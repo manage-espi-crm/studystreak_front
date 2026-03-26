@@ -1,0 +1,23 @@
+# frontend.yml
+name: Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Pull fronted development branch and generate latest build
+        run: |
+          sshpass -p "${{ secrets.DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} " cd ../home/studystreak/StudyStreak &&  git reset --hard HEAD && git pull origin main && npm install --legacy-peer-deps && NODE_OPTIONS="--max_old_space_size=4096" npm run build"
+
+      - name: Start PM2
+        run: |
+          sshpass -p "${{ secrets.DROPLET_PASSWORD }}" ssh -o StrictHostKeyChecking=no ${{ secrets.DROPLET_USERNAME }}@${{ secrets.DROPLET_IP }} " cd ../home/studystreak/StudyStreak && pm2 restart 0"
