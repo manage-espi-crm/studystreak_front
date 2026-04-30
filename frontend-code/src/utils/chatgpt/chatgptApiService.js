@@ -6,9 +6,9 @@ export const speakingApiService = async (formData) => {
     }
 
     // Call Firebase Cloud Functions for secure audio transcription
-    const FIREBASE_FUNCTIONS_URL = 'https://us-central1-gazra-mitra.cloudfunctions.net';
+    const FIREBASE_FUNCTIONS_URL = 'https://openaiaudiotranscription-fswglgao5a-uc.a.run.app';
     
-    const res = await fetch(`${FIREBASE_FUNCTIONS_URL}/openaiAudioTranscription`, {
+    const res = await fetch(`${FIREBASE_FUNCTIONS_URL}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authData.accessToken}`,
@@ -57,9 +57,9 @@ export const writingApiService = async (questions, answer) => {
     };
 
     // Call Firebase Cloud Functions for secure OpenAI proxy
-    const FIREBASE_FUNCTIONS_URL = 'https://us-central1-gazra-mitra.cloudfunctions.net';
+    const FIREBASE_FUNCTIONS_URL = 'https://openaichatcompletion-fswglgao5a-uc.a.run.app';
     
-    const res = await fetch(`${FIREBASE_FUNCTIONS_URL}/openaiChatCompletion`, {
+    const res = await fetch(`${FIREBASE_FUNCTIONS_URL}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -4,19 +4,11 @@ const admin = require('firebase-admin');
 const OpenAI = require('openai');
 const cors = require('cors')({ origin: true });
 
-// Load environment variables
-require('dotenv').config();
-
 // Set global options
 setGlobalOptions({ maxInstances: 10 });
 
 // Initialize Firebase Admin
 admin.initializeApp();
-
-// Initialize OpenAI with API key from environment variables
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // Modern approach using .env file
-});
 
 // Rate limiting store (in production, use Firestore)
 const userRequestCounts = new Map();
@@ -103,13 +95,23 @@ const verifyAuth = async (authHeader) => {
  * OpenAI Chat Completion Proxy
  * POST /openai-chat-completion
  */
-exports.openaiChatCompletion = onRequest(async (req, res) => {
+exports.openaiChatCompletion = onRequest(
+  {
+    secrets: ["OPENAI_API_KEY"],
+  },
+  async (req, res) => {
   return cors(req, res, async () => {
     try {
       // Only allow POST requests
       if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
       }
+
+      // ✅ Access secret at runtime
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
+
 
       // Verify authentication
       const user = await verifyAuth(req.headers.authorization);
@@ -184,13 +186,22 @@ exports.openaiChatCompletion = onRequest(async (req, res) => {
  * OpenAI Audio Transcription Proxy  
  * POST /openai-audio-transcription
  */
-exports.openaiAudioTranscription = onRequest(async (req, res) => {
+exports.openaiAudioTranscription = onRequest(
+  {
+    secrets: ["OPENAI_API_KEY"],
+  },
+  async (req, res) => {
   return cors(req, res, async () => {
     try {
       // Only allow POST requests
       if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
       }
+
+      // ✅ Access secret at runtime
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+      });
 
       // Verify authentication
       const user = await verifyAuth(req.headers.authorization);
