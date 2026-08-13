@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
+import { Copy, Check } from "lucide-react";
+import { toast } from "react-toastify";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import Loading from "../../../UI/Loading";
@@ -49,9 +51,23 @@ const RecordedClasses = () => {
   const [webinarData, setWebinarData] = useState([]);
   const [counsellingData, setCounsellingData] = useState([]);
   const [highlightedRanges, setHighlightedRanges] = useState([]);
+  const [copiedPassword, setCopiedPassword] = useState(null);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
+  };
+
+  const handleCopyPassword = (password, rowId) => {
+    navigator.clipboard
+      .writeText(password)
+      .then(() => {
+        setCopiedPassword(rowId);
+        toast.success("Password copied to clipboard!");
+        setTimeout(() => setCopiedPassword(null), 2000);
+      })
+      .catch(() => {
+        toast.error("Failed to copy password.");
+      });
   };
 
   useEffect(() => {
@@ -244,7 +260,33 @@ const RecordedClasses = () => {
     { headerName: "Title", field: "title", width: 250 },
     { headerName: "Start Date & Time", field: "start_time", width: 250 },
     { headerName: "End Date & Time", field: "end_time", width: 250 },
-    { headerName: "Password", field: "password", width: 220 },
+    {
+      headerName: "Password",
+      field: "password",
+      width: 220,
+      cellRenderer: (params) => (
+        <span className="d-flex align-items-center gap-2">
+          {params.data.password}
+          {params.data.password && (
+            <button
+              type="button"
+              className="btn btn-link p-0 border-0 d-inline-flex align-items-center"
+              title="Copy password"
+              aria-label="Copy password"
+              onClick={() =>
+                handleCopyPassword(params.data.password, params.data.no)
+              }
+            >
+              {copiedPassword === params.data.no ? (
+                <Check size={16} color="#28a745" />
+              ) : (
+                <Copy size={16} />
+              )}
+            </button>
+          )}
+        </span>
+      ),
+    },
   ];
 
   return (
