@@ -52,7 +52,7 @@ const ViewCourse = ({ activeTab }) => {
             8000
           );
           if (response.status === 200) {
-            setCouresList(response?.data?.results || []);
+            setCouresList(response?.data || []);
           }
         } catch (error) {
           console.log("error", error);
