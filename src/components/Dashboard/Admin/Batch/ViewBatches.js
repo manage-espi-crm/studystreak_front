@@ -63,7 +63,11 @@ const ViewBatches = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setBatchList(response.data);
+          setBatchList(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

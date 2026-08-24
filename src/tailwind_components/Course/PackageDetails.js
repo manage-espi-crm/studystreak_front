@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, CheckCircle, Clock, LibraryBig } from "lucide-react";
+import { BookOpen, CheckCircle, Clock, LibraryBig, Star } from "lucide-react";
 import BatchSelection from "./BatchSelection";
 
 const PackageDetails = ({ packages, courseName, courseType }) => {
@@ -99,7 +99,7 @@ const PackageDetails = ({ packages, courseName, courseType }) => {
                 )}
               </div>
             </div>
-            <div className="space-y-6 mb-8">
+            <div className="space-y-2 mb-8 border-t border-dashed border-neutral-200 pt-5">
               {[
                 {
                   label: "Counselling",
@@ -179,47 +179,20 @@ const PackageDetails = ({ packages, courseName, courseType }) => {
               ].map(
                 (feature, i) =>
                   feature.enabled && feature.count !== null && feature.count > 0 && (
-                    <div key={i} className="flex items-start gap-3">
-                      <div
-                        className={`p-1 rounded-full ${
+                    <div
+                      key={i}
+                      className="flex items-center justify-between text-sm py-1"
+                    >
+                      <span className="text-neutral-600">{feature.label}</span>
+                      <span
+                        className={`font-bold rounded-lg min-w-[26px] h-6 inline-flex items-center justify-center px-1.5 text-xs ${
                           selectedPackage === pkg?.package_id
-                            ? "bg-primary-200 text-primary-700"
-                            : "bg-neutral-200 text-neutral-700"
+                            ? "bg-primary-100 text-primary-700"
+                            : "bg-primary-50 text-primary-600"
                         }`}
                       >
-                        <CheckCircle size={16} className="text-current" />
-                      </div>
-                      <div className="flex-1 space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-neutral-800 font-medium">
-                            {feature.label}
-                          </span>
-                          <span
-                            className={`font-semibold ${
-                              selectedPackage === pkg?.package_id
-                                ? "text-primary-700"
-                                : "text-neutral-700"
-                            }`}
-                          >
-                            {feature.count}
-                          </span>
-                        </div>
-                        <div className="w-full bg-neutral-200 rounded-full h-1.5">
-                          <div
-                            className={`h-1.5 rounded-full transition-all duration-300 ${
-                              selectedPackage === pkg?.package_id
-                                ? "bg-primary-600"
-                                : "bg-neutral-400"
-                            }`}
-                            style={{
-                              width: `${Math.min(
-                                (parseInt(feature.count) / 10) * 100,
-                                100
-                              )}%`,
-                            }}
-                          />
-                        </div>
-                      </div>
+                        {feature.count}
+                      </span>
                     </div>
                   )
               )}
@@ -246,7 +219,8 @@ const PackageDetails = ({ packages, courseName, courseType }) => {
 
             {pkg.package_name === "IELTS Gold" && (
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+                <div className="bg-primary-600 text-white px-4 py-1 rounded-full text-sm font-medium inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <Star size={13} />
                   Most Popular
                 </div>
               </div>

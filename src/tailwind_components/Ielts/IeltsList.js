@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Clock } from "lucide-react";
+import { Clock, Users, BookOpen } from "lucide-react";
 import ajaxCall from "../../helpers/ajaxCall";
 import Loading from "../../components/UI/Loading";
+
+const COURSE_DELIVERY_TAGS = {
+  TAUGHT: {
+    label: "Taught",
+    icon: Users,
+    className: "bg-primary-600 text-white",
+  },
+  "SELF-STUDY": {
+    label: "Self-Study",
+    icon: BookOpen,
+    className: "bg-amber-500 text-white",
+  },
+};
 
 const IeltsList = () => {
   const [courseList, setCouresList] = useState([]);
@@ -26,7 +39,7 @@ const IeltsList = () => {
 
         if (response.status === 200) {
           setCouresList(
-            response.data?.filter(({ course_type }) => course_type === "PUBLIC")
+            response.data?.results?.filter(({ course_type }) => course_type === "PUBLIC")
           );
         }
       } catch (error) {
@@ -67,7 +80,10 @@ const IeltsList = () => {
       <div className="container mx-auto px-4">
         {courseList && courseList.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courseList.map((course, index) => (
+            {courseList.map((course, index) => {
+              const deliveryTag = COURSE_DELIVERY_TAGS[course.course_delivery];
+
+              return (
               <div
                 key={course.id}
                 className="group bg-white rounded-xl overflow-hidden border border-neutral-200 shadow-card hover:shadow-card-hover hover:border-primary-200 transition-all duration-300 transform hover:-translate-y-1"
@@ -83,6 +99,14 @@ const IeltsList = () => {
                     alt={course?.Course_Title}
                     className="w-full h-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-300"
                   />
+                  {deliveryTag && (
+                    <span
+                      className={`absolute bottom-3 left-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md ${deliveryTag.className}`}
+                    >
+                      <deliveryTag.icon size={12} />
+                      {deliveryTag.label}
+                    </span>
+                  )}
                 </div>
 
                 <div className="p-6">
@@ -112,7 +136,8 @@ const IeltsList = () => {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="text-center text-lg font-semibold text-red-600">

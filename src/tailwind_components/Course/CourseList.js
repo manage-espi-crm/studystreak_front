@@ -112,7 +112,7 @@ const CourseList = ({ selectedCategory = "", searchTerm = "" }) => {
                   />
                   {deliveryTag && (
                     <span
-                      className={`absolute top-3 right-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md ${deliveryTag.className}`}
+                      className={`absolute bottom-3 left-3 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wide shadow-md ${deliveryTag.className}`}
                     >
                       <deliveryTag.icon size={12} />
                       {deliveryTag.label}

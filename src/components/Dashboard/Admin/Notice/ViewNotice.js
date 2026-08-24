@@ -89,7 +89,10 @@ const ViewNotice = ({ activeTab }) => {
             8000
           );
           if (response.status === 200) {
-            const noticeData = response.data.map((item, index) => ({
+            const noticeRecords = Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || [];
+            const noticeData = noticeRecords.map((item, index) => ({
               notice: item.notice,
               expiry_date: item.expiry_date,
               batch:

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import SingleSelection from "../../../UI/SingleSelect";
 
 const columns = [
   {
@@ -74,6 +75,7 @@ const columns = [
 const ViewPackages = ({ activeTab }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [packageList, setPackageList] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState("");
   const authData = useSelector((state) => state.authStore);
 
   useEffect(() => {
@@ -81,8 +83,11 @@ const ViewPackages = ({ activeTab }) => {
       setIsLoading(true);
       (async () => {
         try {
+          const url = categoryFilter
+            ? `/packagelistview/?category=${categoryFilter}`
+            : "/packagelistview/";
           const response = await ajaxCall(
-            "/packagelistview/",
+            url,
             {
               headers: {
                 Accept: "application/json",
@@ -94,7 +99,7 @@ const ViewPackages = ({ activeTab }) => {
             8000
           );
           if (response?.status === 200) {
-            const packageWithNumbers = response?.data?.map(
+            const packageWithNumbers = (response?.data?.results || []).map(
               (packageItem, index) => ({
                 ...packageItem,
                 no: index + 1,
@@ -109,14 +114,35 @@ const ViewPackages = ({ activeTab }) => {
         }
       })();
     }
-  }, [authData?.accessToken, activeTab]);
+  }, [authData?.accessToken, activeTab, categoryFilter]);
 
-  return isLoading ? (
-    <Loading />
-  ) : packageList.length > 0 ? (
-    <Table rowData={packageList} columnDefs={columns} />
-  ) : (
-    <h5 className="text-center text-danger">No Packages Available !!</h5>
+  return (
+    <>
+      <div className="row">
+        <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+          <div className="dashboard__select__heading">
+            <span>Category</span>
+          </div>
+          <div className="dashboard__selector">
+            <SingleSelection
+              value={categoryFilter}
+              onChange={(val) => setCategoryFilter(val)}
+              url="/categoryview/"
+              objKey={["name"]}
+              isSearch={true}
+              withBlankOption={true}
+            />
+          </div>
+        </div>
+      </div>
+      {isLoading ? (
+        <Loading />
+      ) : packageList.length > 0 ? (
+        <Table rowData={packageList} columnDefs={columns} />
+      ) : (
+        <h5 className="text-center text-danger">No Packages Available !!</h5>
+      )}
+    </>
   );
 };
 

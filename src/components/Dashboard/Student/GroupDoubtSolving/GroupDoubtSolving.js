@@ -44,8 +44,11 @@ const GroupDoubtSolving = ({
           8000
         );
         if (response.status === 200) {
-          onDataFetch(response?.data);
-          setGroupDoubtSolvingClass(response?.data);
+          const classes = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          onDataFetch(classes);
+          setGroupDoubtSolvingClass(classes);
         }
       } catch (error) {
         console.log("error", error);

@@ -35,8 +35,11 @@ const Users = () => {
           8000
         );
         if (response?.status === 200) {
-          setUserList(response?.data);
-          setFilteredUserList(response?.data);
+          const users = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          setUserList(users);
+          setFilteredUserList(users);
         }
       } catch (error) {
         console.log("error", error);

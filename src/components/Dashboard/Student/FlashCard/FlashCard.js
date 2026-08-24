@@ -40,7 +40,10 @@ const FlashCard = () => {
           8000
         );
         if (response?.status === 200) {
-          const filteredFlashCards = response?.data?.filter((item) =>
+          const flashCards = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          const filteredFlashCards = flashCards.filter((item) =>
             item?.course?.some((course) =>
               courseIds?.some(
                 (data) => data === course?.id && course?.category === category
@@ -48,7 +51,7 @@ const FlashCard = () => {
             )
           );
           setFlashCardList(filteredFlashCards);
-          const initialFlipState = response?.data?.reduce((acc, curr) => {
+          const initialFlipState = flashCards.reduce((acc, curr) => {
             acc[curr.id] = false;
             return acc;
           }, {});

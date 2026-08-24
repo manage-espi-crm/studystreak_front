@@ -37,7 +37,11 @@ const FreeMockTest = () => {
           8000
         );
         if (response.status === 200) {
-          setFullLengthTestData(response.data);
+          setFullLengthTestData(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

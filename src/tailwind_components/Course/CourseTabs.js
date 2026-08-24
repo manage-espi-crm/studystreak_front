@@ -47,6 +47,7 @@ const CourseTabs = ({ courseId, courseDetail }) => {
             sections={courseDetail?.section}
             requirements={courseDetail?.Requirements}
             outcomes={courseDetail?.Outcome}
+            categoryId={courseDetail?.Category?.id}
           />
         )}
         {activeTab === "materials" && (

@@ -200,6 +200,50 @@ const Student = () => {
       },
     },
     {
+      headerName: "Purchase Date",
+      field: "package_purchases",
+      colId: "purchase_date",
+      width: 160,
+      wrapText: true,
+      autoHeight: true,
+      cellRenderer: (params) => {
+        const purchases = params.value;
+        if (!purchases || purchases.length === 0) return "-";
+        return (
+          <div style={{ lineHeight: "1.6", padding: "4px 0" }}>
+            {purchases.map((purchase, index) => (
+              <div key={index}>
+                {moment(purchase.purchase_date).format("DD MMM YYYY")}
+              </div>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
+      headerName: "Purchase Price",
+      field: "package_purchases",
+      colId: "purchase_price",
+      width: 140,
+      wrapText: true,
+      autoHeight: true,
+      cellRenderer: (params) => {
+        const purchases = params.value;
+        if (!purchases || purchases.length === 0) return "-";
+        return (
+          <div style={{ lineHeight: "1.6", padding: "4px 0" }}>
+            {purchases.map((purchase, index) => (
+              <div key={index}>
+                {purchase.price !== null && purchase.price !== undefined
+                  ? `₹${purchase.price}`
+                  : "-"}
+              </div>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
       headerName: "No. of Complete Lesson",
       field: "lesson_count",
       filter: true,

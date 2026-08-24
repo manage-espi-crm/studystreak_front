@@ -179,7 +179,10 @@ const RecordedClasses = () => {
         
         if (response.status === 200) {
           console.log("Raw data before filtering:", response?.data);
-          const recordData = response?.data.filter(
+          const recordsList = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          const recordData = recordsList.filter(
             ({ recordings }) => recordings && recordings.length > 0
           );
           console.log("Filtered record data:", recordData);

@@ -82,7 +82,11 @@ const ViewLiveClasses = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setLiveClassList(response.data);
+          setLiveClassList(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

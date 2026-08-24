@@ -18,6 +18,7 @@ const BatchSelection = ({
   const [selectedBatch, setSelectedBatch] = useState(0);
 
   const getCourseBatches = useCallback(async () => {
+    if (!packageId) return;
     try {
       const response = await ajaxCall(
         `/filterbatches/${packageId}/`,

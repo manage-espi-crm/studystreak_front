@@ -343,10 +343,19 @@ const CreateCourse = ({ setMainTab }) => {
                       type: "Category",
                       value: val,
                     });
+                    dispatchCreateCourse({
+                      type: "lessons",
+                      value: [],
+                    });
+                    dispatchCreateCourse({
+                      type: "lessonsId",
+                      value: [],
+                    });
                   }}
                   isSearch={true}
                   url="/categoryview/"
                   objKey={["name"]}
+                  withBlankOption={true}
                 />
               </div>
             </div>
@@ -775,7 +784,11 @@ const CreateCourse = ({ setMainTab }) => {
                     "lessonsId",
                     false
                   )}
-                  url="/lessonview/"
+                  url={
+                    createCourseData.Category
+                      ? `/lessonview/?category=${createCourseData.Category}`
+                      : "/lessonview/"
+                  }
                   name="Lesson_Title"
                   objKey={["Lesson_Title"]}
                   isSearch={true}

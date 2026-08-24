@@ -20,7 +20,7 @@ const CourseDetailPage = () => {
 
   const packageIds = coursePackages?.packages?.map((item) => item?.package_id);
 
-  const batches = batchData.filter((batch) =>
+  const batches = (Array.isArray(batchData) ? batchData : []).filter((batch) =>
     packageIds?.includes(batch?.add_package?.id)
   );
 
@@ -116,7 +116,8 @@ const CourseDetailPage = () => {
         );
 
         if (response?.status === 200) {
-          setBatchData(response?.data);
+          const data = response?.data;
+          setBatchData(Array.isArray(data) ? data : data?.results || []);
         } else {
           console.log("error");
         }

@@ -6,6 +6,7 @@ import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
 
 const initialLessonData = {
+  category: "",
   section: "",
   Lesson_Title: "",
   Lesson_Description: "",
@@ -40,8 +41,11 @@ const EditLesson = ({ lesson, onClose, setRefresh }) => {
     const fetchVideoLinks = async () => {
       setIsLoading(true);
       try {
+        const url = editLessonData.category
+          ? `/list/lessons-videos/?category=${editLessonData.category}`
+          : "/list/lessons-videos/";
         const response = await ajaxCall(
-          "/list/lessons-videos/",
+          url,
           {
             headers: {
               Accept: "application/json",
@@ -66,11 +70,12 @@ const EditLesson = ({ lesson, onClose, setRefresh }) => {
       }
     };
     fetchVideoLinks();
-  }, [authData?.accessToken]);
+  }, [authData?.accessToken, editLessonData.category]);
 
   const handleLessonUpdate = async (e) => {
     e.preventDefault();
     const editData = {
+      category: editLessonData.category,
       section: editLessonData.section,
       Lesson_Title: editLessonData.Lesson_Title,
       Lesson_Description: editLessonData.Lesson_Description,
@@ -108,6 +113,25 @@ const EditLesson = ({ lesson, onClose, setRefresh }) => {
     <div className="row">
       <div>
         <div className="dashboard__select__heading">
+          <span>Course Category</span>
+        </div>
+        <div className="dashboard__selector">
+          <SingleSelection
+            value={editLessonData.category}
+            onChange={(val) => {
+              dispatchEditLesson({ type: "category", value: val });
+              dispatchEditLesson({ type: "section", value: "" });
+              dispatchEditLesson({ type: "Lesson_Video", value: "" });
+            }}
+            url="/categoryview/"
+            objKey={["name"]}
+            isSearch={true}
+            withBlankOption={true}
+          />
+        </div>
+      </div>
+      <div className="mt-3">
+        <div className="dashboard__select__heading">
           <span>Section</span>
         </div>
         <div className="dashboard__selector">
@@ -116,7 +140,11 @@ const EditLesson = ({ lesson, onClose, setRefresh }) => {
             onChange={(val) => {
               dispatchEditLesson({ type: "section", value: val });
             }}
-            url="/lessonsection-list/"
+            url={
+              editLessonData.category
+                ? `/lessonsection-list/?category=${editLessonData.category}`
+                : "/lessonsection-list/"
+            }
             objKey={["name"]}
             isSearch={true}
           />

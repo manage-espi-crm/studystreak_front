@@ -47,7 +47,7 @@ const MyCourse = () => {
       );
 
       if (response.status === 200) {
-        setCourseList(response.data);
+        setCourseList(response.data?.results || []);
       }
     } catch (error) {
       console.log("error", error);

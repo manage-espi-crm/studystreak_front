@@ -56,7 +56,11 @@ const ViewMT = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setDataCallback(response.data);
+          setDataCallback(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

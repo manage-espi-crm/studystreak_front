@@ -68,7 +68,11 @@ const EnglishLevelTest = () => {
           8000
         );
         if (response.status === 200) {
-          setEnglishLevelTestData(response.data);
+          setEnglishLevelTestData(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

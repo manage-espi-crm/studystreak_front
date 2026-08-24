@@ -26,7 +26,11 @@ const FreeDiagnosticTest = () => {
           8000
         );
         if (response.status === 200) {
-          setFreeDiagnosticTest(response?.data);
+          setFreeDiagnosticTest(
+            Array.isArray(response?.data)
+              ? response.data
+              : response?.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

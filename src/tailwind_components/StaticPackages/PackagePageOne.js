@@ -165,9 +165,8 @@ const PackagePageOne = () => {
             </p>
 
             <p className="text-neutral-900">
-              A fully-equipped exam simulator at just ₹49. Ideal for those who
-              already know the IELTS structure and want to self-assess with
-              high-quality material.
+              Ideal for those who already know the IELTS structure and want to
+              self-assess with high-quality material.
             </p>
             <div className="mt-6 bg-white p-4 rounded-lg shadow-sm border border-neutral-200 inline-block">
               <div className="flex items-baseline">

@@ -11,6 +11,7 @@ const initialPackageData = {
   package_price: "",
   duration: 0,
   PackageType: "",
+  category: "",
   select_course: "",
   soft_copy: false,
   hard_copy: false,
@@ -116,6 +117,7 @@ const CreatePackage = ({ setMainTab }) => {
     e.preventDefault();
     if (!validateForm(createPackageData, setFormError)) return;
     setFormStatus({ isError: false, errMsg: null, isSubmitting: true });
+    const { category, ...packagePayload } = createPackageData;
     try {
       const response = await ajaxCall(
         "/packagecreateview/",
@@ -126,7 +128,7 @@ const CreatePackage = ({ setMainTab }) => {
             Authorization: `Bearer ${authData?.accessToken}`,
           },
           method: "POST",
-          body: JSON.stringify(createPackageData),
+          body: JSON.stringify(packagePayload),
         },
         8000
       );
@@ -237,6 +239,30 @@ const CreatePackage = ({ setMainTab }) => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
+                <span>Category</span>
+              </div>
+              <div className="dashboard__selector">
+                <SingleSelection
+                  value={createPackageData?.category}
+                  onChange={(val) => {
+                    dispatchCreatePackage({
+                      type: "category",
+                      value: val,
+                    });
+                    dispatchCreatePackage({
+                      type: "select_course",
+                      value: "",
+                    });
+                  }}
+                  isSearch={true}
+                  url="/categoryview/"
+                  objKey={["name"]}
+                  withBlankOption={true}
+                />
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
                 <span>Course</span>
               </div>
               <div className="dashboard__selector">
@@ -249,7 +275,11 @@ const CreatePackage = ({ setMainTab }) => {
                     });
                   }}
                   isSearch={true}
-                  url="/courselistforpackage/"
+                  url={
+                    createPackageData.category
+                      ? `/courselistforpackage/?category=${createPackageData.category}`
+                      : "/courselistforpackage/"
+                  }
                   objKey={["Course_Title"]}
                 />
               </div>

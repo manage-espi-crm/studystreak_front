@@ -18,7 +18,7 @@ const TickList = ({ items }) => (
   </ul>
 );
 
-const CourseCurriculumTab = ({ sections, requirements, outcomes }) => {
+const CourseCurriculumTab = ({ sections, requirements, outcomes, categoryId }) => {
   const [openSection, setOpenSection] = useState("");
 
   const requirementsAndOutcomes = (
@@ -53,7 +53,37 @@ const CourseCurriculumTab = ({ sections, requirements, outcomes }) => {
     </>
   );
 
-  if (!sections?.length) {
+  const compareByName = (a, b) => {
+    const nameA = a?.name?.toLowerCase();
+    const nameB = b?.name?.toLowerCase();
+    if (nameA < nameB) return -1;
+    if (nameA > nameB) return 1;
+    return 0;
+  };
+
+  const visibleSections = (sections || [])
+    // Legacy sections created before category was added have no
+    // sectionItem.category — keep those instead of hiding them.
+    .filter(
+      (sectionItem) =>
+        !categoryId ||
+        sectionItem?.category == null ||
+        sectionItem.category === categoryId
+    )
+    .slice()
+    .sort((a, b) => {
+      // Legacy sections predate the sequence field and were backfilled
+      // with 0 — treat that as "no sequence" and fall back to the old
+      // alphabetical ordering, same as when it's equal or missing.
+      const seqA = a?.sequence || null;
+      const seqB = b?.sequence || null;
+      if (seqA == null || seqB == null || seqA === seqB) {
+        return compareByName(a, b);
+      }
+      return seqA - seqB;
+    });
+
+  if (!visibleSections.length) {
     return (
       <div>
         {requirementsAndOutcomes}
@@ -65,15 +95,7 @@ const CourseCurriculumTab = ({ sections, requirements, outcomes }) => {
     <div>
       {requirementsAndOutcomes}
       <div className="border border-neutral-200 rounded-2xl overflow-hidden">
-        {sections
-          .slice()
-          .sort((a, b) => {
-            const nameA = a?.name?.toLowerCase();
-            const nameB = b?.name?.toLowerCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-          })
+        {visibleSections
           .map((sectionItem, index) => (
             <div
               key={index}

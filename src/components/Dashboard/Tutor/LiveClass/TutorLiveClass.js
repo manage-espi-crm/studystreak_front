@@ -129,7 +129,10 @@ const TutorLiveClass = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          const data = response?.data?.map((item, index) => {
+          const liveClasses = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          const data = liveClasses.map((item, index) => {
             return {
               no: index + 1,
               Action: item.start_url || "-",

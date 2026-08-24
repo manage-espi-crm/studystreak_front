@@ -67,7 +67,11 @@ const ViewResources = ({ activeTab }) => {
             8000
           );
           if (response?.status === 200) {
-            setResourceList(response?.data);
+            setResourceList(
+              Array.isArray(response?.data)
+                ? response.data
+                : response?.data?.results || []
+            );
           }
         } catch (error) {
           console.log("error", error);

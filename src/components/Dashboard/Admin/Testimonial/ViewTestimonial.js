@@ -62,7 +62,11 @@ const ViewTestimonial = ({ activeTab }) => {
             8000
           );
           if (response?.status === 200) {
-            setTestimonialList(response?.data);
+            setTestimonialList(
+              Array.isArray(response?.data)
+                ? response.data
+                : response?.data?.results || []
+            );
           }
         } catch (error) {
           console.log("error", error);
