@@ -34,7 +34,7 @@ export function useCheckAuth() {
         );
       } else {
         const response = await authenticateUser(
-          localData.timeOfLogin,
+          localData.accessToken,
           localData.refreshToken
         );
 

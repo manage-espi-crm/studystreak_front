@@ -1,3 +1,4 @@
+import { jwtDecode } from "jwt-decode";
 import store from "../store";
 import { authAction } from "../store/authStore";
 import ajaxCall from "./ajaxCall";
@@ -49,40 +50,77 @@ const getRefreshToken = async (refreshToken) => {
   }
 };
 
-async function authenticateUser(timeInMs, refreshToken) {
-  const timeDiff = Date.now() - timeInMs;
-  if (Math.round(timeDiff / 1000) >= 60) {
-    // Experied after 1 minute
+// Shared logout routine so every failure path (expired refresh token, network
+// error during refresh, etc.) leaves auth state consistent instead of each
+// call site re-implementing its own copy.
+const forceLogout = () => {
+  store.dispatch(
+    authAction.setAuthStatus({
+      username: "",
+      authLoading: false,
+      loggedIn: false,
+      accessToken: null,
+      refreshToken: null,
+      userId: null,
+      user_type: null,
+      user_role: null,
+      timeOfLogin: null,
+      logInOperation: 0,
+    })
+  );
+  localStorage.clear();
+  window.location.href = "/login";
+};
+
+// Checks the ACTUAL JWT expiry (`exp` claim) instead of an arbitrary window
+// since login, and refreshes only when the token is genuinely close to
+// expiring. Return shape is kept identical to the previous implementation
+// (`-1` / `true` / `{ data: { access } }`) so callers don't need to change.
+async function authenticateUser(accessToken, refreshToken) {
+  if (!accessToken) {
     deleteFromLocalStorage("loginInfo");
     return -1;
-  } else if (Math.round(timeDiff / 1000) >= 30) {
-    // Experied after 1 minute
-    const response = await ajaxCall(
-      "/token/refresh/",
-      {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({ refresh: refreshToken }),
-      },
-      8000
-    );
+  }
 
-    if (response.status === 401) {
-      localStorage.clear();
-      window.location.href = "/login";
-      return;
-    }
+  let expiresAt;
+  try {
+    expiresAt = jwtDecode(accessToken).exp * 1000;
+  } catch (error) {
+    deleteFromLocalStorage("loginInfo");
+    return -1;
+  }
 
-    return response;
-  } else {
+  const thirtySeconds = 30000;
+  if (expiresAt - Date.now() >= thirtySeconds) {
     return true;
   }
+
+  const newAccessToken = await getAndSetRefreshToken();
+  if (!newAccessToken) {
+    // getAndSetRefreshToken() already forces logout on a real failure; this
+    // also covers the edge case where no refreshToken was stored at all.
+    return -1;
+  }
+
+  return { data: { access: newAccessToken } };
 }
 
-const getAndSetRefreshToken = async () => {
+// Concurrent requests whose tokens are all near-expiry (e.g. several widgets
+// fetching on the same idle-then-reactivated page) would previously each
+// call this independently, racing to redeem the same single-use refresh
+// token. `refreshPromise` makes them share one in-flight refresh instead.
+let refreshPromise = null;
+
+const getAndSetRefreshToken = () => {
+  if (!refreshPromise) {
+    refreshPromise = doRefreshToken().finally(() => {
+      refreshPromise = null;
+    });
+  }
+  return refreshPromise;
+};
+
+const doRefreshToken = async () => {
   const { refreshToken, timeOfLogin, userId, user_role, user_type, username } =
     getFromLocalStorage("loginInfo", true) || {};
 
@@ -102,22 +140,7 @@ const getAndSetRefreshToken = async () => {
       );
 
       if (response.status === 401) {
-        store.dispatch(
-          authAction.setAuthStatus({
-            username: "",
-            authLoading: false,
-            loggedIn: false,
-            accessToken: null,
-            refreshToken: null,
-            userId: null,
-            user_type: null,
-            user_role: null,
-            timeOfLogin: null,
-            logInOperation: 0,
-          })
-        );
-        localStorage.clear();
-        window.location.href = "/login";
+        forceLogout();
         return;
       }
 
@@ -144,22 +167,7 @@ const getAndSetRefreshToken = async () => {
         return data?.access;
       }
     } catch (error) {
-      store.dispatch(
-        authAction.setAuthStatus({
-          username: "",
-          authLoading: false,
-          loggedIn: false,
-          accessToken: null,
-          refreshToken: null,
-          userId: null,
-          user_type: null,
-          user_role: null,
-          timeOfLogin: null,
-          logInOperation: 0,
-        })
-      );
-      localStorage.clear();
-      window.location.href = "/login";
+      forceLogout();
     }
   }
   return "";
@@ -172,4 +180,5 @@ export {
   getRefreshToken,
   authenticateUser,
   getAndSetRefreshToken,
+  forceLogout,
 };
