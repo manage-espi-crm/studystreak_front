@@ -172,42 +172,25 @@ const RecordedClasses = () => {
           },
           8000
         );
-        
-        console.log("Recorded Classes API Response:", response);
-        console.log("Response Status:", response?.status);
-        console.log("Response Data:", response?.data);
-        
         if (response.status === 200) {
-          console.log("Raw data before filtering:", response?.data);
           const recordsList = Array.isArray(response?.data)
             ? response.data
             : response?.data?.results || [];
           const recordData = recordsList.filter(
             ({ recordings }) => recordings && recordings.length > 0
           );
-          console.log("Filtered record data:", recordData);
-          console.log("Number of classes with recordings:", recordData.length);
           handleDataFetch(recordData);
           setRecordClass(recordData);
         } else if (response.status === 401) {
           setError("Authentication failed. Please login again.");
-          console.error("Authentication error - Status 401");
         } else if (response.status === 404) {
           setError("Recorded classes endpoint not found. Please contact support.");
-          console.error("Endpoint not found - Status 404");
         } else {
           setError(`Error loading recorded classes (Status: ${response?.status})`);
-          console.error("Error fetching recorded classes - Status:", response?.status);
-          console.error("Error response:", response);
         }
       } catch (error) {
         setError("Failed to load recorded classes. Please try again later.");
         console.error("Error fetching recorded classes:", error);
-        console.error("Error details:", {
-          message: error.message,
-          response: error.response,
-          stack: error.stack
-        });
       } finally {
         setIsLoading(false);
       }
@@ -219,20 +202,16 @@ const RecordedClasses = () => {
   };
 
   const formatRecordClasses = recordClass.flatMap((item, index) => {
-    console.log(`Processing class ${index + 1}:`, item);
-    
     const baseData = {
       no: `${index + 1}.`,
       title: item.meeting_title,
     };
 
     if (!item.recordings || !Array.isArray(item.recordings)) {
-      console.warn(`Class "${item.meeting_title}" has invalid recordings:`, item.recordings);
       return [];
     }
 
     return item.recordings.map((recording, recordingIndex) => {
-      console.log(`  Recording ${recordingIndex + 1}:`, recording);
       return {
         ...baseData,
         no: `${index + 1}.${recordingIndex + 1}`,
@@ -333,7 +312,7 @@ const RecordedClasses = () => {
                                 value={activeTab}
                               >
                                 {liveClasses.map((item) => (
-                                  <option key={item} value={item.value}>
+                                  <option key={item.value} value={item.value}>
                                     {item.name}
                                   </option>
                                 ))}

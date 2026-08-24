@@ -205,6 +205,8 @@ const Checkout = () => {
   };
 
   useEffect(() => {
+    if (!authData.loggedIn) return;
+
     (async () => {
       try {
         const response = await ajaxCall(
@@ -230,7 +232,7 @@ const Checkout = () => {
         console.log("error:", error);
       }
     })();
-  }, []);
+  }, [authData.loggedIn]);
 
   return (
     <div
