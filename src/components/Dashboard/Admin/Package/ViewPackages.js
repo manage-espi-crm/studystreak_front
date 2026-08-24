@@ -99,7 +99,7 @@ const ViewPackages = ({ activeTab }) => {
             8000
           );
           if (response?.status === 200) {
-            const packageWithNumbers = (response?.data?.results || []).map(
+            const packageWithNumbers = (response?.data || []).map(
               (packageItem, index) => ({
                 ...packageItem,
                 no: index + 1,
