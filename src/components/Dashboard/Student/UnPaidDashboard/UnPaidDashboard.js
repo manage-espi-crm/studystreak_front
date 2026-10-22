@@ -80,7 +80,10 @@ const UnPaidDashboard = () => {
             8000
           );
           if (response?.status === 200) {
-            setClassData(response?.data);
+            const data = response?.data;
+            setClassData(
+              Array.isArray(data) ? data : data?.results || []
+            );
           } else {
             console.log("error");
           }

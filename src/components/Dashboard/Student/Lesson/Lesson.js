@@ -5,6 +5,7 @@ import ajaxCall from "../../../../helpers/ajaxCall";
 import LessonList from "./LessonList";
 import LessonContent from "./LessonContent";
 import Loading from "../../../UI/Loading";
+import BuyCourse from "../BuyCourse/BuyCourse";
 
 const Lesson = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const Lesson = () => {
   const [currentLesson, setCurrentLesson] = useState({});
   const [lessonStatus, setLessonStatus] = useState("Pending");
   const [completedLessons, setCompletedLessons] = useState([]);
+  const [isAccessDenied, setIsAccessDenied] = useState(false);
 
   const handleLessonComplete = (lessonId) => {
     setCompletedLessons((prev) => [...prev, lessonId]);
@@ -67,6 +69,7 @@ const Lesson = () => {
         8000
       );
 
+      setIsAccessDenied(response.status === 403);
       if (response.status === 200) {
         const tempSessions = [];
         response?.data?.lessons.forEach((lesson) => {
@@ -128,6 +131,8 @@ const Lesson = () => {
             <div className="row">
               {isLoading ? (
                 <Loading />
+              ) : isAccessDenied ? (
+                <BuyCourse message="You are not enrolled in this course. Buy a package to access its lessons." />
               ) : (
                 <>
                   <div className="col-xl-5 col-lg-12 col-md-12 col-sm-12 col-12 course__lessons">

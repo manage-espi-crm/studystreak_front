@@ -9,6 +9,21 @@ import DASideBar from "../DASideBar/DASideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SmallModal from "../../../UI/Modal";
 
+const WEEKDAY_LABELS = {
+  MON: "Mon",
+  TUE: "Tue",
+  WED: "Wed",
+  THU: "Thu",
+  FRI: "Fri",
+  SAT: "Sat",
+  SUN: "Sun",
+};
+
+const SCHEDULE_TYPE_LABELS = {
+  DATES: "Start/End Date",
+  SESSIONS: "Sessions",
+};
+
 const Student = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [studentList, setStudentList] = useState([]);
@@ -16,13 +31,15 @@ const Student = () => {
 
   const [openBatch, setOpenBatch] = useState(false);
   const [batchDetails, setBatchDetails] = useState([]);
+  const [batchPurchases, setBatchPurchases] = useState([]);
 
   const [openPackages, setOpenPackages] = useState(false);
   const [packageDeails, setPackageDeails] = useState([]);
 
-  const handleBatch = async (batchIds) => {
+  const handleBatch = async (batchIds, purchases) => {
     try {
       setIsLoading(true);
+      setBatchPurchases(purchases || []);
       const batchPromises = batchIds?.map((batchId) =>
         ajaxCall(
           `/batch/${batchId}/`,
@@ -172,7 +189,9 @@ const Student = () => {
         return params.value.length > 0 ? (
           <button
             className="take-test"
-            onClick={() => handleBatch(params.value)}
+            onClick={() =>
+              handleBatch(params.value, params.data?.batch_purchases)
+            }
             style={{ minWidth: "80px" }}
           >
             View
@@ -355,26 +374,98 @@ const Student = () => {
                     <div className="card-body">
                       <div className="mb-3">
                         <h6 className="text-muted mb-2">Schedule</h6>
-                        <div className="d-flex justify-content-between">
-                          <div>
-                            <small className="text-muted">Start</small>
-                            <p className="mb-0 fw-bold">
-                              {item?.batch_startdate}
-                            </p>
-                            <small className="text-muted">
-                              {item?.batch_start_timing}
-                            </small>
+                        {item?.batch_startdate && item?.batch_enddate && (
+                          <div className="d-flex justify-content-between">
+                            <div>
+                              <small className="text-muted">Start</small>
+                              <p className="mb-0 fw-bold">
+                                {item?.batch_startdate}
+                              </p>
+                              <small className="text-muted">
+                                {item?.batch_start_timing}
+                              </small>
+                            </div>
+                            <div>
+                              <small className="text-muted">End</small>
+                              <p className="mb-0 fw-bold">
+                                {item?.batch_enddate}
+                              </p>
+                              <small className="text-muted">
+                                {item?.batch_end_timing}
+                              </small>
+                            </div>
                           </div>
-                          <div>
-                            <small className="text-muted">End</small>
+                        )}
+                        {item?.number_of_days && (
+                          <div className="mt-2">
+                            <small className="text-muted">Sessions</small>
                             <p className="mb-0 fw-bold">
-                              {item?.batch_enddate}
+                              {item.number_of_days} Classes
                             </p>
-                            <small className="text-muted">
-                              {item?.batch_end_timing}
-                            </small>
+                            {!(item?.batch_startdate && item?.batch_enddate) && (
+                              <small className="text-muted">
+                                {item?.batch_start_timing} to{" "}
+                                {item?.batch_end_timing}
+                              </small>
+                            )}
                           </div>
-                        </div>
+                        )}
+                        {item?.weekdays?.length > 0 && (
+                          <div className="mt-2">
+                            <small className="text-muted">Days</small>
+                            <p className="mb-0 fw-bold">
+                              {item.weekdays
+                                .map((day) => WEEKDAY_LABELS[day] || day)
+                                .join(", ")}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <hr className="my-3" />
+
+                      <div className="mb-3">
+                        <h6 className="text-muted mb-2">Purchase</h6>
+                        {batchPurchases
+                          .filter((purchase) => purchase.batch_id === item?.id)
+                          .map((purchase, purchaseIndex) => {
+                            const isExpired =
+                              purchase.expiry_date &&
+                              moment(purchase.expiry_date).isBefore(moment());
+                            return (
+                              <div
+                                key={purchaseIndex}
+                                className={purchaseIndex > 0 ? "mt-2" : ""}
+                              >
+                                <small className="text-muted">
+                                  Purchased Option
+                                </small>
+                                <p className="mb-0 fw-bold">
+                                  {SCHEDULE_TYPE_LABELS[purchase.schedule_type] ||
+                                    "Not recorded (enrolled before this option existed)"}
+                                </p>
+                                <small className="text-muted">
+                                  Purchased on{" "}
+                                  {moment(purchase.purchase_date).format(
+                                    "DD MMM YYYY"
+                                  )}
+                                  {purchase.expiry_date && (
+                                    <>
+                                      {" · "}Access until{" "}
+                                      {moment(purchase.expiry_date).format(
+                                        "DD MMM YYYY"
+                                      )}
+                                    </>
+                                  )}
+                                </small>
+                                {isExpired && (
+                                  <span className="badge bg-danger ms-2">
+                                    Expired
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
                       </div>
 
                       <hr className="my-3" />

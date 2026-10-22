@@ -19,12 +19,25 @@ const columns = [
     width: 370,
   },
   {
+    headerName: "Slug",
+    field: "slug",
+    filter: true,
+    width: 300,
+  },
+  {
     headerName: "Course Delivery",
     field: "course_delivery",
     filter: true,
     width: 250,
   },
   { headerName: "Course Type", field: "course_type", filter: true, width: 250 },
+  {
+    headerName: "Additional Free Course",
+    field: "is_additional_free_course",
+    filter: true,
+    width: 220,
+    cellRenderer: ({ value }) => (value ? "Yes" : "No"),
+  },
   { headerName: "Category", field: "Category.name", filter: true, width: 250 },
   { headerName: "Language", field: "Language.name", filter: true, width: 250 },
 ];
@@ -52,7 +65,11 @@ const ViewCourse = ({ activeTab }) => {
             8000
           );
           if (response.status === 200) {
-            setCouresList(response?.data || []);
+            setCouresList(
+              Array.isArray(response?.data)
+                ? response.data
+                : response?.data?.results || []
+            );
           }
         } catch (error) {
           console.log("error", error);

@@ -185,7 +185,13 @@ const PopularPackages = () => {
 
               <button
                 className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white py-3 px-4 rounded-xl transition duration-300 font-medium text-sm flex items-center justify-center group-hover:shadow-lg"
-                onClick={() => navigate(`/course/${pkg?.select_course?.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/course/${
+                      pkg?.select_course?.slug || pkg?.select_course?.id
+                    }`
+                  )
+                }
               >
                 <ShoppingBag className="w-4 h-4 mr-2" />
                 Enroll Now

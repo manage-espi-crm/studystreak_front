@@ -165,8 +165,7 @@ const PackagePageOne = () => {
             </p>
 
             <p className="text-neutral-900">
-              Ideal for those who already know the IELTS structure and want to
-              self-assess with high-quality material.
+              Ideal for students who want structured IELTS preparation with expert guidance, engaging lessons, and comprehensive practice material.
             </p>
             <div className="mt-6 bg-white p-4 rounded-lg shadow-sm border border-neutral-200 inline-block">
               <div className="flex items-baseline">
@@ -233,6 +232,14 @@ const PackagePageOne = () => {
               Everything you need to prepare for{" "}
               {packageDetails?.select_course?.Course_Title} success.
             </p>
+            {packageDetails?.additional_courses?.length > 0 && (
+              <p className="text-lg text-success-700 font-medium mt-2">
+                Plus free access to:{" "}
+                {packageDetails.additional_courses
+                  .map((course) => course.Course_Title)
+                  .join(", ")}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {features.map((feature, index) => (

@@ -24,7 +24,16 @@ const columns = [
     field: "select_course.Course_Title",
     filter: true,
   },
-  { headerName: "Duration", field: "duration" },
+  {
+    headerName: "Additional Courses",
+    field: "additional_courses",
+    filter: true,
+    width: 280,
+    cellRenderer: ({ data }) =>
+      data.additional_courses?.map((item) => item.Course_Title).join(", ") ||
+      "-",
+  },
+  { headerName: "Validity", field: "duration" },
   {
     headerName: "Total Full Length Test",
     field: "full_length_test_count",
@@ -99,7 +108,10 @@ const ViewPackages = ({ activeTab }) => {
             8000
           );
           if (response?.status === 200) {
-            const packageWithNumbers = (response?.data || []).map(
+            const list = Array.isArray(response?.data)
+              ? response.data
+              : response?.data?.results || [];
+            const packageWithNumbers = list.map(
               (packageItem, index) => ({
                 ...packageItem,
                 no: index + 1,

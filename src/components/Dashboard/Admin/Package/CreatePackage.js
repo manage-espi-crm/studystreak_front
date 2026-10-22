@@ -5,6 +5,7 @@ import { Spinner } from "react-bootstrap";
 import Tab from "../../../UI/Tab";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
+import SelectionBox from "../../../UI/SelectionBox";
 
 const initialPackageData = {
   package_name: "",
@@ -13,6 +14,8 @@ const initialPackageData = {
   PackageType: "",
   category: "",
   select_course: "",
+  additional_courses: [],
+  additional_coursesId: [],
   soft_copy: false,
   hard_copy: false,
   full_length_test: false,
@@ -40,6 +43,16 @@ const initialPackageData = {
   counselling_count: 0,
 };
 
+// The main course and the additional courses come from opposite sets: a free
+// course is bundled with packages, never sold as one.
+const courseListUrl = (category, isAdditionalFree) => {
+  const params = new URLSearchParams({
+    is_additional_free_course: isAdditionalFree,
+  });
+  if (category) params.append("category", category);
+  return `/courselistforpackage/?${params.toString()}`;
+};
+
 const initialSubmit = { isError: false, errMsg: null, isSubmitting: false };
 
 const reducerCreatePackage = (state, action) => {
@@ -64,6 +77,14 @@ const validateForm = (createPackageData, setFormError) => {
   }
   if (!createPackageData.select_course) {
     setFormError("Course is Required");
+    return false;
+  }
+  if (
+    createPackageData.additional_coursesId?.includes(
+      +createPackageData.select_course
+    )
+  ) {
+    setFormError("Additional Courses cannot include the primary Course");
     return false;
   }
   if (!createPackageData.full_length_test_count) {
@@ -113,11 +134,25 @@ const CreatePackage = ({ setMainTab }) => {
     setFormStatus({ isError: true, errMsg, isSubmitting: false });
   };
 
+  const addedAdditionalCourses = (val) => {
+    dispatchCreatePackage({ type: "additional_courses", value: val });
+    dispatchCreatePackage({
+      type: "additional_coursesId",
+      value: val.map((course) => course.id),
+    });
+  };
+
   const createPackage = async (e) => {
     e.preventDefault();
     if (!validateForm(createPackageData, setFormError)) return;
     setFormStatus({ isError: false, errMsg: null, isSubmitting: true });
-    const { category, ...packagePayload } = createPackageData;
+    const {
+      category,
+      additional_courses,
+      additional_coursesId,
+      ...packagePayload
+    } = createPackageData;
+    packagePayload.additional_courses = additional_coursesId;
     try {
       const response = await ajaxCall(
         "/packagecreateview/",
@@ -203,7 +238,7 @@ const CreatePackage = ({ setMainTab }) => {
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__form__wraper">
                 <div className="dashboard__form__input">
-                  <label>Duration</label>
+                  <label>Validity</label>
                   <input
                     type="number"
                     placeholder="In Months"
@@ -253,6 +288,14 @@ const CreatePackage = ({ setMainTab }) => {
                       type: "select_course",
                       value: "",
                     });
+                    dispatchCreatePackage({
+                      type: "additional_courses",
+                      value: [],
+                    });
+                    dispatchCreatePackage({
+                      type: "additional_coursesId",
+                      value: [],
+                    });
                   }}
                   isSearch={true}
                   url="/categoryview/"
@@ -275,11 +318,23 @@ const CreatePackage = ({ setMainTab }) => {
                     });
                   }}
                   isSearch={true}
-                  url={
-                    createPackageData.category
-                      ? `/courselistforpackage/?category=${createPackageData.category}`
-                      : "/courselistforpackage/"
-                  }
+                  url={courseListUrl(createPackageData.category, false)}
+                  objKey={["Course_Title"]}
+                />
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
+                <span>Additional Courses</span>
+              </div>
+              <div className="dashboard__selector">
+                <SelectionBox
+                  value={createPackageData?.additional_courses}
+                  onSelect={addedAdditionalCourses}
+                  isSearch={true}
+                  multiple={true}
+                  url={courseListUrl(createPackageData.category, true)}
+                  name="Course_Title"
                   objKey={["Course_Title"]}
                 />
               </div>

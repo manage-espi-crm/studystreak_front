@@ -38,9 +38,10 @@ const IeltsList = () => {
         );
 
         if (response.status === 200) {
-          setCouresList(
-            response.data?.filter(({ course_type }) => course_type === "PUBLIC")
-          );
+          const list = Array.isArray(response.data)
+            ? response.data
+            : response.data?.results || [];
+          setCouresList(list.filter(({ course_type }) => course_type === "PUBLIC"));
         }
       } catch (error) {
         console.log("error", error);
@@ -128,7 +129,7 @@ const IeltsList = () => {
 
                   <div className="flex flex-col space-y-2">
                     <Link
-                      to={`/course/${course.id}`}
+                      to={`/course/${course.slug || course.id}`}
                       className="block w-full text-center bg-primary-50 text-primary-600 py-2.5 rounded-xl hover:bg-primary-100 transition-colors duration-300 font-medium border border-primary-600"
                     >
                       View Details

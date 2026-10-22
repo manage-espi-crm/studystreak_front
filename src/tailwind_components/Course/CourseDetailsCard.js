@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import moment from "moment";
-import { User, Calendar, BookOpen, Globe, Users, Clock, ChevronDown } from "lucide-react";
+import { User, BookOpen, Globe, Users, Clock, ChevronDown } from "lucide-react";
+
+const COURSE_DELIVERY_LABELS = {
+  TAUGHT: "Teacher Taught",
+  "SELF-STUDY": "Self-Study",
+};
 
 const BatchAccordionItem = ({ batch, isOpen, onToggle }) => (
   <div
@@ -50,9 +55,9 @@ const CourseDetailsCard = ({ courseDetail, batches }) => {
       color: "text-primary-500",
     },
     {
-      label: "Duration",
-      value: courseDetail?.course_identifier,
-      icon: Calendar,
+      label: "Course Delivery",
+      value: COURSE_DELIVERY_LABELS[courseDetail?.course_delivery],
+      icon: courseDetail?.course_delivery === "SELF-STUDY" ? BookOpen : Users,
       bg: "bg-success-50",
       color: "text-success-500",
     },

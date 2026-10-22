@@ -4,6 +4,16 @@ import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
 
+const WEEKDAY_LABELS = {
+  MON: "Mon",
+  TUE: "Tue",
+  WED: "Wed",
+  THU: "Thu",
+  FRI: "Fri",
+  SAT: "Sat",
+  SUN: "Sun",
+};
+
 const columns = [
   {
     headerName: "No.",
@@ -20,12 +30,27 @@ const columns = [
     width: 220,
   },
   {
-    headerName: "Start Date",
+    headerName: "Schedule",
     field: "batch_startdate",
     filter: true,
-    width: 210,
+    width: 320,
+    cellRenderer: (params) => {
+      const batch = params.data;
+      const parts = [];
+      if (batch?.batch_startdate && batch?.batch_enddate) {
+        parts.push(`${batch.batch_startdate} to ${batch.batch_enddate}`);
+      }
+      if (batch?.number_of_days) {
+        parts.push(`${batch.number_of_days} sessions`);
+      }
+      if (batch?.weekdays?.length > 0) {
+        parts.push(
+          batch.weekdays.map((day) => WEEKDAY_LABELS[day] || day).join("/")
+        );
+      }
+      return parts.join("  |  ") || "-";
+    },
   },
-  { headerName: "End Date", field: "batch_enddate", filter: true, width: 210 },
   {
     headerName: "Start Time",
     field: "batch_start_timing",

@@ -32,7 +32,9 @@ const MyCourse = () => {
   const fetchCourses = useCallback(async () => {
     try {
       const response = await ajaxCall(
-        "/courselistview/",
+        // Free courses are hidden from public listings, but a student who got
+        // one bundled with a package still has it in My Courses.
+        "/courselistview/?include_additional_free=true",
         {
           headers: {
             Accept: "application/json",
@@ -47,7 +49,11 @@ const MyCourse = () => {
       );
 
       if (response.status === 200) {
-        setCourseList(response.data || []);
+        setCourseList(
+          Array.isArray(response.data)
+            ? response.data
+            : response.data?.results || []
+        );
       }
     } catch (error) {
       console.log("error", error);
@@ -118,15 +124,27 @@ const MyCourse = () => {
                   <div className="dashboard__content__wraper common-background-color-across-app">
                     <div className="dashboard__section__title flex-wrap gap-2">
                       <h4>Courses</h4>
-                      <h5 className="text-danger">
-                        {coursesWithExpiry?.length > 0 &&
-                          coursesWithExpiry.map((item, index) => {
+                      <h5 className="text-danger mb-0">
+                        {coursesWithExpiry
+                          ?.filter((item) => item.expiryDate)
+                          ?.map((item, index) => {
                             const daysRemaining = getDaysRemaining(
                               item.expiryDate
                             );
                             return (
-                              <span key={index}>
-                                {item.Course_Title} : {daysRemaining} days Left
+                              <span
+                                key={index}
+                                style={{
+                                  display: "block",
+                                  marginBottom: "4px",
+                                }}
+                              >
+                                {item.Course_Title} :{" "}
+                                {daysRemaining > 0
+                                  ? `${daysRemaining} days Left`
+                                  : daysRemaining === 0
+                                  ? "Expires Today"
+                                  : "Expired"}
                               </span>
                             );
                           })}

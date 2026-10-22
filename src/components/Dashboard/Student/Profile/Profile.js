@@ -70,7 +70,14 @@ const Profile = () => {
         8000
       );
       if (response.status === 200) {
-        setCourse(response?.data);
+        // Expected score is stored per package; skip the extra rows the API
+        // returns for a package's additional courses.
+        setCourse(
+          response?.data.filter(
+            (item, index, self) =>
+              self.findIndex((c) => c.package_id === item.package_id) === index
+          )
+        );
         setScore(
           response?.data.find((item) => item.course_category === category)
         );

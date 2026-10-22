@@ -3,7 +3,7 @@ import moment from "moment";
 
 const UnPaidClasses = ({ classData, title, message }) => {
   const now = moment();
-  const classes = classData.filter((item) =>
+  const classes = (Array.isArray(classData) ? classData : []).filter((item) =>
     moment(item.end_time).isAfter(now)
   );
 

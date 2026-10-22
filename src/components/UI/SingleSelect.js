@@ -29,6 +29,7 @@ const SingleSelection = (props) => {
     const optionsData = Array.isArray(response?.data)
       ? response.data
       : response?.data?.results || [];
+    props.onDataLoaded?.(optionsData);
 
     const allObj = optionsData.map((option) => {
       let name = "";

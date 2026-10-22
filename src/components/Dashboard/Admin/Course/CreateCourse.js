@@ -3,12 +3,14 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import slugify from "../../../../helpers/slugify";
 import SingleSelection from "../../../UI/SingleSelect";
 import SelectionBox from "../../../UI/SelectionBox";
 import Tab from "../../../UI/Tab";
 
 const initialCourseData = {
   Course_Title: "",
+  slug: "",
   course_identifier: "",
   Short_Description: "",
   Description: "",
@@ -26,6 +28,7 @@ const initialCourseData = {
   primary_instructor: "",
   Featured: false,
   Support_Available: false,
+  is_additional_free_course: false,
   is_active: false,
   Requirements: [],
   requirementId: [],
@@ -121,14 +124,38 @@ const CreateCourse = ({ setMainTab }) => {
   );
   const [formStatus, setFormStatus] = useState(initialSubmit);
   const [activeTab, setActiveTab] = useState("Course Details");
+  // Once the admin edits the slug by hand we stop auto-syncing it from the title.
+  const [slugEdited, setSlugEdited] = useState(false);
   const authData = useSelector((state) => state.authStore);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
 
+  const handleTitleChange = (value) => {
+    dispatchCreateCourse({ type: "Course_Title", value });
+    if (!slugEdited) {
+      dispatchCreateCourse({ type: "slug", value: slugify(value) });
+    }
+  };
+
+  const handleSlugChange = (value) => {
+    setSlugEdited(true);
+    // Keep it permissive while typing (so a trailing "-" isn't eaten);
+    // normalize fully on blur.
+    dispatchCreateCourse({
+      type: "slug",
+      value: value.toLowerCase().replace(/[^a-z0-9-]+/g, "-"),
+    });
+  };
+
+  const handleSlugBlur = (value) => {
+    dispatchCreateCourse({ type: "slug", value: slugify(value) });
+  };
+
   const resetReducerForm = () => {
     dispatchCreateCourse({ type: "reset" });
+    setSlugEdited(false);
   };
 
   const setFormError = (errMsg) => {
@@ -142,6 +169,7 @@ const CreateCourse = ({ setMainTab }) => {
     try {
       const formData = new FormData();
       formData.append("Course_Title", createCourseData.Course_Title);
+      formData.append("slug", createCourseData.slug);
       formData.append("course_identifier", createCourseData.course_identifier);
       formData.append("Short_Description", createCourseData.Short_Description);
       formData.append("Description", createCourseData.Description);
@@ -167,6 +195,10 @@ const CreateCourse = ({ setMainTab }) => {
       formData.append("Featured", createCourseData.Featured);
       formData.append("Support_Available", createCourseData.Support_Available);
       formData.append("is_active", createCourseData.is_active);
+      formData.append(
+        "is_additional_free_course",
+        createCourseData.is_additional_free_course
+      );
       createCourseData.requirementId.forEach((id) => {
         formData.append(`Requirements`, id);
       });
@@ -267,13 +299,26 @@ const CreateCourse = ({ setMainTab }) => {
                     type="text"
                     placeholder="Course Title"
                     value={createCourseData.Course_Title}
-                    onChange={(e) => {
-                      dispatchCreateCourse({
-                        type: "Course_Title",
-                        value: e.target.value,
-                      });
-                    }}
+                    onChange={(e) => handleTitleChange(e.target.value)}
                   />
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>Course Slug</label>
+                  <input
+                    type="text"
+                    placeholder="course-url-slug"
+                    value={createCourseData.slug}
+                    onChange={(e) => handleSlugChange(e.target.value)}
+                    onBlur={(e) => handleSlugBlur(e.target.value)}
+                  />
+                  <small className="text-muted">
+                    Used in the public course URL: /course/
+                    {createCourseData.slug || "your-course-slug"}
+                  </small>
                 </div>
               </div>
             </div>
@@ -569,6 +614,24 @@ const CreateCourse = ({ setMainTab }) => {
                   onChange={(e) => {
                     dispatchCreateCourse({
                       type: "Support_Available",
+                      value: e.target.checked,
+                    });
+                  }}
+                />
+              </div>
+              <div className="form__check">
+                <label
+                  title="Free course bundled with packages. Not sold separately and hidden from course listings."
+                >
+                  Additional Free Course
+                </label>{" "}
+                <input
+                  type="checkbox"
+                  value={createCourseData.is_additional_free_course}
+                  checked={createCourseData.is_additional_free_course}
+                  onChange={(e) => {
+                    dispatchCreateCourse({
+                      type: "is_additional_free_course",
                       value: e.target.checked,
                     });
                   }}

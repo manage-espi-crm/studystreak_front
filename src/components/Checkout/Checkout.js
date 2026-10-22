@@ -18,6 +18,7 @@ const Checkout = () => {
     packageName,
     packagePrice,
     selectedBatch,
+    selectedSchedule,
   } = location.state || {};
 
   const [discount, setDiscount] = useState(0);
@@ -112,6 +113,7 @@ const Checkout = () => {
             currency: "INR",
             product_type: "batch",
             product_id: selectedBatch,
+            schedule_type: selectedSchedule,
           }
         : {
             amount: package_amount,
@@ -180,6 +182,11 @@ const Checkout = () => {
           if (result?.status === 200) {
             toast.success("Payment Successful");
             navigate("/studentDashboard");
+          } else {
+            toast.error(
+              result?.data?.detail ||
+                "Payment could not be confirmed. Please contact support before paying again."
+            );
           }
         },
         prefill: {

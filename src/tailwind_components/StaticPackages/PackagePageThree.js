@@ -236,6 +236,14 @@ const PackagePageThree = () => {
               Everything you need to prepare for{" "}
               {packageDetails?.select_course?.Course_Title} success.
             </p>
+            {packageDetails?.additional_courses?.length > 0 && (
+              <p className="text-lg text-success-700 font-medium mt-2">
+                Plus free access to:{" "}
+                {packageDetails.additional_courses
+                  .map((course) => course.Course_Title)
+                  .join(", ")}
+              </p>
+            )}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {features.map((feature, index) => (
