@@ -3,6 +3,23 @@ import Multiselect from "multiselect-react-dropdown";
 import ajaxCall from "../../helpers/ajaxCall";
 import "react-select-search/style.css";
 
+// Box: min 45px high (grows when chips wrap), white, text 20px from the left
+const boxStyle = {
+  searchBox: {
+    minHeight: "45px",
+    display: "flex",
+    flexWrap: "wrap",
+    alignItems: "center",
+    // Right padding leaves room for the arrow
+    padding: "4px 40px 4px 20px",
+    background: "#fff",
+  },
+  inputField: {
+    margin: 0,
+    fontSize: "14px",
+  },
+};
+
 const SelectionBox = (props) => {
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +102,8 @@ const SelectionBox = (props) => {
       displayValue="name"
       loading={isLoading}
       loadingMessage={props.loadMsg}
+      style={boxStyle}
+      disable={props.disabled}
     />
   );
 };

@@ -125,7 +125,12 @@ const CourseList = ({ selectedCategory = "", searchTerm = "" }) => {
                   <h3 className="font-semibold text-lg mb-3 text-neutral-800 group-hover:text-primary-600 transition-colors duration-300">
                     {course.Course_Title}
                   </h3>
-                  <div className="flex items-center text-sm text-neutral-800 mb-3">
+                  {/* Duration / Lessons hidden for a TCY course; "invisible" keeps the card height */}
+                  <div
+                    className={`flex items-center text-sm text-neutral-800 mb-3 ${
+                      course?.is_tcy_course ? "invisible" : ""
+                    }`}
+                  >
                     <Clock size={16} className="mr-2" />
                     <span>{formatDuration(course?.total_duration)}</span>
                     <span className="mx-2">•</span>

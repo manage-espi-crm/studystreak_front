@@ -54,24 +54,34 @@ const Checkout = () => {
       setNoCoupon("");
       return;
     }
+    let isStale = false;
     (async () => {
       try {
+        const accessToken = JSON.parse(
+          localStorage.getItem("loginInfo")
+        )?.accessToken;
         const response = await ajaxCall(
           `/cuponview/?cupon_code=${couponCode}`,
           {
             headers: {
               Accept: "application/json",
               "Content-Type": "application/json",
-              Authorization: `Bearer ${
-                JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
-              }`,
+              // Token sent only when logged in (coupon check works without login)
+              ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
             },
             method: "GET",
           },
           8000
         );
 
+        if (isStale) return;
         if (response?.status === 200) {
+          // Discount equal to or above the price: coupon not applied
+          if (response.data[0].discount >= Number(packagePrice)) {
+            setDiscount(0);
+            setNoCoupon("This coupon can't be applied to this package.");
+            return;
+          }
           setNoCoupon("");
           setDiscount(response.data[0].discount);
         } else if (
@@ -85,6 +95,9 @@ const Checkout = () => {
         console.log("error", error);
       }
     })();
+    return () => {
+      isStale = true;
+    };
   }, [couponCode]);
 
   const handleEnrollButton = async () => {
@@ -114,12 +127,16 @@ const Checkout = () => {
             product_type: "batch",
             product_id: selectedBatch,
             schedule_type: selectedSchedule,
+            // Backend applies the coupon discount to the price
+            ...(discount > 0 && { cupon_code: couponCode }),
           }
         : {
             amount: package_amount,
             currency: "INR",
             product_type: "package",
             product_id: packageId,
+            // Backend applies the coupon discount to the price
+            ...(discount > 0 && { cupon_code: couponCode }),
           };
 
     try {
@@ -142,6 +159,16 @@ const Checkout = () => {
       if (!response) {
         setIsLoading(false);
         alert("Server error. Are you online?");
+        return;
+      }
+
+      // No order created: stop before opening Razorpay
+      if (response.status !== 201 || !response.data?.id) {
+        setIsLoading(false);
+        // Network / 401 / 403 errors: message already shown by ajaxCall
+        if (!response.isNetwork && ![401, 403].includes(response.status)) {
+          toast.error("Could not start the payment. Please try again.");
+        }
         return;
       }
 

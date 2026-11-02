@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import moment from "moment";
 import Loading from "../../../UI/Loading";
 import DSSidebar from "../DSSideBar/DSSideBar";
@@ -96,6 +97,43 @@ const MyCourse = () => {
     fetchExpiryDates();
   }, [fetchExpiryDates]);
 
+  // Opens the student's TCY dashboard (TCY auto-login link) in a new tab
+  const openTcyCourse = async (courseId) => {
+    // Tab opened before the API call, so the browser does not block it as a popup
+    const tcyTab = window.open("", "_blank");
+    const response = await ajaxCall(
+      `/tcyloginview/${courseId}/`,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+          }`,
+        },
+        method: "GET",
+      },
+      8000
+    );
+
+    if (response.status === 200 && response.data?.link) {
+      if (tcyTab) {
+        // TCY page gets no access to this tab
+        tcyTab.opener = null;
+        tcyTab.location.href = response.data.link;
+      } else {
+        // New tab blocked: TCY opens in this tab
+        window.location.href = response.data.link;
+      }
+      return;
+    }
+    tcyTab?.close();
+    // Network / 401 / 403 errors: message already shown by ajaxCall
+    if (!response.isNetwork && ![401, 403].includes(response.status)) {
+      toast.error(response.data?.detail || "Please try again later.");
+    }
+  };
+
   const getDaysRemaining = (endDate) => {
     const end = moment(endDate);
     const today = moment();
@@ -172,34 +210,42 @@ const MyCourse = () => {
                                   <h3>{item?.Course_Title}</h3>
                                 </div>
                                 <div className="gridarea__list">
-                                  <ul className="ps-0">
-                                    <li>
-                                      <i className="icofont-book-alt"></i>{" "}
-                                      {item?.total_lesson} Lessons
-                                    </li>
-                                    <li>
-                                      <i className="icofont-clock-time"></i>{" "}
-                                      {formatDuration(item?.total_duration)}
-                                    </li>
-                                  </ul>
+                                  {/* Lessons / Minutes line hidden for a TCY course */}
+                                  {!item?.is_tcy_course && (
+                                    <ul className="ps-0">
+                                      <li>
+                                        <i className="icofont-book-alt"></i>{" "}
+                                        {item?.total_lesson} Lessons
+                                      </li>
+                                      <li>
+                                        <i className="icofont-clock-time"></i>{" "}
+                                        {formatDuration(item?.total_duration)}
+                                      </li>
+                                    </ul>
+                                  )}
                                 </div>
                                 <div className="d-flex gap-2 align-items-center justify-content-center">
                                   <button
                                     onClick={() =>
-                                      navigate(`/courseLessons/${item?.id}`)
+                                      item?.is_tcy_course
+                                        ? openTcyCourse(item?.id)
+                                        : navigate(`/courseLessons/${item?.id}`)
                                     }
                                     className="default__button"
                                   >
-                                    Start Lessons
+                                    {item?.is_tcy_course ? "Go to Course" : "Start Lessons"}
                                   </button>
-                                  <button
-                                    onClick={() =>
-                                      navigate(`/courseMaterials/${item?.id}`)
-                                    }
-                                    className="default__button"
-                                  >
-                                    View Materials
-                                  </button>
+                                  {/* View Materials hidden for a TCY course */}
+                                  {!item?.is_tcy_course && (
+                                    <button
+                                      onClick={() =>
+                                        navigate(`/courseMaterials/${item?.id}`)
+                                      }
+                                      className="default__button"
+                                    >
+                                      View Materials
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             </div>

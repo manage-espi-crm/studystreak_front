@@ -43,8 +43,18 @@ const BatchAccordionItem = ({ batch, isOpen, onToggle }) => (
   </div>
 );
 
+// TCY batch box: name only, not expandable
+const TcyBatchItem = ({ batchName }) => (
+  <div className="border border-neutral-200 rounded-xl bg-white px-4 py-3">
+    <span className="font-medium text-sm text-neutral-800">{batchName}</span>
+  </div>
+);
+
 const CourseDetailsCard = ({ courseDetail, batches }) => {
   const [openBatchIndex, setOpenBatchIndex] = useState(null);
+  // TCY course: TCY batch name shown instead of the batch list
+  const tcyBatchName =
+    courseDetail?.is_tcy_course && courseDetail?.tcy_batch_name;
 
   const metaItems = [
     {
@@ -109,23 +119,27 @@ const CourseDetailsCard = ({ courseDetail, batches }) => {
         ))}
       </div>
 
-      {batches?.length > 0 && (
+      {(tcyBatchName || batches?.length > 0) && (
         <div>
           <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 uppercase tracking-wide mb-3">
             <Users className="w-3.5 h-3.5" />
             Batches &amp; Timings
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {batches.map((batch, index) => (
-              <BatchAccordionItem
-                key={batch.id ?? index}
-                batch={batch}
-                isOpen={openBatchIndex === index}
-                onToggle={() =>
-                  setOpenBatchIndex(openBatchIndex === index ? null : index)
-                }
-              />
-            ))}
+            {tcyBatchName ? (
+              <TcyBatchItem batchName={tcyBatchName} />
+            ) : (
+              batches.map((batch, index) => (
+                <BatchAccordionItem
+                  key={batch.id ?? index}
+                  batch={batch}
+                  isOpen={openBatchIndex === index}
+                  onToggle={() =>
+                    setOpenBatchIndex(openBatchIndex === index ? null : index)
+                  }
+                />
+              ))
+            )}
           </div>
         </div>
       )}
