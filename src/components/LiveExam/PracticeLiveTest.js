@@ -11,6 +11,13 @@ import ListeningInstruction from "../Instruction/ListeningInstruction";
 import readingBandValues from "../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../utils/bandValues/listeningBandValues";
 import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
+import {
+  ieltsAcademicTask1Prompt,
+  ieltsAcademicTask2Prompt,
+  isIeltsAcademicTask1,
+  getPassageImages,
+  calculateWritingBand,
+} from "../../utils/assessment/ieltsAcademicWritingPrompts";
 const Cheerio = require("cheerio");
 
 const DisplayLeftContainer = ({ next, passage, image }) => {
@@ -800,7 +807,73 @@ const PracticeLiveExam = () => {
             ? examBlock?.passage?.replace(/<img[^>]*>/g, "")
             : "Passage not found";
 
-          const gptBody = {
+          // IELTS Academic uses the separate Task 1 and Task 2 prompts
+          const isIeltsAcademic =
+            fullPaper?.[0]?.IELTS?.category === "IELTS" &&
+            fullPaper?.[0]?.IELTS?.sub_category === "Academic";
+          const isTask1 = isIeltsAcademicTask1(examBlock?.passage);
+          const studentResponse = item.data[0].answer_text;
+          const wordCount = studentResponse
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean).length;
+
+          const academicBody = isTask1
+            ? {
+                model: OPENAI_MODEL,
+                messages: [
+                  { role: "system", content: ieltsAcademicTask1Prompt },
+                  {
+                    role: "user",
+                    content: [
+                      {
+                        type: "text",
+                        text: `
+TASK QUESTION:
+${passage}
+EXTRACTED VISUAL DATA:
+Not provided
+STUDENT'S RESPONSE:
+${studentResponse}
+WORD COUNT:
+${wordCount}
+ASSESSMENT ID:
+${item.exam_id}
+Evaluate this submission using all the system
+instructions. Return the complete report in the
+mandatory output format.
+`,
+                      },
+                      ...getPassageImages(examBlock?.passage).map((url) => ({
+                        type: "image_url",
+                        image_url: { url, detail: "high" },
+                      })),
+                    ],
+                  },
+                ],
+              }
+            : {
+                model: OPENAI_MODEL,
+                messages: [
+                  { role: "system", content: ieltsAcademicTask2Prompt },
+                  {
+                    role: "user",
+                    content: `
+IELTS TEST: Academic Writing Task 2
+ESSAY QUESTION:
+${passage}
+STUDENT'S ESSAY:
+${studentResponse}
+ACTUAL WORD COUNT:
+${wordCount}
+Evaluate this essay using the complete assessment instructions.
+Return the report in the exact heading sequence and format specified.
+`,
+                  },
+                ],
+              };
+
+          const gptBody = isIeltsAcademic ? academicBody : {
             model: OPENAI_MODEL,
             messages: [
               {
@@ -854,7 +927,11 @@ const PracticeLiveExam = () => {
 
             // Use regex to extract the band value
             const bandMatch = gptResponse.match(/Band:\s*(\d+(\.\d+)?)/);
-            bandValue = bandMatch ? bandMatch[1] : 0;
+            bandValue = isIeltsAcademic
+              ? calculateWritingBand(gptResponse, isTask1)
+              : bandMatch
+              ? bandMatch[1]
+              : 0;
 
             // Convert gptResponse to HTML format
             const formattedResponse = gptResponse
