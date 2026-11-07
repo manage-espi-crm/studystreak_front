@@ -708,7 +708,7 @@ const MockTestLive = () => {
             let gptResponse = "";
             let scoreValue = null;
             const gptBody = {
-              model: "gpt-3.5-turbo",
+              model: "gpt-6-luna",
               messages: [
                 {
                   role: "user",

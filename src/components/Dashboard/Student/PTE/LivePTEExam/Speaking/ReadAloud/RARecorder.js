@@ -180,7 +180,7 @@ const RARecorder = ({
       // Only proceed with API calls if we have a transcript
       if (transcript && transcript.trim() !== "") {
         const gptBody = {
-          model: "gpt-3.5-turbo",
+          model: "gpt-6-luna",
           messages: [
             {
               role: "user",

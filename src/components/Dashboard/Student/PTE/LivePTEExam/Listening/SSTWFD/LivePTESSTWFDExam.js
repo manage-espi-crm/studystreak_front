@@ -349,7 +349,7 @@ const LivePTESSTWFDExam = () => {
           const gptBody =
             examData?.sub_category === "WFD"
               ? {
-                  model: "gpt-3.5-turbo",
+                  model: "gpt-6-luna",
                   messages: [
                     {
                       role: "user",
@@ -389,7 +389,7 @@ const LivePTESSTWFDExam = () => {
                   ],
                 }
               : {
-                  model: "gpt-3.5-turbo",
+                  model: "gpt-6-luna",
                   messages: [
                     {
                       role: "user",
