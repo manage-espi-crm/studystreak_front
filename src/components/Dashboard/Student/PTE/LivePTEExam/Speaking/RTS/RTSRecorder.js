@@ -5,7 +5,7 @@ import SpeechRecognition, {
 import { ProgressBar, Spinner } from "react-bootstrap";
 import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import DisplayAudio from "../../../../../../UI/DisplayAudio";
-import { secureOpenAIChatCompletion } from "../../../../../../../helpers/secureOpenAIService";
+import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../../helpers/secureOpenAIService";
 
 const RTSRecorder = ({
   setRecordedFilePath,
@@ -188,7 +188,7 @@ const RTSRecorder = ({
 
       if (transcript && transcript.trim() !== "") {
         const gptBody = {
-          model: "gpt-6-luna",
+          model: OPENAI_MODEL,
           messages: [
             {
               role: "user",

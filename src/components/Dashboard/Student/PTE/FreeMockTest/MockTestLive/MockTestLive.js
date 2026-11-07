@@ -11,6 +11,7 @@ import SpeakingAndWriting from "../Instruction/SpeakingAndWriting";
 import PTEAudioRecorder from "../../LivePTEExam/PTEAudioRecorder/PTEAudioRecorder";
 import readingBandValues from "../../../../../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../../../../../utils/bandValues/listeningBandValues";
+import { OPENAI_MODEL } from "../../../../../../helpers/secureOpenAIService";
 const Cheerio = require("cheerio");
 
 const instructions = {
@@ -708,7 +709,7 @@ const MockTestLive = () => {
             let gptResponse = "";
             let scoreValue = null;
             const gptBody = {
-              model: "gpt-6-luna",
+              model: OPENAI_MODEL,
               messages: [
                 {
                   role: "user",

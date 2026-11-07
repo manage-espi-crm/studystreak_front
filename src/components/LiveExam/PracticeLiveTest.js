@@ -10,6 +10,7 @@ import WritingInstruction from "../Instruction/WritingInstruction";
 import ListeningInstruction from "../Instruction/ListeningInstruction";
 import readingBandValues from "../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../utils/bandValues/listeningBandValues";
+import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
 const Cheerio = require("cheerio");
 
 const DisplayLeftContainer = ({ next, passage, image }) => {
@@ -796,7 +797,7 @@ const PracticeLiveExam = () => {
             : "Passage not found";
 
           const gptBody = {
-            model: "gpt-6-luna",
+            model: OPENAI_MODEL,
             messages: [
               {
                 role: "user",

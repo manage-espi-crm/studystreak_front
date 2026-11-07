@@ -4,7 +4,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import DisplayAudio from "../../../../../UI/DisplayAudio";
 import ajaxCall from "../../../../../../helpers/ajaxCall";
-import { secureOpenAIChatCompletion } from "../../../../../../helpers/secureOpenAIService";
+import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../helpers/secureOpenAIService";
 
 const PTEAudioRecorder = ({
   next,
@@ -137,7 +137,7 @@ const PTEAudioRecorder = ({
         ?.question.replace(/<\/?[^>]+(>|$)/g, "");
 
       const gptBody = {
-        model: "gpt-6-luna",
+        model: OPENAI_MODEL,
         messages: [
           {
             role: "user",
