@@ -10,6 +10,7 @@ import { formatTime } from "../../utils/timer/formateTime";
 import ReadingMTInstruction from "../Instruction/MiniTestInstruction/ReadingMTInstruction";
 import WritingMTInstruction from "../Instruction/MiniTestInstruction/WritingMTInstruction";
 import ListeningMTInstruction from "../Instruction/MiniTestInstruction/ListeningMTInstruction";
+import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
 const Cheerio = require("cheerio");
 
 const LiveExam = () => {
@@ -206,7 +207,7 @@ const LiveExam = () => {
     ) {
       // Call ChaGpt API for checking the answer
       const gptBody = {
-        model: "gpt-3.5-turbo",
+        model: OPENAI_MODEL,
         messages: [
           {
             role: "user",

@@ -6,6 +6,9 @@
 
 import ajaxCall from "./ajaxCall";
 
+// OpenAI model used for all AI evaluation requests
+export const OPENAI_MODEL = "gpt-6-luna";
+
 /**
  * Secure OpenAI Chat Completion Service
  * Replaces direct calls to https://api.openai.com/v1/chat/completions

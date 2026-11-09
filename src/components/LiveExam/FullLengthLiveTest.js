@@ -13,7 +13,7 @@ import ajaxCall from "../../helpers/ajaxCall";
 import Loading from "../UI/Loading";
 import SmallModal from "../UI/Modal";
 import AudioRecorder from "../Exam-Create/AudioRecorder";
-import { secureOpenAIChatCompletion } from "../../helpers/secureOpenAIService";
+import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../helpers/secureOpenAIService";
 import ReadingInstruction from "../Instruction/ReadingInstruction";
 import WritingInstruction from "../Instruction/WritingInstruction";
 import SpeakingInstruction from "../Instruction/SpeakingInstruction";
@@ -849,7 +849,7 @@ const FullLengthLiveExam = () => {
             let gptResponse = "";
             let bandValue = null;
             const gptBody = {
-              model: "gpt-3.5-turbo",
+              model: OPENAI_MODEL,
               messages: [
                 {
                   role: "user",

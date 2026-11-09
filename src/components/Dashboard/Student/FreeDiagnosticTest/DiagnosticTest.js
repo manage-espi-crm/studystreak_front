@@ -8,7 +8,7 @@ import React, {
 import "../../../../css/LiveExam.css";
 import { toast } from "react-toastify";
 import { convert } from "html-to-text";
-import { secureOpenAIChatCompletion } from "../../../../helpers/secureOpenAIService";
+import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../helpers/secureOpenAIService";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../UI/Loading";
 import SmallModal from "../../../UI/Modal";
@@ -774,7 +774,7 @@ const DiagnosticTest = () => {
             let gptResponse = "";
             let bandValue = null;
             const gptBody = {
-              model: "gpt-3.5-turbo",
+              model: OPENAI_MODEL,
               messages: [
                 {
                   role: "user",

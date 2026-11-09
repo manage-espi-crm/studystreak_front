@@ -10,6 +10,7 @@ import WritingInstruction from "../Instruction/WritingInstruction";
 import ListeningInstruction from "../Instruction/ListeningInstruction";
 import readingBandValues from "../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../utils/bandValues/listeningBandValues";
+import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
 const Cheerio = require("cheerio");
 
 const DisplayLeftContainer = ({ next, passage, image }) => {
@@ -791,12 +792,16 @@ const PracticeLiveExam = () => {
             return;
           }
 
-          const passage = examData?.passage
-            ? examData?.passage?.replace(/<img[^>]*>/g, "")
+          // Use the question of the block this answer belongs to, not the open tab
+          const examBlock = fullPaper?.[0][examType][examForm]?.find(
+            (block) => block.id === item.exam_id
+          );
+          const passage = examBlock?.passage
+            ? examBlock?.passage?.replace(/<img[^>]*>/g, "")
             : "Passage not found";
 
           const gptBody = {
-            model: "gpt-3.5-turbo",
+            model: OPENAI_MODEL,
             messages: [
               {
                 role: "user",

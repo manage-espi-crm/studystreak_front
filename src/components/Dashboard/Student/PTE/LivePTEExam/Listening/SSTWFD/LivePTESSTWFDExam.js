@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import Loading from "../../../../../../UI/Loading";
 import SmallModal from "../../../../../../UI/Modal";
-import { secureOpenAIChatCompletion } from "../../../../../../../helpers/secureOpenAIService";
+import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../../helpers/secureOpenAIService";
 
 const instructions = {
   SST: "You will hear a short lecture. Write a summary for a fellow student who was not present at the lecture. You should write 50-70 words. You have 10 minutes to finish this task. Your response will be judged on the Quality of Your writing and on how well your response presents the key points presented in the lecture.",
@@ -349,7 +349,7 @@ const LivePTESSTWFDExam = () => {
           const gptBody =
             examData?.sub_category === "WFD"
               ? {
-                  model: "gpt-3.5-turbo",
+                  model: OPENAI_MODEL,
                   messages: [
                     {
                       role: "user",
@@ -389,7 +389,7 @@ const LivePTESSTWFDExam = () => {
                   ],
                 }
               : {
-                  model: "gpt-3.5-turbo",
+                  model: OPENAI_MODEL,
                   messages: [
                     {
                       role: "user",
