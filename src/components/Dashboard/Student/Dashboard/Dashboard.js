@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import Loading from "../../../UI/Loading";
 import ScoreCard from "./ScoreCard/ScoreCard";
+import PTEScoreCard from "./PTEScoreCard/PTEScoreCard";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import NextLesson from "./NextLesson/NextLesson";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import { openTcyPage } from "../../../../helpers/tcy";
 import LeaderBoard from "./LeaderBoard/LeaderBoard";
 import SpeakingSlots from "./SpeakingSlots/SpeakingSlots";
 import UnPaidDashboard from "../UnPaidDashboard/UnPaidDashboard";
@@ -13,19 +15,15 @@ import UpcomingLiveClasses from "./UpcomingLiveClasses/UpcomingLiveClasses";
 import UpcomingRegularLiveClass from "./UpcomingRegularLiveClass/UpCommingRegularLiveClass";
 import {
   BookCheck,
-  BookHeadphones,
   CassetteTape,
   ChartNoAxesColumnIncreasing,
   Film,
-  Mic,
   NotepadTextDashed,
   PcCase,
   Pencil,
-  Ribbon,
   Presentation,
   Proportions,
   Speaker,
-  SquarePen,
   Users,
   Videotape,
   BookMarked,
@@ -120,12 +118,14 @@ const Dashboard = () => {
             link: "/studentLiveClasses",
             state: { activeTab: "Speaking Practice" },
           },
-          {
+          // Free Mock Test tile hidden from the PTE dashboard
+          /* {
             name: "Free Mock Test",
             icon: <Ribbon width={35} height={35} />,
             link: "/PTE/FreeMockTest",
-          },
-          {
+          }, */
+          // PTE section tiles hidden from the PTE dashboard
+          /* {
             name: "PTE Speaking",
             icon: <Mic width={35} height={35} />,
             link: "/PTE/Speaking/",
@@ -144,7 +144,7 @@ const Dashboard = () => {
             name: "PTE Listening",
             icon: <BookHeadphones width={35} height={35} />,
             link: "/PTE/Listening/",
-          },
+          }, */
           {
             name: "Counselling",
             icon: <Users width={35} height={35} />,
@@ -177,6 +177,11 @@ const Dashboard = () => {
             name: "Resources",
             icon: <Proportions width={35} height={35} />,
             link: "/resources",
+          },
+          {
+            name: "Reports",
+            icon: <BookMarked width={35} height={35} />,
+            onClick: () => openTcyPage("PTE", "/tcyreportsview/"),
           },
         ]
       : [
@@ -383,7 +388,8 @@ const Dashboard = () => {
                         <div className="course__details__heading">
                           <h3>Welcome, {userData?.username}</h3>
                         </div>
-                        {(category === "IELTS" || category === "PTE") &&
+                        {/* Batch line hidden for PTE; old condition: (category === "IELTS" || category === "PTE") */}
+                        {category === "IELTS" &&
                           studentBatch?.length > 0 && (
                             <h5>
                               Batch :{" "}
@@ -403,6 +409,13 @@ const Dashboard = () => {
                           <div className="online__course__wrap mt-0">
                             <div className="row instructor__slider__active row__custom__class">
                               <ScoreCard course={category} />
+                            </div>
+                          </div>
+                        )}
+                        {category === "PTE" && (
+                          <div className="online__course__wrap mt-0">
+                            <div className="row instructor__slider__active row__custom__class">
+                              <PTEScoreCard />
                             </div>
                           </div>
                         )}
@@ -463,9 +476,37 @@ const Dashboard = () => {
                                   </div>
                                 </div>
                               ))}
+                            {/* PTE Practice Test: opens the TCY dashboard (needs an active PTE TCY course) */}
+                            {category === "PTE" && (
+                              <div className="col-xl-6 column__custom__class">
+                                <div className="gridarea__wraper card-background">
+                                  <div className="gridarea__content">
+                                    <div className="gridarea__content p-2 m-2">
+                                      <div
+                                        role="button"
+                                        onClick={() =>
+                                          openTcyPage("PTE", "/tcypracticetestview/")
+                                        }
+                                        className="gridarea__heading d-flex justify-content-center align-items-center gap-4"
+                                      >
+                                        <Pencil
+                                          width={35}
+                                          height={35}
+                                          color="black"
+                                        />
+                                        <h2 className="mt-2">
+                                          PTE Practice Test
+                                        </h2>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
-                        {category === "PTE" && (
+                        {/* PTE Reports tile (/PTE/Dashboard) hidden; Reports card in the list below opens TCY */}
+                        {/* {category === "PTE" && (
                           <div className="col-xl-12 column__custom__class">
                             <div className="gridarea__wraper card-background">
                               <div className="gridarea__content">
@@ -488,10 +529,10 @@ const Dashboard = () => {
                               </div>
                             </div>
                           </div>
-                        )}
+                        )} */}
                         <div className="row">
                           {cardList.map(
-                            ({ name, icon, link, state }, index) => (
+                            ({ name, icon, link, state, onClick }, index) => (
                               <div
                                 key={index}
                                 className="col-xl-4 column__custom__class"
@@ -500,20 +541,33 @@ const Dashboard = () => {
                                   <div
                                     className="gridarea__content p-3 m-2"
                                     style={{
-                                      cursor: link ? "pointer" : "default",
+                                      cursor:
+                                        link || onClick ? "pointer" : "default",
                                     }}
                                   >
-                                    <Link
-                                      to={link}
-                                      state={state}
-                                      className="text-decoration-none"
-                                      style={{ color: "black" }}
-                                    >
-                                      <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
+                                    {/* Card with onClick (e.g. TCY) instead of a page link */}
+                                    {onClick ? (
+                                      <div
+                                        role="button"
+                                        onClick={onClick}
+                                        className="gridarea__heading d-flex justify-content-center align-items-center gap-4"
+                                      >
                                         {icon}
                                         <h3>{name}</h3>
                                       </div>
-                                    </Link>
+                                    ) : (
+                                      <Link
+                                        to={link}
+                                        state={state}
+                                        className="text-decoration-none"
+                                        style={{ color: "black" }}
+                                      >
+                                        <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
+                                          {icon}
+                                          <h3>{name}</h3>
+                                        </div>
+                                      </Link>
+                                    )}
                                   </div>
                                 </div>
                               </div>

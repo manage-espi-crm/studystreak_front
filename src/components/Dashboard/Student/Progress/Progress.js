@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment";
+import Table from "../../../UI/Table";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import listeningBandValues from "../../../../utils/bandValues/listeningBandValues";
@@ -28,13 +30,37 @@ const Progress = () => {
     .filter((badge) => totalPoints >= badge.points_required)
     .sort((a, b) => a.points_required - b.points_required);
 
-  const [examPTE, setExamPTE] = useState({
+  // Old PTE counts, replaced by the TCY results
+  /* const [examPTE, setExamPTE] = useState({
     PTEReading: 0,
     PTEListening: 0,
     PTEWriting: 0,
     PTESpeaking: 0,
     PTEFreeMockTest: 0,
-  });
+  }); */
+  const [tcyResults, setTcyResults] = useState([]);
+
+  // TCY results table (PTE)
+  const tcyColumns = [
+    {
+      headerName: "No.",
+      cellRenderer: (params) => params.rowIndex + 1,
+      width: 80,
+    },
+    { headerName: "Test Name", field: "test_name", flex: 2, minWidth: 220 },
+    { headerName: "Score", field: "total_score", width: 110 },
+    { headerName: "Total Questions", field: "total_questions", width: 150 },
+    { headerName: "Correct", field: "total_correct", width: 110 },
+    { headerName: "Incorrect", field: "total_incorrect", width: 120 },
+    {
+      headerName: "Attempt Date",
+      field: "attempt_date",
+      flex: 1,
+      minWidth: 190,
+      valueFormatter: (params) =>
+        params.value ? moment(params.value).format("MMM DD, YYYY hh:mm A") : "",
+    },
+  ];
 
   const [studentExams, setStudentExams] = useState({
     miniTest: 0,
@@ -79,14 +105,17 @@ const Progress = () => {
           },
         ];
 
-      case "PTE":
+      // PTE exam cards replaced by the TCY results table
+      /* case "PTE":
         return [
           { name: "Free Mock Test", count: examPTE.PTEFreeMockTest },
           { name: "PTE Reading", count: examPTE.PTEReading },
           { name: "PTE Listening", count: examPTE.PTEListening },
           { name: "PTE Writing", count: examPTE.PTEWriting },
           { name: "PTE Speaking", count: examPTE.PTESpeaking },
-        ];
+        ]; */
+      case "PTE":
+        return [];
 
       default:
         return [
@@ -522,6 +551,13 @@ const Progress = () => {
 
   useEffect(() => {
     if (category === "PTE") {
+      fetchTestData("/tcyprogressview/?category=PTE", setTcyResults);
+    }
+  }, [category]);
+
+  // Old PTE counts, replaced by the TCY results
+  /* useEffect(() => {
+    if (category === "PTE") {
       (async () => {
         try {
           const response = await ajaxCall(
@@ -552,7 +588,7 @@ const Progress = () => {
         }
       })();
     }
-  }, [category]);
+  }, [category]); */
 
   useEffect(() => {
     (async () => {
@@ -653,6 +689,16 @@ const Progress = () => {
                         Exams
                       </h4>
                     </div>
+                    {/* PTE: TCY test results table */}
+                    {category === "PTE" && (
+                      <div className="mb-5">
+                        {tcyResults?.length > 0 ? (
+                          <Table rowData={tcyResults} columnDefs={tcyColumns} />
+                        ) : (
+                          <h5 className="text-center text-danger">No Results Available !!</h5>
+                        )}
+                      </div>
+                    )}
                     <div className="row">
                       {examList.map(({ name, count, lastScore }, index) => (
                         <div

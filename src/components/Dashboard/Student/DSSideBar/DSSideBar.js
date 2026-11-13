@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import { openTcyPage } from "../../../../helpers/tcy";
 import { useCheckAuth } from "../../../../hooks/useCheckAuth";
 import NoticeBoard from "../Dashboard/NoticeBoard/NoticeBoard";
 import {
   BookCheck,
   BookCopy,
-  BookHeadphones,
   CassetteTape,
   ClipboardMinus,
   LayoutPanelLeft,
   LogOut,
-  Mic,
   NotepadTextDashed,
   PcCase,
   Pencil,
   Proportions,
   Scroll,
   Settings,
-  SquarePen,
   UserPen,
   Videotape,
   WalletCards,
@@ -163,6 +161,17 @@ const DSSidebar = () => {
             link: "/studentMyCourse",
           },
           {
+            name: "PTE Practice Test",
+            icon: <Pencil />,
+            onClick: () => openTcyPage("PTE", "/tcypracticetestview/"),
+          },
+          {
+            name: "Diagnostic Test",
+            icon: <NotepadTextDashed />,
+            link: "/diagnosticTest",
+          },
+          // PTE section items hidden from the PTE menu
+          /* {
             name: "PTE Speaking",
             icon: <Mic />,
             link: "/PTE/Speaking",
@@ -181,17 +190,18 @@ const DSSidebar = () => {
             name: "PTE Listening",
             icon: <BookHeadphones />,
             link: "/PTE/Listening",
-          },
+          }, */
           {
             name: "Live Classes",
             icon: <CassetteTape />,
             link: "/studentLiveClasses",
           },
-          {
+          // Resources hidden from the PTE menu
+          /* {
             name: "Resources",
             icon: <Proportions />,
             link: "/resources",
-          },
+          }, */
           {
             name: "Recorded Classes",
             icon: <Videotape />,
@@ -203,10 +213,15 @@ const DSSidebar = () => {
             icon: <WalletCards />,
             link: "/flashCard",
           },
-          {
+          /* {
             name: "Reports",
             icon: <BookMarked />,
             link: "/PTE/Dashboard",
+          }, */
+          {
+            name: "Reports",
+            icon: <BookMarked />,
+            onClick: () => openTcyPage("PTE", "/tcyreportsview/"),
           },
           {
             name: "Settings",
@@ -429,8 +444,17 @@ const DSSidebar = () => {
                       ? "active admin__menu"
                       : "admin__menu"
                   }
-                  to={item.link}
-                  onClick={item.name === "Logout" ? logout : () => {}}
+                  to={item.link || location}
+                  onClick={
+                    item.onClick
+                      ? (e) => {
+                          e.preventDefault();
+                          item.onClick();
+                        }
+                      : item.name === "Logout"
+                      ? logout
+                      : () => {}
+                  }
                   state={item?.state}
                 >
                   <div className="admin__menu__icon">{item.icon}</div>

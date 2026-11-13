@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import { openTcyPage } from "../../../../helpers/tcy";
 import { useCheckAuth } from "../../../../hooks/useCheckAuth";
 import {
   Box,
@@ -19,20 +20,16 @@ import NoticeBoard from "../Dashboard/NoticeBoard/NoticeBoard";
 import {
   BookCheck,
   BookCopy,
-  BookHeadphones,
   CassetteTape,
   ClipboardMinus,
   LayoutPanelLeft,
   LogOut,
-  Mic,
   NotepadTextDashed,
   PcCase,
   Pencil,
   Proportions,
-  Ribbon,
   Scroll,
   Settings,
-  SquarePen,
   UserPen,
   Videotape,
   WalletCards,
@@ -242,12 +239,24 @@ const DSLeftDrawer = () => {
             icon: <BookCopy />,
             link: "/studentMyCourse",
           },
-          {
+          // Free Mock Test hidden from the PTE menu
+          /* {
             name: "Free Mock Test",
             icon: <Ribbon />,
             link: "/PTE/FreeMockTest",
+          }, */
+          {
+            name: "PTE Practice Test",
+            icon: <Pencil />,
+            onClick: () => openTcyPage("PTE", "/tcypracticetestview/"),
           },
           {
+            name: "Diagnostic Test",
+            icon: <NotepadTextDashed />,
+            link: "/diagnosticTest",
+          },
+          // PTE section items hidden from the PTE menu
+          /* {
             name: "PTE Speaking",
             icon: <Mic />,
             link: "/PTE/Speaking",
@@ -266,17 +275,18 @@ const DSLeftDrawer = () => {
             name: "PTE Listening",
             icon: <BookHeadphones />,
             link: "/PTE/Listening",
-          },
+          }, */
           {
             name: "Live Classes",
             icon: <CassetteTape />,
             link: "/studentLiveClasses",
           },
-          {
+          // Resources hidden from the PTE menu
+          /* {
             name: "Resources",
             icon: <Proportions />,
             link: "/resources",
-          },
+          }, */
           {
             name: "Recorded Classes",
             icon: <Videotape />,
@@ -288,10 +298,16 @@ const DSLeftDrawer = () => {
             icon: <WalletCards />,
             link: "/flashCard",
           },
-          {
+          // Old PTE Reports page
+          /* {
             name: "Reports",
             icon: <BookMarked />,
             link: "/PTE/Dashboard",
+          }, */
+          {
+            name: "Reports",
+            icon: <BookMarked />,
+            onClick: () => openTcyPage("PTE", "/tcyreportsview/"),
           },
           {
             name: "Settings",
@@ -514,8 +530,17 @@ const DSLeftDrawer = () => {
                       ? "active admin__menu"
                       : "admin__menu"
                   }
-                  to={item.link}
-                  onClick={item.name === "Logout" ? logout : () => {}}
+                  to={item.link || location}
+                  onClick={
+                    item.onClick
+                      ? (e) => {
+                          e.preventDefault();
+                          item.onClick();
+                        }
+                      : item.name === "Logout"
+                      ? logout
+                      : () => {}
+                  }
                   state={item?.state}
                   style={{
                     textDecoration: "none",
