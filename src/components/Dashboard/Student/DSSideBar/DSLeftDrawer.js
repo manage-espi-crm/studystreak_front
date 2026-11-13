@@ -222,7 +222,7 @@ const DSLeftDrawer = () => {
             link: "/login",
           },
         ]
-      : category === "PTE"
+      : category === "PTE" || category === "DUOLINGO" || category === "TOEFL"
       ? [
           {
             name: "Dashboard",
@@ -246,9 +246,9 @@ const DSLeftDrawer = () => {
             link: "/PTE/FreeMockTest",
           }, */
           {
-            name: "PTE Practice Test",
+            name: `${category === "DUOLINGO" ? "Duolingo" : category} Practice Test`,
             icon: <Pencil />,
-            onClick: () => openTcyPage("PTE", "/tcypracticetestview/"),
+            onClick: () => openTcyPage(category, "/tcypracticetestview/"),
           },
           {
             name: "Diagnostic Test",
@@ -307,7 +307,7 @@ const DSLeftDrawer = () => {
           {
             name: "Reports",
             icon: <BookMarked />,
-            onClick: () => openTcyPage("PTE", "/tcyreportsview/"),
+            onClick: () => openTcyPage(category, "/tcyreportsview/"),
           },
           {
             name: "Settings",

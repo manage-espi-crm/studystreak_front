@@ -40,7 +40,7 @@ const Progress = () => {
   }); */
   const [tcyResults, setTcyResults] = useState([]);
 
-  // TCY results table (PTE)
+  // TCY results table (PTE / Duolingo / TOEFL)
   const tcyColumns = [
     {
       headerName: "No.",
@@ -115,6 +115,8 @@ const Progress = () => {
           { name: "PTE Speaking", count: examPTE.PTESpeaking },
         ]; */
       case "PTE":
+      case "DUOLINGO":
+      case "TOEFL":
         return [];
 
       default:
@@ -175,7 +177,10 @@ const Progress = () => {
   };
 
   const classList =
-    category === "IELTS" || category === "PTE"
+    category === "IELTS" ||
+    category === "PTE" ||
+    category === "DUOLINGO" ||
+    category === "TOEFL"
       ? [...commonClassList, speakingPracticeClass]
       : commonClassList;
 
@@ -550,8 +555,15 @@ const Progress = () => {
   };
 
   useEffect(() => {
-    if (category === "PTE") {
-      fetchTestData("/tcyprogressview/?category=PTE", setTcyResults);
+    if (
+      category === "PTE" ||
+      category === "DUOLINGO" ||
+      category === "TOEFL"
+    ) {
+      fetchTestData(
+        `/tcyprogressview/?category=${encodeURIComponent(category)}`,
+        setTcyResults
+      );
     }
   }, [category]);
 
@@ -689,8 +701,10 @@ const Progress = () => {
                         Exams
                       </h4>
                     </div>
-                    {/* PTE: TCY test results table */}
-                    {category === "PTE" && (
+                    {/* PTE / Duolingo / TOEFL: TCY test results table */}
+                    {(category === "PTE" ||
+                      category === "DUOLINGO" ||
+                      category === "TOEFL") && (
                       <div className="mb-5">
                         {tcyResults?.length > 0 ? (
                           <Table rowData={tcyResults} columnDefs={tcyColumns} />

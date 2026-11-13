@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import Loading from "../../../UI/Loading";
 import ScoreCard from "./ScoreCard/ScoreCard";
-import PTEScoreCard from "./PTEScoreCard/PTEScoreCard";
+import TcyScoreCard from "./TcyScoreCard/TcyScoreCard";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import NextLesson from "./NextLesson/NextLesson";
 import ajaxCall from "../../../../helpers/ajaxCall";
@@ -110,8 +110,13 @@ const Dashboard = () => {
             link: "/resources",
           },
         ]
-      : category === "PTE"
+      : category === "PTE" || category === "DUOLINGO" || category === "TOEFL"
       ? [
+          {
+            name: `${category === "DUOLINGO" ? "Duolingo" : category} Practice Test`,
+            icon: <Pencil width={35} height={35} />,
+            onClick: () => openTcyPage(category, "/tcypracticetestview/"),
+          },
           {
             name: "Speaking Slot",
             icon: <Speaker width={35} height={35} />,
@@ -146,12 +151,6 @@ const Dashboard = () => {
             link: "/PTE/Listening/",
           }, */
           {
-            name: "Counselling",
-            icon: <Users width={35} height={35} />,
-            link: "/studentLiveClasses",
-            state: { activeTab: "Counselling" },
-          },
-          {
             name: "Regular Classes",
             icon: <Videotape width={35} height={35} />,
             link: "/studentLiveClasses",
@@ -163,13 +162,19 @@ const Dashboard = () => {
             state: { activeTab: "Tutor Support" },
           },
           {
+            name: "Counselling",
+            icon: <Users width={35} height={35} />,
+            link: "/studentLiveClasses",
+            state: { activeTab: "Counselling" },
+          },
+          {
             name: "Webinar",
             icon: <Film width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Webinar" },
           },
           {
-            name: "Progress",
+            name: "Progress Report",
             icon: <ChartNoAxesColumnIncreasing width={35} height={35} />,
             link: "/progress",
           },
@@ -181,7 +186,7 @@ const Dashboard = () => {
           {
             name: "Reports",
             icon: <BookMarked width={35} height={35} />,
-            onClick: () => openTcyPage("PTE", "/tcyreportsview/"),
+            onClick: () => openTcyPage(category, "/tcyreportsview/"),
           },
         ]
       : [
@@ -412,10 +417,12 @@ const Dashboard = () => {
                             </div>
                           </div>
                         )}
-                        {category === "PTE" && (
+                        {(category === "PTE" ||
+                          category === "DUOLINGO" ||
+                          category === "TOEFL") && (
                           <div className="online__course__wrap mt-0">
                             <div className="row instructor__slider__active row__custom__class">
-                              <PTEScoreCard />
+                              <TcyScoreCard category={category} />
                             </div>
                           </div>
                         )}
@@ -437,7 +444,9 @@ const Dashboard = () => {
                                         />
                                         <h2 className="mt-2">
                                           {category === "IELTS" ||
-                                          category === "PTE"
+                                          category === "PTE" ||
+                                          category === "DUOLINGO" ||
+                                          category === "TOEFL"
                                             ? "Diagnostic Test"
                                             : "English Diagnostic Test"}
                                         </h2>
@@ -476,33 +485,6 @@ const Dashboard = () => {
                                   </div>
                                 </div>
                               ))}
-                            {/* PTE Practice Test: opens the TCY dashboard (needs an active PTE TCY course) */}
-                            {category === "PTE" && (
-                              <div className="col-xl-6 column__custom__class">
-                                <div className="gridarea__wraper card-background">
-                                  <div className="gridarea__content">
-                                    <div className="gridarea__content p-2 m-2">
-                                      <div
-                                        role="button"
-                                        onClick={() =>
-                                          openTcyPage("PTE", "/tcypracticetestview/")
-                                        }
-                                        className="gridarea__heading d-flex justify-content-center align-items-center gap-4"
-                                      >
-                                        <Pencil
-                                          width={35}
-                                          height={35}
-                                          color="black"
-                                        />
-                                        <h2 className="mt-2">
-                                          PTE Practice Test
-                                        </h2>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
                           </div>
                         </div>
                         {/* PTE Reports tile (/PTE/Dashboard) hidden; Reports card in the list below opens TCY */}
@@ -628,7 +610,10 @@ const Dashboard = () => {
                       <LeaderBoard studentID={studentID} />
                       <UpcomingRegularLiveClass />
                       <NextLesson />
-                      {(category === "IELTS" || category === "PTE") && (
+                      {(category === "IELTS" ||
+                        category === "PTE" ||
+                        category === "DUOLINGO" ||
+                        category === "TOEFL") && (
                         <SpeakingSlots />
                       )}
                       <UpcomingLiveClasses />

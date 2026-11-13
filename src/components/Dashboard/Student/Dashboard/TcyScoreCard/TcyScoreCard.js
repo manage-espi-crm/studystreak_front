@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 
-const PTEScoreCard = () => {
+const TcyScoreCard = ({ category }) => {
   const [lastExam, setLastExam] = useState(null);
 
   useEffect(() => {
     (async () => {
       try {
         const response = await ajaxCall(
-          "/tcydashboardscoreview/?category=PTE",
+          `/tcydashboardscoreview/?category=${encodeURIComponent(category)}`,
           {
             headers: {
               Accept: "application/json",
@@ -29,7 +29,7 @@ const PTEScoreCard = () => {
         console.log("error", error);
       }
     })();
-  }, []);
+  }, [category]);
 
   return (
     <>
@@ -37,7 +37,10 @@ const PTEScoreCard = () => {
         <div className="gridarea__wraper card-background">
           <div className="gridarea__content">
             <div className="gridarea__heading">
-              <h6>Your Latest Given PTE Exam</h6>
+              <h6>
+                Your Latest Given {category === "DUOLINGO" ? "Duolingo" : category}{" "}
+                Exam
+              </h6>
             </div>
             {lastExam ? (
               <div className="gridarea__price mb-0">
@@ -73,4 +76,4 @@ const PTEScoreCard = () => {
   );
 };
 
-export default PTEScoreCard;
+export default TcyScoreCard;

@@ -20,7 +20,10 @@ const LiveClass = () => {
 
   const liveClasses = [
     "Regular",
-    ...(category === "IELTS" || category === "PTE"
+    ...(category === "IELTS" ||
+    category === "PTE" ||
+    category === "DUOLINGO" ||
+    category === "TOEFL"
       ? ["Speaking Practice"]
       : []),
     "Group Doubt",
