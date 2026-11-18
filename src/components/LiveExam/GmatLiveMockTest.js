@@ -7,6 +7,7 @@ import readingBandValues from "../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../utils/bandValues/listeningBandValues";
 import InstructionsPage from "./Instruction";
 import Loading from "../UI/Loading";
+import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
 const Cheerio = require("cheerio");
 
 const GmatLiveMockTest = () => {
@@ -127,7 +128,7 @@ const GmatLiveMockTest = () => {
 
     // Call ChaGpt API for checking the answer
     const gptBody = {
-      model: "gpt-3.5-turbo",
+      model: OPENAI_MODEL,
       messages: [
         {
           role: "user",

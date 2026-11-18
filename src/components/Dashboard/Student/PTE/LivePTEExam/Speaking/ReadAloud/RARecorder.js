@@ -5,7 +5,7 @@ import SpeechRecognition, {
 import { ProgressBar, Spinner } from "react-bootstrap";
 import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import DisplayAudio from "../../../../../../UI/DisplayAudio";
-import { secureOpenAIChatCompletion } from "../../../../../../../helpers/secureOpenAIService";
+import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../../helpers/secureOpenAIService";
 
 const RARecorder = ({
   setRecordedFilePath,
@@ -180,7 +180,7 @@ const RARecorder = ({
       // Only proceed with API calls if we have a transcript
       if (transcript && transcript.trim() !== "") {
         const gptBody = {
-          model: "gpt-3.5-turbo",
+          model: OPENAI_MODEL,
           messages: [
             {
               role: "user",
