@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Tab from "../../../UI/Tab";
+import { openTcyPage } from "../../../../helpers/tcy";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import MiniTestReport from "./MiniTestReport/MiniTestReport";
 import PracticeTestReport from "./PracticeTestReport/PracticeTestReport";
@@ -8,6 +9,7 @@ import FullLengthTestReport from "./FullLengthTestReport/FullLengthTestReport";
 const Report = () => {
   const [activeTab, setActiveTab] = useState("Mini Test");
   const category = JSON.parse(localStorage.getItem("course"))?.course_category;
+  const hasTcyCourse = JSON.parse(localStorage.getItem("course"))?.has_tcy_course;
 
   const tabs =
     category === "GENERAL"
@@ -16,9 +18,18 @@ const Report = () => {
           { name: "Mini Test" },
           { name: "Practice Test" },
           { name: "Full Length Test" },
+          // Practice Exam tab disabled for a student without an IELTS TCY course
+          ...(category === "IELTS"
+            ? [{ name: "Practice Exam", disabled: !hasTcyCourse, external: true }]
+            : []),
         ];
 
   const handleTabChange = (tab) => {
+    // Practice Exam tab redirect to the TCY dashboard page.
+    if (tab === "Practice Exam") {
+      openTcyPage(category, "/tcyreportsview/");
+      return;
+    }
     setActiveTab(tab);
   };
 

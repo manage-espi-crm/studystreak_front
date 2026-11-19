@@ -558,7 +558,8 @@ const Progress = () => {
     if (
       category === "PTE" ||
       category === "DUOLINGO" ||
-      category === "TOEFL"
+      category === "TOEFL" ||
+      category === "IELTS"
     ) {
       fetchTestData(
         `/tcyprogressview/?category=${encodeURIComponent(category)}`,
@@ -731,6 +732,17 @@ const Progress = () => {
                         </div>
                       ))}
                     </div>
+                    {/* IELTS: TCY test results table below exam cards */}
+                    {category === "IELTS" && (
+                      <div className="mb-5">
+                        <h5 className="mb-3">Practice Exam</h5>
+                        {tcyResults?.length > 0 ? (
+                          <Table rowData={tcyResults} columnDefs={tcyColumns} />
+                        ) : (
+                          <h5 className="text-center text-danger">No Results Available !!</h5>
+                        )}
+                      </div>
+                    )}
                     <div className="dashboard__section__title">
                       <h4
                         className="sidebar__title"

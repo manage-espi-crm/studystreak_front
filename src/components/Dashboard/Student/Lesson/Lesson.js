@@ -95,7 +95,7 @@ const Lesson = () => {
           ? response?.data?.lessons.find(
               (lesson) => lesson.id === currentLesson.lesson?.id
             )
-          : tempCourse[0].section[0].lessons[0]; // Default to first lesson if no current lesson
+          : tempCourse[0].section[0]?.lessons[0]; // Default to first lesson if no current lesson; none for a course without lessons
 
         if (lessonToActivate) {
           setActiveLesson(lessonToActivate);
@@ -133,6 +133,11 @@ const Lesson = () => {
                 <Loading />
               ) : isAccessDenied ? (
                 <BuyCourse message="You are not enrolled in this course. Buy a package to access its lessons." />
+              ) : courseLessons?.[0]?.lessons?.length === 0 ? (
+                // Course without lessons
+                <h5 className="text-center text-danger">
+                  No Lessons Available !!
+                </h5>
               ) : (
                 <>
                   <div className="col-xl-5 col-lg-12 col-md-12 col-sm-12 col-12 course__lessons">

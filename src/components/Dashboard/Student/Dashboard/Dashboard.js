@@ -17,6 +17,7 @@ import {
   BookCheck,
   CassetteTape,
   ChartNoAxesColumnIncreasing,
+  NotebookPen,
   Film,
   NotepadTextDashed,
   PcCase,
@@ -24,11 +25,20 @@ import {
   Presentation,
   Proportions,
   Speaker,
+  SquareArrowOutUpRight,
   Users,
   Videotape,
   BookMarked,
 } from "lucide-react";
 import TidioChat from "../../../../tailwind_components/ChatBot/TidioChat";
+
+// has_tcy_course: student has an active TCY course in this course's category
+const withTcyFlag = (course, courses) => ({
+  ...course,
+  has_tcy_course: courses.some(
+    (c) => c.course_category === course?.course_category && c.is_tcy_course
+  ),
+});
 
 const Dashboard = () => {
   const [count, setCount] = useState({
@@ -58,6 +68,13 @@ const Dashboard = () => {
   const cardList =
     category === "IELTS"
       ? [
+          // Practice Exam disabled for a student without an IELTS TCY course
+          {
+            name: "Practice Exam",
+            icon: <NotebookPen width={35} height={35} />,
+            disabled: !selectedCourse?.has_tcy_course,
+            onClick: () => openTcyPage(category, "/tcypracticetestview/"),
+          },
           {
             name: "Speaking Slot",
             icon: <Speaker width={35} height={35} />,
@@ -77,12 +94,6 @@ const Dashboard = () => {
             state: { count: count?.full_length_test_count },
           },
           {
-            name: "Counselling",
-            icon: <Users width={35} height={35} />,
-            link: "/studentLiveClasses",
-            state: { activeTab: "Counselling" },
-          },
-          {
             name: "Regular Classes",
             icon: <Videotape width={35} height={35} />,
             link: "/studentLiveClasses",
@@ -94,13 +105,19 @@ const Dashboard = () => {
             state: { activeTab: "Tutor Support" },
           },
           {
+            name: "Counselling",
+            icon: <Users width={35} height={35} />,
+            link: "/studentLiveClasses",
+            state: { activeTab: "Counselling" },
+          },
+          {
             name: "Webinar",
             icon: <Film width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Webinar" },
           },
           {
-            name: "Progress",
+            name: "Progress Report",
             icon: <ChartNoAxesColumnIncreasing width={35} height={35} />,
             link: "/progress",
           },
@@ -109,12 +126,18 @@ const Dashboard = () => {
             icon: <Proportions width={35} height={35} />,
             link: "/resources",
           },
+          {
+            name: "Reports",
+            icon: <BookMarked width={35} height={35} />,
+            link: "/reports",
+          },
         ]
       : category === "PTE" || category === "DUOLINGO" || category === "TOEFL"
       ? [
           {
-            name: `${category === "DUOLINGO" ? "Duolingo" : category} Practice Test`,
-            icon: <Pencil width={35} height={35} />,
+            name: "Practice Exam",
+            icon: <NotebookPen width={35} height={35} />,
+            disabled: !selectedCourse?.has_tcy_course,
             onClick: () => openTcyPage(category, "/tcypracticetestview/"),
           },
           {
@@ -186,6 +209,7 @@ const Dashboard = () => {
           {
             name: "Reports",
             icon: <BookMarked width={35} height={35} />,
+            disabled: !selectedCourse?.has_tcy_course,
             onClick: () => openTcyPage(category, "/tcyreportsview/"),
           },
         ]
@@ -247,8 +271,10 @@ const Dashboard = () => {
   );
 
   const handleCourse = (course) => {
-    setSelectedCourse(course);
-    localStorage.setItem("course", JSON.stringify(course));
+    const selected = withTcyFlag(course, studentCourses);
+    setSelectedCourse(selected);
+    localStorage.setItem("course", JSON.stringify(selected));
+    window.dispatchEvent(new Event("courseChange"));
   };
 
   const fetchData = async (url, dataes) => {
@@ -335,6 +361,7 @@ const Dashboard = () => {
               course_id: item.course_id,
               package_id: item.package_id,
               course_category: item.course_category,
+              is_tcy_course: item.is_tcy_course,
             };
           });
           setLesson(
@@ -361,9 +388,15 @@ const Dashboard = () => {
     const handleCourseSelection = (courses) => {
       const savedCourse = JSON.parse(localStorage.getItem("course"));
       if (!savedCourse && courses.length > 0) {
-        const defaultCourse = courses[0];
+        const defaultCourse = withTcyFlag(courses[0], courses);
         setSelectedCourse(defaultCourse);
         localStorage.setItem("course", JSON.stringify(defaultCourse));
+        window.dispatchEvent(new Event("courseChange"));
+      } else if (savedCourse) {
+        const course = withTcyFlag(savedCourse, courses);
+        setSelectedCourse(course);
+        localStorage.setItem("course", JSON.stringify(course));
+        window.dispatchEvent(new Event("courseChange"));
       } else {
         setSelectedCourse(savedCourse);
       }
@@ -414,6 +447,9 @@ const Dashboard = () => {
                           <div className="online__course__wrap mt-0">
                             <div className="row instructor__slider__active row__custom__class">
                               <ScoreCard course={category} />
+                              {category === "IELTS" && (
+                                <TcyScoreCard category={category} />
+                              )}
                             </div>
                           </div>
                         )}
@@ -514,24 +550,46 @@ const Dashboard = () => {
                         )} */}
                         <div className="row">
                           {cardList.map(
-                            ({ name, icon, link, state, onClick }, index) => (
+                            (
+                              { name, icon, link, state, onClick, disabled },
+                              index
+                            ) => (
                               <div
                                 key={index}
                                 className="col-xl-4 column__custom__class"
                               >
-                                <div className="gridarea__wraper text-center card-background">
+                                <div
+                                  className="gridarea__wraper text-center card-background"
+                                  style={{ position: "relative" }}
+                                >
+                                  {onClick && (
+                                    <SquareArrowOutUpRight
+                                      size={16}
+                                      style={{
+                                        position: "absolute",
+                                        top: 10,
+                                        right: 10,
+                                        opacity: disabled ? 0.5 : 1,
+                                      }}
+                                    />
+                                  )}
                                   <div
                                     className="gridarea__content p-3 m-2"
                                     style={{
-                                      cursor:
-                                        link || onClick ? "pointer" : "default",
+                                      cursor: disabled
+                                        ? "not-allowed"
+                                        : link || onClick
+                                        ? "pointer"
+                                        : "default",
+                                      opacity: disabled ? 0.5 : 1,
                                     }}
                                   >
                                     {/* Card with onClick (e.g. TCY) instead of a page link */}
                                     {onClick ? (
                                       <div
                                         role="button"
-                                        onClick={onClick}
+                                        aria-disabled={disabled}
+                                        onClick={disabled ? undefined : onClick}
                                         className="gridarea__heading d-flex justify-content-center align-items-center gap-4"
                                       >
                                         {icon}

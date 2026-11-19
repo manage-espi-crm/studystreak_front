@@ -1,4 +1,5 @@
 import React from "react";
+import { SquareArrowOutUpRight } from "lucide-react";
 
 const Tab = ({ tabs, activeTab, handleTabChange }) => {
   return (
@@ -15,8 +16,23 @@ const Tab = ({ tabs, activeTab, handleTabChange }) => {
                 activeTab === tab.name ? "active" : ""
               }`}
               onClick={() => handleTabChange(tab.name)}
+              disabled={tab.disabled}
+              style={
+                tab.disabled
+                  ? { opacity: 0.5, cursor: "not-allowed" }
+                  : undefined
+              }
             >
-              {tab.name}
+              <span style={{ whiteSpace: "nowrap" }}>
+                {tab.name}
+                {/* external: tab opens a page in a new tab */}
+                {tab.external && (
+                  <SquareArrowOutUpRight
+                    size={14}
+                    style={{ display: "inline-block", marginLeft: 6, verticalAlign: "middle" }}
+                  />
+                )}
+              </span>
             </button>
           </li>
         ))}

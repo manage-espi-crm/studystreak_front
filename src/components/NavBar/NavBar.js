@@ -19,7 +19,12 @@ const encrypt = (text, key) => {
   return base64Result;
 };
 
-const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
+const NavBar = ({
+  showNavBar,
+  handleMouseEnter,
+  handleMouseLeave,
+  handleMenuClick,
+}) => {
   const { logoutUser } = useCheckAuth();
   const token = localStorage.getItem("loginInfo");
   const role = JSON.parse(localStorage.getItem("loginInfo"))?.user_role || "";
@@ -117,8 +122,9 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
                   <div className="headerarea__left">
                     <IconButton
                       aria-label="open drawer"
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
+                      onClick={handleMenuClick}
+                      onMouseEnter={handleMenuClick ? undefined : handleMouseEnter}
+                      onMouseLeave={handleMenuClick ? undefined : handleMouseLeave}
                       edge="start"
                       sx={{
                         marginRight: 2,

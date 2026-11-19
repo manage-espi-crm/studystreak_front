@@ -365,8 +365,6 @@ const CreateCourse = ({ setMainTab }) => {
                           type: "is_additional_free_course",
                           value: false,
                         });
-                        dispatchCreateCourse({ type: "lessons", value: [] });
-                        dispatchCreateCourse({ type: "lessonsId", value: [] });
                       } else {
                         dispatchCreateCourse({ type: "tcyCourse", value: "" });
                       }
@@ -947,8 +945,6 @@ const CreateCourse = ({ setMainTab }) => {
                   objKey={["Lesson_Title"]}
                   isSearch={true}
                   multiple={true}
-                  // Disabled for a TCY course (no lessons)
-                  disabled={createCourseData.is_tcy_course}
                 />
               </div>
             </div>

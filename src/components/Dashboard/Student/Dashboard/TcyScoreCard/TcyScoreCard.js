@@ -39,7 +39,7 @@ const TcyScoreCard = ({ category }) => {
             <div className="gridarea__heading">
               <h6>
                 Your Latest Given {category === "DUOLINGO" ? "Duolingo" : category}{" "}
-                Exam
+                Practice Exam
               </h6>
             </div>
             {lastExam ? (
@@ -62,13 +62,14 @@ const TcyScoreCard = ({ category }) => {
           </div>
         </div>
       </div>
-      {/* Your Latest Given Diagnostic Test: title only, no data yet */}
+      {/* Your Latest Given Diagnostic Test: no data yet, empty message only */}
       <div className="col-xl-6 column__custom__class">
         <div className="gridarea__wraper card-background">
           <div className="gridarea__content">
             <div className="gridarea__heading">
               <h6>Your Latest Given Diagnostic Test</h6>
             </div>
+            <h6 className="text-center text-danger">No Result Available !!</h6>
           </div>
         </div>
       </div>

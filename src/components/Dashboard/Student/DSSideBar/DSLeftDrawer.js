@@ -12,6 +12,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemButton,
+  Tooltip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -24,12 +25,14 @@ import {
   ClipboardMinus,
   LayoutPanelLeft,
   LogOut,
+  NotebookPen,
   NotepadTextDashed,
   PcCase,
   Pencil,
   Proportions,
   Scroll,
   Settings,
+  SquareArrowOutUpRight,
   UserPen,
   Videotape,
   WalletCards,
@@ -97,9 +100,10 @@ const Drawer = styled(MuiDrawer, {
 const DSLeftDrawer = () => {
   const location = useLocation().pathname;
   const category = JSON.parse(localStorage.getItem("course"))?.course_category;
+  const hasTcyCourse = JSON.parse(localStorage.getItem("course"))?.has_tcy_course;
   const { logoutUser } = useCheckAuth();
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [count, setCount] = useState({
     count: 0,
     all_pt_count: 0,
@@ -109,14 +113,15 @@ const DSLeftDrawer = () => {
   });
   const [givenPTCount, setGivenPTCount] = useState(0);
   const [givenFLTCount, setGivenFLTCount] = useState(0);
-  const [, setHovered] = useState(false);
+  // Old hover open / close, replaced by burger click
+  /* const [, setHovered] = useState(false); */
 
   const logout = (event) => {
     event.preventDefault();
     logoutUser();
   };
 
-  const handleMouseEnter = () => {
+  /* const handleMouseEnter = () => {
     setHovered(true);
     if (!open) setOpen(true);
   };
@@ -124,7 +129,18 @@ const DSLeftDrawer = () => {
   const handleMouseLeave = () => {
     setHovered(false);
     if (open) setOpen(false);
-  };
+  }; */
+
+  // Burger click opens / closes the side menu
+  const handleMenuClick = () => setOpen((prev) => !prev);
+
+  // Category changed on the dashboard: re-render to read the saved course again
+  const [, setCourseVersion] = useState(0);
+  useEffect(() => {
+    const onCourseChange = () => setCourseVersion((v) => v + 1);
+    window.addEventListener("courseChange", onCourseChange);
+    return () => window.removeEventListener("courseChange", onCourseChange);
+  }, []);
 
   const menuList =
     category === "IELTS" || count?.count === 0
@@ -144,6 +160,18 @@ const DSLeftDrawer = () => {
             icon: <BookCopy />,
             link: "/studentMyCourse",
           },
+          // Practice Exam disabled for a student without an IELTS TCY course
+          ...(category === "IELTS"
+            ? [
+                {
+                  name: "Practice Exam",
+                  icon: <NotebookPen />,
+                  disabled: !hasTcyCourse,
+                  onClick: () =>
+                    openTcyPage(category, "/tcypracticetestview/"),
+                },
+              ]
+            : []),
           {
             name: "Paper Test",
             icon: <Scroll />,
@@ -208,7 +236,7 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Reports",
-            icon: <ClipboardMinus />,
+            icon: <BookMarked />,
             link: "/reports",
           },
           {
@@ -246,8 +274,9 @@ const DSLeftDrawer = () => {
             link: "/PTE/FreeMockTest",
           }, */
           {
-            name: `${category === "DUOLINGO" ? "Duolingo" : category} Practice Test`,
-            icon: <Pencil />,
+            name: "Practice Exam",
+            icon: <NotebookPen />,
+            disabled: !hasTcyCourse,
             onClick: () => openTcyPage(category, "/tcypracticetestview/"),
           },
           {
@@ -307,6 +336,7 @@ const DSLeftDrawer = () => {
           {
             name: "Reports",
             icon: <BookMarked />,
+            disabled: !hasTcyCourse,
             onClick: () => openTcyPage(category, "/tcyreportsview/"),
           },
           {
@@ -387,7 +417,7 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Reports",
-            icon: <ClipboardMinus />,
+            icon: <BookMarked />,
             link: "/reports",
           },
           {
@@ -496,8 +526,7 @@ const DSLeftDrawer = () => {
         <div className="fixing-navbar-at-top-side">
           <NavBar
             showNavBar={true}
-            handleMouseEnter={handleMouseEnter}
-            handleMouseLeave={handleMouseLeave}
+            handleMenuClick={handleMenuClick}
           />
         </div>
       </AppBar>
@@ -509,8 +538,6 @@ const DSLeftDrawer = () => {
             backgroundColor: "#ebf2f5",
           },
         }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
         <Box sx={{ overflow: "auto", mt: 8 }}>
           <List>
@@ -535,7 +562,7 @@ const DSLeftDrawer = () => {
                     item.onClick
                       ? (e) => {
                           e.preventDefault();
-                          item.onClick();
+                          if (!item.disabled) item.onClick();
                         }
                       : item.name === "Logout"
                       ? logout
@@ -545,13 +572,18 @@ const DSLeftDrawer = () => {
                   style={{
                     textDecoration: "none",
                     color: location === item.link ? "#01579b" : "#000",
+                    ...(item.disabled && {
+                      opacity: 0.5,
+                      cursor: "not-allowed",
+                    }),
                   }}
                 >
+                  <Tooltip title={open ? "" : item.name} placement="right">
                   <ListItemButton
                     sx={{
                       minHeight: 50,
                       justifyContent: open ? "initial" : "center",
-                      px: 4,
+                      px: open ? 4 : 2.5,
                     }}
                   >
                     <ListItemIcon
@@ -571,7 +603,18 @@ const DSLeftDrawer = () => {
                       <>
                         <ListItemText
                           className="side-navbar-rexr-color-common admin__menu__title"
-                          primary={item.name}
+                          primary={
+                            <span style={{ whiteSpace: "nowrap" }}>
+                              {item.name}
+                              {/* Opens in a new tab */}
+                              {item.onClick && (
+                                <SquareArrowOutUpRight
+                                  size={14}
+                                  style={{ display: "inline-block", marginLeft: 6, verticalAlign: "middle" }}
+                                />
+                              )}
+                            </span>
+                          }
                         />
                         {getLabel(
                           item.name,
@@ -583,6 +626,7 @@ const DSLeftDrawer = () => {
                       </>
                     )}
                   </ListItemButton>
+                  </Tooltip>
                 </Link>
               </ListItem>
             ))}
