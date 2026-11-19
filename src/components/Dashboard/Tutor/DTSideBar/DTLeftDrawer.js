@@ -159,7 +159,11 @@ const DTLeftDrawer = () => {
                     color: location === item.link ? "#01579b" : "#000",
                   }}
                 >
-                  <Tooltip title={open ? "" : item.name} placement="right">
+                  <Tooltip
+                    title={open ? "" : item.name}
+                    placement="right"
+                    componentsProps={{ tooltip: { sx: { fontSize: 14 } } }}
+                  >
                   <ListItemButton
                     sx={{
                       minHeight: 50,

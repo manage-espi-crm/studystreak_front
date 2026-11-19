@@ -273,7 +273,11 @@ const DALeftDrawer = () => {
                   }}
                 >
                   {/* Closed menu: item name shown on icon hover */}
-                  <Tooltip title={open ? "" : item.name} placement="right">
+                  <Tooltip
+                    title={open ? "" : item.name}
+                    placement="right"
+                    componentsProps={{ tooltip: { sx: { fontSize: 14 } } }}
+                  >
                   <ListItemButton
                     sx={{
                       minHeight: 50,
