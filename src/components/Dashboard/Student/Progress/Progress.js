@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 import Table from "../../../UI/Table";
+import Loading from "../../../UI/Loading";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import listeningBandValues from "../../../../utils/bandValues/listeningBandValues";
@@ -39,6 +40,8 @@ const Progress = () => {
     PTEFreeMockTest: 0,
   }); */
   const [tcyResults, setTcyResults] = useState([]);
+  // TCY results grid: loader while the results are fetched
+  const [tcyLoading, setTcyLoading] = useState(false);
 
   // TCY results table (PTE / Duolingo / TOEFL)
   const tcyColumns = [
@@ -561,10 +564,11 @@ const Progress = () => {
       category === "TOEFL" ||
       category === "IELTS"
     ) {
+      setTcyLoading(true);
       fetchTestData(
         `/tcyprogressview/?category=${encodeURIComponent(category)}`,
         setTcyResults
-      );
+      ).finally(() => setTcyLoading(false));
     }
   }, [category]);
 
@@ -702,15 +706,17 @@ const Progress = () => {
                         Exams
                       </h4>
                     </div>
-                    {/* PTE / Duolingo / TOEFL: TCY test results table */}
-                    {(category === "PTE" ||
+                    {/* IELTS / PTE / Duolingo / TOEFL: TCY test results grid (empty grid when no results) */}
+                    {(category === "IELTS" ||
+                      category === "PTE" ||
                       category === "DUOLINGO" ||
                       category === "TOEFL") && (
                       <div className="mb-5">
-                        {tcyResults?.length > 0 ? (
-                          <Table rowData={tcyResults} columnDefs={tcyColumns} />
+                        <h5 className="mb-3">Practice Exam</h5>
+                        {tcyLoading ? (
+                          <Loading />
                         ) : (
-                          <h5 className="text-center text-danger">No Results Available !!</h5>
+                          <Table rowData={tcyResults} columnDefs={tcyColumns} />
                         )}
                       </div>
                     )}
@@ -732,17 +738,6 @@ const Progress = () => {
                         </div>
                       ))}
                     </div>
-                    {/* IELTS: TCY test results table below exam cards */}
-                    {category === "IELTS" && (
-                      <div className="mb-5">
-                        <h5 className="mb-3">Practice Exam</h5>
-                        {tcyResults?.length > 0 ? (
-                          <Table rowData={tcyResults} columnDefs={tcyColumns} />
-                        ) : (
-                          <h5 className="text-center text-danger">No Results Available !!</h5>
-                        )}
-                      </div>
-                    )}
                     <div className="dashboard__section__title">
                       <h4
                         className="sidebar__title"
