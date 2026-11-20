@@ -9,7 +9,7 @@ const COURSE_DELIVERY_LABELS = {
 
 const BatchAccordionItem = ({ batch, isOpen, onToggle }) => (
   <div
-    className={`border rounded-xl bg-white overflow-hidden transition-colors duration-200 ${
+    className={`border rounded-xl bg-neutral-50 overflow-hidden transition-colors duration-200 ${
       isOpen ? "border-primary-300" : "border-neutral-200"
     }`}
   >
@@ -45,7 +45,7 @@ const BatchAccordionItem = ({ batch, isOpen, onToggle }) => (
 
 // TCY batch box: name only, not expandable
 const TcyBatchItem = ({ batchName }) => (
-  <div className="border border-neutral-200 rounded-xl bg-white px-4 py-3">
+  <div className="border border-neutral-200 rounded-xl bg-neutral-50 px-4 py-3">
     <span className="font-medium text-sm text-neutral-800">{batchName}</span>
   </div>
 );

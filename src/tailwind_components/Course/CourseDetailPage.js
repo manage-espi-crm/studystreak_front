@@ -198,6 +198,7 @@ const CourseDetailPage = () => {
               packages={coursePackages?.packages}
               courseName={courseDetail?.Course_Title}
               courseType={courseDetail?.course_delivery}
+              courseCategory={courseDetail?.Category?.name}
             />
           ) : (
             <div>

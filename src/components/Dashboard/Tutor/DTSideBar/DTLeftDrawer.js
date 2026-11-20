@@ -30,7 +30,7 @@ const menuList = [
   },
 ];
 
-const drawerWidth = 280;
+const drawerWidth = 200;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -49,7 +49,7 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 12px)`,
   },
 });
 
@@ -167,8 +167,9 @@ const DTLeftDrawer = () => {
                   <ListItemButton
                     sx={{
                       minHeight: 50,
-                      justifyContent: open ? "initial" : "center",
+                      justifyContent: "initial",
                       px: open ? 4 : 2.5,
+                      pl: "22px",
                     }}
                   >
                     <ListItemIcon

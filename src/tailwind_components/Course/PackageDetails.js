@@ -88,7 +88,7 @@ const getPackageFeatures = (pkg) =>
     (feature) => feature.enabled && feature.count !== null && feature.count > 0
   );
 
-const PackageDetails = ({ packages, courseName, courseType }) => {
+const PackageDetails = ({ packages, courseName, courseType, courseCategory }) => {
   const navigate = useNavigate();
 
   const [packageName, setPackageName] = useState("");
@@ -108,6 +108,7 @@ const PackageDetails = ({ packages, courseName, courseType }) => {
           packageId,
           courseType,
           courseName,
+          courseCategory,
           packageName,
           packagePrice,
         },
@@ -269,6 +270,7 @@ const PackageDetails = ({ packages, courseName, courseType }) => {
         open={isModalOpen}
         courseName={courseName}
         courseType={courseType}
+        courseCategory={courseCategory}
         packageName={packageName}
         packagePrice={packagePrice}
         packageId={selectedPackage}

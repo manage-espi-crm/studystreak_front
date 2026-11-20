@@ -7,6 +7,7 @@ import Loading from "../../../UI/Loading";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import { openLoaderTab } from "../../../../helpers/tcy";
 
 const MyCourse = () => {
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ const MyCourse = () => {
   // Opens the student's TCY dashboard (TCY auto-login link) in a new tab
   const openTcyCourse = async (courseId) => {
     // Tab opened before the API call, so the browser does not block it as a popup
-    const tcyTab = window.open("", "_blank");
+    const tcyTab = openLoaderTab();
     const response = await ajaxCall(
       `/tcyloginview/${courseId}/`,
       {
@@ -209,11 +210,22 @@ const MyCourse = () => {
                               className="gridarea__wraper gridarea__wraper__2 global-neomorphism-card-styling d-flex flex-column"
                               style={{ height: "calc(100% - 50px)" }}
                             >
-                              <div className="gridarea__img">
+                              <div
+                                className="gridarea__img"
+                                style={{
+                                  height: 192,
+                                  background: "#E9E7EF", 
+                                }}
+                              >
                                 <img
                                   src={item?.Course_Thumbnail}
                                   alt={item?.Course_Title}
-                                  className="course__image"
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "contain",
+                                    borderRadius: 0,
+                                  }}
                                 />
                               </div>
                               <div className="gridarea__content d-flex flex-column justify-content-between flex-grow-1">

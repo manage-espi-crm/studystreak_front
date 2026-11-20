@@ -1,8 +1,27 @@
+import { renderToStaticMarkup } from "react-dom/server";
 import { toast } from "react-toastify";
 import ajaxCall from "./ajaxCall";
+import Loading from "../components/UI/Loading";
+
+// New blank tab showing the app's Loading component (same markup and CSS) until the TCY link is ready
+export const openLoaderTab = () => {
+  const tab = window.open("", "_blank");
+  if (!tab) return null;
+  // App stylesheets copied into the blank tab, so the loader uses the real CSS
+  const styles = [...document.querySelectorAll('link[rel="stylesheet"], style')]
+    .map((el) => el.outerHTML)
+    .join("");
+  tab.document.write(`<!doctype html>
+<html><head><title>Loading...</title><base href="${window.location.origin}/" />${styles}</head>
+<body style="margin:0;height:100vh;display:flex;justify-content:center;align-items:center">
+${renderToStaticMarkup(<Loading />)}
+</body></html>`);
+  tab.document.close();
+  return tab;
+};
 
 export const openTcyPage = async (category, url) => {
-  const tcyTab = window.open("", "_blank");
+  const tcyTab = openLoaderTab();
   const response = await ajaxCall(
     `${url}?category=${encodeURIComponent(category)}`,
     {

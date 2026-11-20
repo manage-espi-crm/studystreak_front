@@ -39,7 +39,7 @@ import {
   Podcast,
 } from "lucide-react";
 
-const drawerWidth = 300;
+const drawerWidth = 230;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -58,7 +58,7 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 12px)`,
   },
 });
 
@@ -281,8 +281,9 @@ const DALeftDrawer = () => {
                   <ListItemButton
                     sx={{
                       minHeight: 50,
-                      justifyContent: open ? "initial" : "center",
+                      justifyContent: "initial",
                       px: open ? 4 : 2.5,
+                      pl: "22px",
                     }}
                   >
                     <ListItemIcon

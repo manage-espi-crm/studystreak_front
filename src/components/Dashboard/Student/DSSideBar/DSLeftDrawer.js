@@ -39,7 +39,7 @@ import {
   BookMarked,
 } from "lucide-react";
 
-const drawerWidth = 280;
+const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -58,7 +58,7 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 12px)`,
   },
 });
 
@@ -491,6 +491,8 @@ const DSLeftDrawer = () => {
     })();
   }, [givenFLTCount, givenPTCount, open]);
 
+  const labelStyle = { fontSize: 8, lineHeight: "12px", padding: "0 5px" };
+
   const getLabel = (itemName, count, givenCount) => {
     const countKey = itemName.replace(/ /g, "_").toLowerCase() + "_count";
 
@@ -498,7 +500,7 @@ const DSLeftDrawer = () => {
       if (count?.all_pt_count === -1)
         return <span className="dashboard__label bg-success">All</span>;
       if (givenCount === count?.practice_test_count + givenCount)
-        return <span className="dashboard__label bg-danger">N/A</span>;
+        return <span className="dashboard__label bg-danger" style={labelStyle}>N/A</span>;
       return (
         <span className="dashboard__label">{count?.practice_test_count}</span>
       );
@@ -508,7 +510,7 @@ const DSLeftDrawer = () => {
       if (count?.all_flt_count === -1)
         return <span className="dashboard__label bg-success">All</span>;
       if (givenCount === count?.full_length_test_count + givenCount)
-        return <span className="dashboard__label bg-danger">N/A</span>;
+        return <span className="dashboard__label bg-danger" style={labelStyle}>N/A</span>;
       return (
         <span className="dashboard__label">
           {count?.full_length_test_count}
@@ -586,8 +588,10 @@ const DSLeftDrawer = () => {
                   <ListItemButton
                     sx={{
                       minHeight: 50,
-                      justifyContent: open ? "initial" : "center",
+                      justifyContent: "initial",
                       px: open ? 4 : 2.5,
+                      pl: "22px",
+                      pr: open ? 4 : 2.5,
                     }}
                   >
                     <ListItemIcon
