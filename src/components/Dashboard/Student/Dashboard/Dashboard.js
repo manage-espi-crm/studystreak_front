@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import moment from "moment";
 import Loading from "../../../UI/Loading";
 import ScoreCard from "./ScoreCard/ScoreCard";
@@ -41,9 +41,13 @@ const Dashboard = () => {
   const [lesson, setLesson] = useState([]);
   const [studentID, setStudentID] = useState(0);
   const [batchData, setBatchData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [isCoursesLoading, setIsCoursesLoading] = useState(true);
+  const isLoading = isDataLoading || isCoursesLoading;
   const [studentCourses, setStudentCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState({});
+  // Category of the course just bought (passed by Checkout after a successful payment)
+  const purchasedCategoryRef = useRef(useLocation().state?.purchasedCategory);
 
   const category = selectedCourse?.course_category;
 
@@ -237,8 +241,12 @@ const Dashboard = () => {
   );
 
   const handleCourse = (course) => {
+    if (course?.course_category !== selectedCourse?.course_category) {
+      setIsCoursesLoading(true);
+    }
     setSelectedCourse(course);
     localStorage.setItem("course", JSON.stringify(course));
+    window.dispatchEvent(new Event("courseChange"));
   };
 
   const fetchData = async (url, dataes) => {
@@ -269,7 +277,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
-      setIsLoading(true);
+      setIsDataLoading(true);
       await Promise.all([
         fetchData("/batchview/", (data) =>
           setBatchData(Array.isArray(data) ? data : data?.results || [])
@@ -294,7 +302,7 @@ const Dashboard = () => {
           setStudentID(data?.student_details?.student_id);
         }),
       ]);
-      setIsLoading(false);
+      setIsDataLoading(false);
     };
 
     fetchAllData();
@@ -302,7 +310,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchStudentCourses = async () => {
-      setIsLoading(true);
       try {
         const response = await ajaxCall(
           "/get-student-course/",
@@ -344,16 +351,32 @@ const Dashboard = () => {
       } catch (error) {
         console.log("error", error);
       } finally {
-        setIsLoading(false);
+        setIsCoursesLoading(false);
       }
     };
 
     const handleCourseSelection = (courses) => {
+      // Right after a purchase: open the purchased course's category
+      const purchasedCourse =
+        purchasedCategoryRef.current &&
+        courses.find((c) => c.course_category === purchasedCategoryRef.current);
+      if (purchasedCategoryRef.current) {
+        purchasedCategoryRef.current = null;
+        window.history.replaceState({ ...window.history.state, usr: undefined }, "");
+      }
+      if (purchasedCourse) {
+        setSelectedCourse(purchasedCourse);
+        localStorage.setItem("course", JSON.stringify(purchasedCourse));
+        window.dispatchEvent(new Event("courseChange"));
+        return;
+      }
+
       const savedCourse = JSON.parse(localStorage.getItem("course"));
       if (!savedCourse && courses.length > 0) {
         const defaultCourse = courses[0];
         setSelectedCourse(defaultCourse);
         localStorage.setItem("course", JSON.stringify(defaultCourse));
+        window.dispatchEvent(new Event("courseChange"));
       } else {
         setSelectedCourse(savedCourse);
       }
@@ -363,7 +386,18 @@ const Dashboard = () => {
   }, [category]);
 
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   return isLoading ? (

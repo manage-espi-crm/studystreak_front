@@ -19,6 +19,7 @@ const Checkout = () => {
     packagePrice,
     selectedBatch,
     selectedSchedule,
+    courseCategory,
   } = location.state || {};
 
   const [discount, setDiscount] = useState(0);
@@ -208,7 +209,10 @@ const Checkout = () => {
 
           if (result?.status === 200) {
             toast.success("Payment Successful");
-            navigate("/studentDashboard");
+            // Dashboard opens on the purchased course's category
+            navigate("/studentDashboard", {
+              state: { purchasedCategory: courseCategory },
+            });
           } else {
             toast.error(
               result?.data?.detail ||

@@ -78,7 +78,7 @@ const IeltsList = () => {
     <Loading />
   ) : (
     <section className="py-8 md:py-2">
-      <div className="container mx-auto px-4">
+      <div>
         {courseList && courseList.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {courseList.map((course, index) => {
@@ -87,18 +87,15 @@ const IeltsList = () => {
               return (
               <div
                 key={course.id}
-                className="group bg-white rounded-xl overflow-hidden border border-neutral-200 shadow-card hover:shadow-card-hover hover:border-primary-200 transition-all duration-300 transform hover:-translate-y-1"
+                className="group bg-white rounded-xl overflow-hidden border border-neutral-200 shadow-card hover:shadow-card-hover hover:border-primary-200 transition-all duration-300 transform hover:-translate-y-1 flex flex-col"
               >
                 <div
-                  className={`h-48 relative overflow-hidden ${getGradientClass(
-                    index
-                  )}`}
+                  className="h-48 relative overflow-hidden bg-neutral-200"
                 >
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
                   <img
                     src={course?.Course_Thumbnail}
                     alt={course?.Course_Title}
-                    className="w-full h-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-300"
+                    className="w-full h-full object-contain absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                   />
                   {deliveryTag && (
                     <span
@@ -110,7 +107,7 @@ const IeltsList = () => {
                   )}
                 </div>
 
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-1">
                   <h3 className="font-semibold text-lg mb-3 text-neutral-800 group-hover:text-primary-600 transition-colors duration-300">
                     {course?.Course_Title}
                   </h3>
@@ -121,7 +118,7 @@ const IeltsList = () => {
                     <span>{course?.total_lesson} Lessons</span>
                   </div>
 
-                  <div className="flex items-center mb-4 pt-3 border-t border-neutral-100">
+                  <div className="flex items-center mb-4 pt-3 border-t border-neutral-100 mt-auto">
                     <span className="text-sm text-neutral-600 ml-2">
                       Language: {course.Language?.name}
                     </span>

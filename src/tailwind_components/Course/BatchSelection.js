@@ -39,6 +39,7 @@ const BatchSelection = ({
   packageId,
   courseType,
   courseName,
+  courseCategory,
   packageName,
   packagePrice,
 }) => {
@@ -83,6 +84,7 @@ const BatchSelection = ({
         packageId,
         courseType,
         courseName,
+        courseCategory,
         packageName,
         packagePrice,
         selectedBatch: selection?.batchId,
