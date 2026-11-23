@@ -124,7 +124,7 @@ exports.openaiChatCompletion = onRequest(
       
       // Create clean request body with only supported OpenAI parameters
       const gptBody = {
-        model: model || 'gpt-3.5-turbo',
+        model: model || 'gpt-6-luna',
         messages,
         ...(temperature !== undefined && { temperature }),
         ...(max_tokens !== undefined && { max_tokens }),

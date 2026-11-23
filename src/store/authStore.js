@@ -36,16 +36,13 @@ const authStore = createSlice({
         state.logInOperation = action.payload.logInOperation;
       }
     },
+    // only saves the new access token. Does not change loggedIn or authLoading.
+    // Why:
+    // - When: exam pages open in a new tab where login is not checked yet.
+    // - Problem: setting authLoading to false here made the result page think
+    //   the user is logged out, so it sent the user to "/" after submitting the exam.
     setRefreshTokenAuthStatus: (state, action) => {
-      if (state.loggedIn) {
-        state.authLoading = false;
-        state.accessToken = action.payload.accessToken;
-      } else {
-        state.authLoading = false;
-        state.loggedIn = false;
-        state.timeOfLogin = null;
-        state.logInOperation = action.payload.logInOperation;
-      }
+      state.accessToken = action.payload.accessToken;
     },
   },
 });

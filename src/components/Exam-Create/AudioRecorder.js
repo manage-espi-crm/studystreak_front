@@ -5,6 +5,7 @@ import SpeechRecognition, {
 import { Spinner } from "react-bootstrap";
 import ajaxCall from "../../helpers/ajaxCall";
 import DisplayAudio from "../UI/DisplayAudio";
+import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
 
 const AudioRecorder = ({
   setRecordedFilePath,
@@ -100,7 +101,7 @@ const AudioRecorder = ({
         ?.question.replace(/<\/?[^>]+(>|$)/g, "");
 
       const gptBody = {
-        model: "gpt-3.5-turbo",
+        model: OPENAI_MODEL,
         messages: [
           {
             role: "user",
