@@ -5,6 +5,7 @@ import {
   getFromLocalStorage,
   setToLocalStorage,
 } from "../helpers/helperFunction";
+import ajaxCall from "../helpers/ajaxCall";
 import { authAction } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 
@@ -115,6 +116,23 @@ export function useCheckAuth() {
   };
 
   const logoutUser = () => {
+    // Blacklist the refresh token on the server.
+    const { refreshToken } = getFromLocalStorage("loginInfo", true) || {};
+    if (refreshToken) {
+      ajaxCall(
+        "/logout/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify({ refresh: refreshToken }),
+        },
+        8000
+      );
+    }
+
     dispatch(
       authAction.setAuthStatus({
         username: "",

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { HelmetProvider } from "react-helmet-async";
@@ -21,6 +21,7 @@ import CourseDetailPage from "./tailwind_components/Course/CourseDetailPage";
 import IELTSCoursePage from "./tailwind_components/Ielts/IELTSCoursePage";
 import EnglishTest from "./tailwind_components/EnglishTest/EnglishTest";
 import AuthPage from "./tailwind_components/Login/AuthPage";
+import Logout from "./tailwind_components/Login/Logout";
 import BlogDetails from "./tailwind_components/Blog/BlogDetail";
 import ForgotPasswordPage from "./tailwind_components/Login/ForgotPassword";
 import Podcast from "./tailwind_components/Podcast/Podcast";
@@ -153,8 +154,20 @@ import RTSSpeakingAnswer from "./components/Dashboard/Student/PTE/LivePTEExam/Sp
 import SGDSpeakingAnswer from "./components/Dashboard/Student/PTE/LivePTEExam/Speaking/SGD/SGDSpeakingAnswer";
 import Progress from "./components/Dashboard/Student/Progress/Progress";
 import withBootstrap from "./layout/BootstrapStyles";
+import { forceLogout } from "./helpers/helperFunction";
 
 const App = () => {
+  // Log out this tab when another tab clears the login (logout button or /logout page).
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === null || (e.key === "loginInfo" && e.newValue === null)) {
+        forceLogout();
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   return (
     <div>
       <ToastContainer
@@ -203,6 +216,7 @@ const App = () => {
             element={<PackagePageThree />}
           />
           <Route path="/thank-you" element={<ThankYouPage />} />
+          <Route path="/logout" element={<Logout />} />
 
           <Route element={<AdminNavBarRoute isProtected={true} />}>
             <Route
