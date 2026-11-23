@@ -9,6 +9,7 @@ import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
 
 const initialLessonData = {
+  category: "",
   section: "",
   Lesson_Title: "",
   Lesson_Description: "",
@@ -197,6 +198,7 @@ const CreateLesson = ({ parentActiveTab, parentSetActiveTab }) => {
 
     const formData = new FormData();
 
+    formData.append("category", createLessonData?.category);
     formData.append("section", createLessonData?.section);
     formData.append("Lesson_Title", createLessonData?.Lesson_Title);
     formData.append("Lesson_Description", createLessonData?.Lesson_Description);
@@ -276,8 +278,11 @@ const CreateLesson = ({ parentActiveTab, parentSetActiveTab }) => {
       const fetchVideoLinks = async () => {
         setIsLoading(true);
         try {
+          const url = createLessonData.category
+            ? `/list/lessons-videos/?category=${createLessonData.category}`
+            : "/list/lessons-videos/";
           const response = await ajaxCall(
-            "/list/lessons-videos/",
+            url,
             {
               headers: {
                 Accept: "application/json",
@@ -303,7 +308,7 @@ const CreateLesson = ({ parentActiveTab, parentSetActiveTab }) => {
       };
       fetchVideoLinks();
     }
-  }, [authData?.accessToken, parentActiveTab]);
+  }, [authData?.accessToken, parentActiveTab, createLessonData.category]);
 
   return (
     <>
@@ -321,6 +326,34 @@ const CreateLesson = ({ parentActiveTab, parentSetActiveTab }) => {
           <div className="row">
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
+                <span>Course Category</span>
+              </div>
+              <div className="dashboard__selector">
+                <SingleSelection
+                  value={createLessonData.category}
+                  onChange={(val) => {
+                    dispatchCreateLesson({
+                      type: "category",
+                      value: val,
+                    });
+                    dispatchCreateLesson({
+                      type: "section",
+                      value: "",
+                    });
+                    dispatchCreateLesson({
+                      type: "Lesson_Video",
+                      value: "",
+                    });
+                  }}
+                  url="/categoryview/"
+                  objKey={["name"]}
+                  isSearch={true}
+                  withBlankOption={true}
+                />
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
                 <span>Section</span>
               </div>
               <div className="dashboard__selector">
@@ -332,7 +365,11 @@ const CreateLesson = ({ parentActiveTab, parentSetActiveTab }) => {
                       value: val,
                     });
                   }}
-                  url="/lessonsection-list/"
+                  url={
+                    createLessonData.category
+                      ? `/lessonsection-list/?category=${createLessonData.category}`
+                      : "/lessonsection-list/"
+                  }
                   objKey={["name"]}
                   isSearch={true}
                 />

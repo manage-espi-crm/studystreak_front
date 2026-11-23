@@ -26,8 +26,11 @@ const RegularClass = ({ selectedDate, onDataFetch }) => {
           8000
         );
         if (response.status === 200) {
-          onDataFetch(response?.data);
-          setRegularClass(response?.data);
+          const classes = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          onDataFetch(classes);
+          setRegularClass(classes);
         }
       } catch (error) {
         console.log("error", error);

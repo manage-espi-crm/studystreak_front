@@ -3,9 +3,12 @@ import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import SingleSelection from "../../../UI/SingleSelect";
 
 const initialData = {
   name: "",
+  category: "",
+  sequence: "",
 };
 
 const initialSubmit = { isError: false, errMsg: null, isSubmitting: false };
@@ -22,6 +25,14 @@ const reducerData = (state, action) => {
 const validateForm = (sectionData, setFormError) => {
   if (!sectionData.name) {
     setFormError("Section Name is Required");
+    return false;
+  }
+  if (!sectionData.category) {
+    setFormError("Course Category is Required");
+    return false;
+  }
+  if (!sectionData.sequence) {
+    setFormError("Sequence is Required");
     return false;
   }
   return true;
@@ -87,6 +98,41 @@ const CreateSection = () => {
               placeholder="Section Name"
               onChange={(e) =>
                 dispatchSectionData({ type: "name", value: e.target.value })
+              }
+            />
+          </div>
+        </div>
+      </div>
+      <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+        <div className="dashboard__select__heading">
+          <span>Course Category</span>
+        </div>
+        <div className="dashboard__selector">
+          <SingleSelection
+            value={sectionData.category}
+            onChange={(val) =>
+              dispatchSectionData({ type: "category", value: val })
+            }
+            url="/categoryview/"
+            objKey={["name"]}
+            isSearch={true}
+            withBlankOption={true}
+          />
+        </div>
+      </div>
+      <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+        <div className="dashboard__form__wraper">
+          <div className="dashboard__form__input">
+            <label>Sequence</label>
+            <input
+              type="number"
+              value={sectionData.sequence}
+              placeholder="Section Sequence"
+              onChange={(e) =>
+                dispatchSectionData({
+                  type: "sequence",
+                  value: e.target.value,
+                })
               }
             />
           </div>

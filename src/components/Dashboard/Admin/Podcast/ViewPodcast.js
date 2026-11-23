@@ -86,7 +86,11 @@ const ViewPodcast = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setPodcastList(response.data);
+          setPodcastList(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

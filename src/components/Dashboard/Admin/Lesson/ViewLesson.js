@@ -5,6 +5,7 @@ import Loading from "../../../UI/Loading";
 import Table from "../../../UI/Table";
 import SmallModal from "../../../UI/Modal";
 import EditLesson from "./EditLesson";
+import SingleSelection from "../../../UI/SingleSelect";
 
 const ViewLesson = ({ activeTab }) => {
   const [refresh, setRefresh] = useState(false);
@@ -12,6 +13,7 @@ const ViewLesson = ({ activeTab }) => {
   const [lessonList, setLessonList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedLesson, setSelectedLesson] = useState({});
+  const [categoryFilter, setCategoryFilter] = useState("");
   const authData = useSelector((state) => state.authStore);
 
   const ViewButton = ({ url }) =>
@@ -33,21 +35,37 @@ const ViewLesson = ({ activeTab }) => {
       setIsLoading(true);
       (async () => {
         try {
-          const response = await ajaxCall(
-            "/lesson-get/",
-            {
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authData?.accessToken}`,
+          let lessons = [];
+          let page = 1;
+          let hasNext = true;
+
+          while (hasNext) {
+            const params = categoryFilter
+              ? `category=${categoryFilter}&page=${page}`
+              : `page=${page}`;
+            const response = await ajaxCall(
+              `/lesson-get/?${params}`,
+              {
+                headers: {
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${authData?.accessToken}`,
+                },
+                method: "GET",
               },
-              method: "GET",
-            },
-            8000
-          );
-          if (response.status === 200) {
-            setLessonList(response?.data);
+              8000
+            );
+            if (response.status !== 200) break;
+
+            const pageData = Array.isArray(response?.data)
+              ? response.data
+              : response?.data?.results || [];
+            lessons = [...lessons, ...pageData];
+            hasNext = Boolean(response?.data?.next);
+            page += 1;
           }
+
+          setLessonList(lessons);
         } catch (error) {
           console.log("error", error);
         } finally {
@@ -55,7 +73,7 @@ const ViewLesson = ({ activeTab }) => {
         }
       })();
     }
-  }, [refresh, activeTab, authData?.accessToken]);
+  }, [refresh, activeTab, authData?.accessToken, categoryFilter]);
 
   const columns = [
     {
@@ -80,6 +98,7 @@ const ViewLesson = ({ activeTab }) => {
       cellRenderer: (params) => params.rowIndex + 1,
     },
     { headerName: "Lesson Title", field: "Lesson_Title", filter: true },
+    { headerName: "Course Category", field: "category_name", filter: true },
     {
       headerName: "Lesson Description",
       field: "Lesson_Description",
@@ -112,6 +131,23 @@ const ViewLesson = ({ activeTab }) => {
 
   return (
     <>
+      <div className="row">
+        <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+          <div className="dashboard__select__heading">
+            <span>Course Category</span>
+          </div>
+          <div className="dashboard__selector">
+            <SingleSelection
+              value={categoryFilter}
+              onChange={(val) => setCategoryFilter(val)}
+              url="/categoryview/"
+              objKey={["name"]}
+              isSearch={true}
+              withBlankOption={true}
+            />
+          </div>
+        </div>
+      </div>
       {isLoading ? (
         <Loading />
       ) : lessonList.length > 0 ? (

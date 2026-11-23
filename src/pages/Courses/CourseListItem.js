@@ -29,7 +29,7 @@ const CourseListItem = ({ search, selectedCategory, selectedLevel }) => {
 
         if (response.status === 200) {
           setCouresList(
-            response.data?.filter(({ course_type }) => course_type === "PUBLIC")
+            response.data?.results?.filter(({ course_type }) => course_type === "PUBLIC")
           );
         }
       } catch (error) {

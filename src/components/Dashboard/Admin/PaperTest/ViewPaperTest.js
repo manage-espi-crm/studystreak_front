@@ -67,7 +67,11 @@ const ViewPaperTest = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setPaperTestList(response.data);
+          setPaperTestList(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

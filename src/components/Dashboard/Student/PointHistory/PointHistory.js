@@ -222,8 +222,11 @@ const PointHistory = ({ totalPoints, setTotalPoints }) => {
           8000
         );
         if (response?.status === 200) {
-          setPointHistory(response?.data);
-          setTotalPoints(response?.data?.reduce((a, b) => a + b.points, 0));
+          const points = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          setPointHistory(points);
+          setTotalPoints(points.reduce((a, b) => a + b.points, 0));
         } else {
           console.log("error");
         }
@@ -256,7 +259,11 @@ const PointHistory = ({ totalPoints, setTotalPoints }) => {
           8000
         );
         if (response?.status === 200) {
-          setDataList(response?.data);
+          setDataList(
+            Array.isArray(response?.data)
+              ? response.data
+              : response?.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);

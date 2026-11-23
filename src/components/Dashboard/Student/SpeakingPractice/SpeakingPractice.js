@@ -46,8 +46,11 @@ const SpeakingPractice = ({
           8000
         );
         if (response.status === 200) {
-          onDataFetch(response?.data);
-          setSpeakingSolvingClass(response?.data);
+          const classes = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          onDataFetch(classes);
+          setSpeakingSolvingClass(classes);
         }
       } catch (error) {
         console.log("error", error);

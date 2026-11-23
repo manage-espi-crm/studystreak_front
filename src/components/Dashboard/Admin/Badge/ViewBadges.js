@@ -43,7 +43,11 @@ const ViewBadges = ({ activeTab }) => {
             8000
           );
           if (response?.status === 200) {
-            setBadgeList(response?.data);
+            setBadgeList(
+              Array.isArray(response?.data)
+                ? response.data
+                : response?.data?.results || []
+            );
           }
         } catch (error) {
           console.log("error", error);

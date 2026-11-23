@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import Table from "../../../../UI/Table";
+import BuyCourse from "../../BuyCourse/BuyCourse";
 
 const AdditionalResources = ({ courseId }) => {
+  const [hasAccess, setHasAccess] = useState(true);
   const [additionalResource, setAdditionalResource] = useState([]);
 
   const doDownload = (params) => {
@@ -31,6 +33,7 @@ const AdditionalResources = ({ courseId }) => {
           8000
         );
         if (response.status === 200) {
+          setHasAccess(response?.data?.has_access !== false);
           setAdditionalResource(response?.data?.data);
         } else {
           console.log("error");
@@ -61,7 +64,11 @@ const AdditionalResources = ({ courseId }) => {
       <div className="dashboard__section__title">
         <h4>Additional Resources</h4>
       </div>
-      <Table rowData={additionalResource} columnDefs={columns} />
+      {hasAccess ? (
+        <Table rowData={additionalResource} columnDefs={columns} />
+      ) : (
+        <BuyCourse message="You are not enrolled in this course. Buy a package to access its resources." />
+      )}
     </div>
   );
 };

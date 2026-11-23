@@ -3,9 +3,11 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import SingleSelection from "../../../UI/SingleSelect";
 
 const initialData = {
   fileName: null,
+  category: "",
 };
 
 const initialSubmit = { isError: false, errMsg: null, isSubmitting: false };
@@ -21,6 +23,11 @@ const reducerData = (state, action) => {
 
 const validateForm = (uploadData, setFormError) => {
   const fileName = uploadData?.fileName?.name;
+
+  if (!uploadData.category) {
+    setFormError("Course Category is Required");
+    return false;
+  }
 
   if (!uploadData.fileName) {
     setFormError("Upload File is Required");
@@ -54,6 +61,7 @@ const UploadLesson = () => {
     const data = JSON.stringify({
       fileName: uploadData?.fileName?.name,
       fileType: uploadData?.fileName?.type,
+      category: uploadData?.category,
     });
 
     try {
@@ -104,6 +112,23 @@ const UploadLesson = () => {
 
   return (
     <div className="row">
+      <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+        <div className="dashboard__select__heading">
+          <span>Course Category</span>
+        </div>
+        <div className="dashboard__selector">
+          <SingleSelection
+            value={uploadData.category}
+            onChange={(val) =>
+              dispatchUploadData({ type: "category", value: val })
+            }
+            url="/categoryview/"
+            objKey={["name"]}
+            isSearch={true}
+            withBlankOption={true}
+          />
+        </div>
+      </div>
       <div className="col-xl-6 col-lg-6 col-md-6 col-12">
         <div className="dashboard__form__wraper">
           <div className="dashboard__form__input">

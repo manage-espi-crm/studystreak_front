@@ -70,7 +70,7 @@ const PracticeTestTable = ({
     );
   };
 
-  const columns = [
+  const baseColumns = [
     {
       headerName: "Take Test",
       field: "button",
@@ -173,6 +173,25 @@ const PracticeTestTable = ({
       width: 250,
     },
   ];
+
+  const hideDetailsForGeneral =
+    Array.isArray(testData) && testData.length > 0 &&
+    testData.every((t) => t?.exam_type === "General");
+
+  const columns = baseColumns.filter((col) => {
+    if (hideDetailsForGeneral && ["sections", "questions", "time"].includes(col.field)) {
+      return false;
+    }
+    return true;
+  });
+
+  if (hideDetailsForGeneral) {
+    // Remove fixed widths and apply flexible sizing so remaining columns fill table
+    for (let i = 0; i < columns.length; i++) {
+      delete columns[i].width;
+      columns[i].flex = 1;
+    }
+  }
 
   const rowData = testData.sort((a, b) => {
     const getNumber = (name) => {

@@ -46,6 +46,14 @@ const Dashboard = () => {
   const [selectedCourse, setSelectedCourse] = useState({});
 
   const category = selectedCourse?.course_category;
+
+  // A package's additional courses often share its category, so the
+  // dropdown shows each category once.
+  const courseCategories = studentCourses.filter(
+    (item, index, self) =>
+      self.findIndex((c) => c.course_category === item.course_category) ===
+      index
+  );
   const batchIds = JSON?.parse(localStorage.getItem("BatchIds"));
   const userData = JSON?.parse(localStorage.getItem("loginInfo"));
 
@@ -224,8 +232,8 @@ const Dashboard = () => {
           },
         ];
 
-  const studentBatch = batchData?.filter((item) =>
-    batchIds?.includes(item?.id)
+  const studentBatch = (Array.isArray(batchData) ? batchData : []).filter(
+    (item) => batchIds?.includes(item?.id)
   );
 
   const handleCourse = (course) => {
@@ -263,7 +271,9 @@ const Dashboard = () => {
     const fetchAllData = async () => {
       setIsLoading(true);
       await Promise.all([
-        fetchData("/batchview/", setBatchData),
+        fetchData("/batchview/", (data) =>
+          setBatchData(Array.isArray(data) ? data : data?.results || [])
+        ),
         fetchData("/student/course-enrollment/details/", (data) => {
           const givenPTCount = data?.student_details?.student_pt;
           const givenFLTCount = data?.student_details?.student_flt;
@@ -540,15 +550,20 @@ const Dashboard = () => {
                           <select
                             className="form-select"
                             aria-label="Select a course"
-                            value={JSON.stringify(selectedCourse)}
+                            value={selectedCourse?.course_category ?? ""}
                             onChange={(e) =>
-                              handleCourse(JSON.parse(e.target.value))
+                              handleCourse(
+                                courseCategories.find(
+                                  (item) =>
+                                    item.course_category === e.target.value
+                                )
+                              )
                             }
                           >
-                            {studentCourses?.map((item) => (
+                            {courseCategories.map((item) => (
                               <option
-                                key={item.course_id}
-                                value={JSON.stringify(item)}
+                                key={item.course_category}
+                                value={item.course_category}
                               >
                                 {item.course_category}
                               </option>

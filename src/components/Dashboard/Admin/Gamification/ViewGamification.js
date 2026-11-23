@@ -173,7 +173,10 @@ const ViewGamification = ({ content, activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setter(response?.data);
+          const data = Array.isArray(response?.data)
+            ? response.data
+            : response?.data?.results || [];
+          setter(data);
         }
       } catch (error) {
         console.log("error", error);

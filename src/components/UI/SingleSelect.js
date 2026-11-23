@@ -26,7 +26,12 @@ const SingleSelection = (props) => {
       8000
     );
 
-    const allObj = response?.data?.map((option) => {
+    const optionsData = Array.isArray(response?.data)
+      ? response.data
+      : response?.data?.results || [];
+    props.onDataLoaded?.(optionsData);
+
+    const allObj = optionsData.map((option) => {
       let name = "";
       props.objKey?.forEach((key, index) => {
         if (index !== 0) name += " - ";
@@ -37,6 +42,9 @@ const SingleSelection = (props) => {
       }
       return { value: option.id || option.object_id, name };
     });
+    if (props.withBlankOption) {
+      allObj.unshift({ value: "", name: props.blankOptionLabel || "-- None --" });
+    }
     setOptions(allObj);
     setIsLoading(false);
   };

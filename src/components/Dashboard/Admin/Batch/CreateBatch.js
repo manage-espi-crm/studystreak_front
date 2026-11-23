@@ -5,6 +5,35 @@ import { Spinner } from "react-bootstrap";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
 
+const WEEKDAY_OPTIONS = [
+  { value: "MON", label: "Mon" },
+  { value: "TUE", label: "Tue" },
+  { value: "WED", label: "Wed" },
+  { value: "THU", label: "Thu" },
+  { value: "FRI", label: "Fri" },
+  { value: "SAT", label: "Sat" },
+  { value: "SUN", label: "Sun" },
+];
+
+const SESSION_COUNT_PRESETS = ["30", "60", "90"];
+
+// Class days guaranteed within the package validity, whichever weekday the
+// student enrolls on. Mirrors batch.max_sessions_within on the backend.
+const maxSessionsWithin = (validityInMonths, weekdays) => {
+  const totalDays = validityInMonths * 30;
+  const codes = WEEKDAY_OPTIONS.map((day) => day.value);
+  const selected = new Set(weekdays.length ? weekdays : codes);
+  let max = Infinity;
+  for (let start = 0; start < 7; start++) {
+    let count = 0;
+    for (let offset = 0; offset < totalDays; offset++) {
+      if (selected.has(codes[(start + offset) % 7])) count++;
+    }
+    max = Math.min(max, count);
+  }
+  return max;
+};
+
 const initialBatchData = {
   add_package: "",
   batch_name: "",
@@ -12,6 +41,8 @@ const initialBatchData = {
   batch_enddate: "",
   batch_start_timing: "",
   batch_end_timing: "",
+  number_of_days: "",
+  weekdays: [],
 };
 
 const initialSubmit = { isError: false, errMsg: null, isSubmitting: false };
@@ -25,7 +56,7 @@ const reducerBatch = (state, action) => {
   }
 };
 
-const validateForm = (batchData, setFormError) => {
+const validateForm = (batchData, setFormError, maxSessions) => {
   if (!batchData.add_package) {
     setFormError("Package is Required");
     return false;
@@ -34,20 +65,42 @@ const validateForm = (batchData, setFormError) => {
     setFormError("Batch Name is Required");
     return false;
   }
-  if (!batchData.batch_startdate) {
-    setFormError("Start Date is Required");
-    return false;
-  }
-  if (!batchData.batch_enddate) {
-    setFormError("End Date is Required");
-    return false;
-  }
   if (!batchData.batch_start_timing) {
     setFormError("Start Time is Required");
     return false;
   }
   if (!batchData.batch_end_timing) {
     setFormError("End Time is Required");
+    return false;
+  }
+
+  const hasFixedDates = batchData.batch_startdate && batchData.batch_enddate;
+
+  if (
+    (batchData.batch_startdate || batchData.batch_enddate) &&
+    !hasFixedDates
+  ) {
+    setFormError("Start Date and End Date are both required together");
+    return false;
+  }
+  if (hasFixedDates && batchData.batch_enddate < batchData.batch_startdate) {
+    setFormError("End Date must be on or after Start Date");
+    return false;
+  }
+  if (!hasFixedDates && !batchData.number_of_days) {
+    setFormError(
+      "Provide a Start Date & End Date, or a Number of Sessions (you may provide both)"
+    );
+    return false;
+  }
+  if (!batchData.weekdays?.length) {
+    setFormError("Select at least one Day of Week");
+    return false;
+  }
+  if (maxSessions !== null && Number(batchData.number_of_days) > maxSessions) {
+    setFormError(
+      `${batchData.number_of_days} sessions cannot fit in the package validity on the selected days. Maximum is ${maxSessions} sessions.`
+    );
     return false;
   }
   return true;
@@ -66,11 +119,38 @@ const CreateBatch = ({ setActiveTab }) => {
     setFormStatus({ isError: true, errMsg, isSubmitting: false });
   };
 
+  const [isCustomSessionCount, setIsCustomSessionCount] = useState(false);
+  const [packageDurations, setPackageDurations] = useState({});
+
+  const packageDuration = packageDurations[batchData.add_package];
+  const maxSessions = packageDuration
+    ? maxSessionsWithin(packageDuration, batchData.weekdays)
+    : null;
+  const exceedsMaxSessions =
+    maxSessions !== null && Number(batchData.number_of_days) > maxSessions;
+
+  const toggleWeekday = (dayValue) => {
+    dispatchBatch({
+      type: "weekdays",
+      value: batchData.weekdays.includes(dayValue)
+        ? batchData.weekdays.filter((d) => d !== dayValue)
+        : [...batchData.weekdays, dayValue],
+    });
+  };
+
   const createBatch = async (e) => {
     e.preventDefault();
-    if (!validateForm(batchData, setFormError)) return;
+    if (!validateForm(batchData, setFormError, maxSessions)) return;
     setFormStatus({ isError: false, errMsg: null, isSubmitting: true });
     try {
+      const payload = {
+        ...batchData,
+        batch_startdate: batchData.batch_startdate || null,
+        batch_enddate: batchData.batch_enddate || null,
+        number_of_days: batchData.number_of_days
+          ? Number(batchData.number_of_days)
+          : null,
+      };
       const response = await ajaxCall(
         "/create-batch/",
         {
@@ -80,7 +160,7 @@ const CreateBatch = ({ setActiveTab }) => {
             Authorization: `Bearer ${authData?.accessToken}`,
           },
           method: "POST",
-          body: JSON.stringify(batchData),
+          body: JSON.stringify(payload),
         },
         8000
       );
@@ -122,6 +202,13 @@ const CreateBatch = ({ setActiveTab }) => {
                 isSearch={true}
                 url="/packagelistview/"
                 objKey={["package_name"]}
+                onDataLoaded={(packages) =>
+                  setPackageDurations(
+                    Object.fromEntries(
+                      packages.map((pkg) => [pkg.id, pkg.duration])
+                    )
+                  )
+                }
               />
             </div>
           </div>
@@ -208,6 +295,116 @@ const CreateBatch = ({ setActiveTab }) => {
                     });
                   }}
                 />
+              </div>
+            </div>
+          </div>
+          <div className="col-xl-12">
+            <div className="dashboard__form__wraper">
+              <div className="dashboard__form__input">
+                <label>Days of Week</label>
+                <div
+                  className="d-flex"
+                  style={{
+                    gap: "10px",
+                    flexWrap: "nowrap",
+                    overflowX: "auto",
+                    marginBottom: "15px",
+                  }}
+                >
+                  {WEEKDAY_OPTIONS.map((day) => (
+                    <label
+                      key={day.value}
+                      className="d-flex align-items-center mb-0"
+                      style={{
+                        fontWeight: "normal",
+                        gap: "4px",
+                        cursor: "pointer",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={batchData.weekdays.includes(day.value)}
+                        onChange={() => toggleWeekday(day.value)}
+                        style={{
+                          width: "18px",
+                          height: "18px",
+                          margin: 0,
+                          cursor: "pointer",
+                          accentColor: "#01579b",
+                        }}
+                      />
+                      <span style={{ lineHeight: "18px" }}>{day.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="col-xl-12">
+            <hr />
+          </div>
+          <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+            <div className="dashboard__form__wraper">
+              <div className="dashboard__form__input">
+                <label>Number of Sessions</label>
+                <select
+                  value={
+                    isCustomSessionCount ? "custom" : batchData?.number_of_days
+                  }
+                  style={{
+                    width: "100%",
+                    background: "transparent",
+                    borderRadius: "6px",
+                    lineHeight: "23px",
+                    padding: "10px 20px",
+                    fontSize: "14px",
+                    color: "var(--contentColor)",
+                    marginBottom: "15px",
+                  }}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "custom") {
+                      setIsCustomSessionCount(true);
+                      dispatchBatch({ type: "number_of_days", value: "" });
+                    } else {
+                      setIsCustomSessionCount(false);
+                      dispatchBatch({ type: "number_of_days", value: val });
+                    }
+                  }}
+                >
+                  <option value="">Select</option>
+                  {SESSION_COUNT_PRESETS.map((count) => (
+                    <option key={count} value={count}>
+                      {count} Sessions
+                    </option>
+                  ))}
+                  <option value="custom">Custom</option>
+                </select>
+                {isCustomSessionCount && (
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Enter number of sessions"
+                    value={batchData?.number_of_days}
+                    style={{ marginTop: "-10px" }}
+                    onChange={(e) => {
+                      dispatchBatch({
+                        type: "number_of_days",
+                        value: e.target.value,
+                      });
+                    }}
+                  />
+                )}
+                {maxSessions !== null && batchData.weekdays.length > 0 && (
+                  <small
+                    className={exceedsMaxSessions ? "text-danger" : "text-muted"}
+                    style={{ display: "block", marginTop: "5px" }}
+                  >
+                    Max {maxSessions} sessions fit in this package's{" "}
+                    {packageDuration}-month validity on the selected days
+                  </small>
+                )}
               </div>
             </div>
           </div>

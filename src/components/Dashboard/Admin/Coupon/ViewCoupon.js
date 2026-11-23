@@ -66,7 +66,11 @@ const ViewCoupon = ({ activeTab }) => {
           8000
         );
         if (response?.status === 200) {
-          setCouponList(response.data);
+          setCouponList(
+            Array.isArray(response.data)
+              ? response.data
+              : response.data?.results || []
+          );
         }
       } catch (error) {
         console.log("error", error);
