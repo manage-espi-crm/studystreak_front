@@ -101,7 +101,7 @@ const MobileTopBar = () => {
           </div>
           <div className="headerarea__login">
             {token ? (
-              <Link to="/login" onClick={logout}>
+              <Link to="/logout" onClick={logout}>
                 <div>Logout</div>
               </Link>
             ) : (

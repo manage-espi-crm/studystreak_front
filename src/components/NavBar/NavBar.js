@@ -274,7 +274,7 @@ const NavBar = ({
               )}
               <div className="headerarea__login">
                 {token ? (
-                  <Link to="/login" onClick={logout} style={navTextStyle}>
+                  <Link to="/logout" onClick={logout} style={navTextStyle}>
                     <div>Logout</div>
                   </Link>
                 ) : (
