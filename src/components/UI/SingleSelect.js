@@ -74,7 +74,7 @@ const SingleSelection = (props) => {
   let placeholder = isLoading
     ? "Loading"
     : options?.length
-    ? "Select Options"
+    ? "Select Option"
     : "No Data Found";
 
   return (

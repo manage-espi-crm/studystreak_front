@@ -59,6 +59,10 @@ const reducerCreatePackage = (state, action) => {
   if (action.type === "reset") {
     return initialPackageData;
   }
+  // Count fields: whole number, 0 or more; empty allowed while typing
+  if (action.type.endsWith("_count") && action.value !== "") {
+    return { ...state, [action.type]: Math.max(0, parseInt(action.value, 10) || 0) };
+  }
   return { ...state, [action.type]: action.value };
 };
 
@@ -68,6 +72,20 @@ const tabs = [
   { name: "Tests" },
   { name: "Membership" },
   { name: "Classes" },
+];
+
+// [checkbox, its count, label] for each package feature that has a count
+const FEATURE_COUNTS = [
+  ["full_length_test", "full_length_test_count", "Full Length Test"],
+  ["practice_test", "practice_test_count", "Practice Test"],
+  ["speaking_test", "speaking_test_count", "Specking Test"],
+  ["writing_evaluation", "writing_evaluation_count", "Writing Evaluation"],
+  ["one_to_one_doubt_solving", "one_to_one_doubt_solving_count", "One To One Doubt Solving"],
+  ["group_doubt_solving", "group_doubt_solving_count", "Group Doubt Solving"],
+  ["speaking_practice", "speaking_practice_count", "Speaking Practice"],
+  ["tutor_support", "tutor_support_count", "Tutor Support"],
+  ["webinar", "webinar_count", "Webinar"],
+  ["counselling", "counselling_count", "Counselling"],
 ];
 
 const validateForm = (createPackageData, setFormError) => {
@@ -87,26 +105,26 @@ const validateForm = (createPackageData, setFormError) => {
     setFormError("Additional Courses cannot include the primary Course");
     return false;
   }
-  if (!createPackageData.full_length_test_count) {
-    setFormError("Full length test count is Required");
+  // Count above 0 needs its checkbox ticked
+  const untickedFeature = FEATURE_COUNTS.find(
+    ([checkbox, count]) =>
+      Number(createPackageData[count]) > 0 && !createPackageData[checkbox]
+  );
+  if (untickedFeature) {
+    setFormError(
+      `Please check the ${untickedFeature[2]} checkbox to add its count, or set the count to 0.`
+    );
     return false;
   }
-  if (!createPackageData.practice_test_count) {
-    setFormError("Practice test count is Required");
-    return false;
-  }
-  if (!createPackageData.speaking_test_count) {
-    setFormError("Speaking test count is Required");
-    return false;
-  }
-
-  if (!createPackageData.group_doubt_solving_count) {
-    setFormError("Group doubt solving count is Required");
-    return false;
-  }
-
-  if (!createPackageData.one_to_one_doubt_solving_count) {
-    setFormError("One to one doubt solving count is Required");
+  // Ticked checkbox needs a count above 0
+  const featureWithoutCount = FEATURE_COUNTS.find(
+    ([checkbox, count]) =>
+      createPackageData[checkbox] && !(Number(createPackageData[count]) > 0)
+  );
+  if (featureWithoutCount) {
+    setFormError(
+      `Please enter a count greater than 0 for ${featureWithoutCount[2]}, or uncheck its checkbox.`
+    );
     return false;
   }
   return true;
@@ -153,6 +171,10 @@ const CreatePackage = ({ setMainTab }) => {
       ...packagePayload
     } = createPackageData;
     packagePayload.additional_courses = additional_coursesId;
+    // Empty counts sent as 0
+    FEATURE_COUNTS.forEach(([, count]) => {
+      if (packagePayload[count] === "") packagePayload[count] = 0;
+    });
     try {
       const response = await ajaxCall(
         "/packagecreateview/",
@@ -255,7 +277,7 @@ const CreatePackage = ({ setMainTab }) => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
-                <span>Package Type</span>
+                <span>Package Type <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
               <div className="dashboard__selector">
                 <SingleSelection
@@ -306,7 +328,7 @@ const CreatePackage = ({ setMainTab }) => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
-                <span>Course</span>
+                <span>Course <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
               <div className="dashboard__selector">
                 <SingleSelection
@@ -391,6 +413,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Full Length Test Count"
                     value={createPackageData.full_length_test_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.full_length_test_count === "" && dispatchCreatePackage({ type: "full_length_test_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "full_length_test_count",
@@ -423,7 +447,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Practice Test Count"
                     value={createPackageData?.practice_test_count}
-                    checked={createPackageData?.practice_test_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.practice_test_count === "" && dispatchCreatePackage({ type: "practice_test_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "practice_test_count",
@@ -456,6 +481,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Specking Test Count"
                     value={createPackageData?.speaking_test_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.speaking_test_count === "" && dispatchCreatePackage({ type: "speaking_test_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "speaking_test_count",
@@ -488,6 +515,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Writing Evaluation Count"
                     value={createPackageData?.writing_evaluation_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.writing_evaluation_count === "" && dispatchCreatePackage({ type: "writing_evaluation_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "writing_evaluation_count",
@@ -578,6 +607,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="One To One Doubt Solving Count"
                     value={createPackageData.one_to_one_doubt_solving_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.one_to_one_doubt_solving_count === "" && dispatchCreatePackage({ type: "one_to_one_doubt_solving_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "one_to_one_doubt_solving_count",
@@ -610,6 +641,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Group Doubt Solving Count"
                     value={createPackageData.group_doubt_solving_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.group_doubt_solving_count === "" && dispatchCreatePackage({ type: "group_doubt_solving_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "group_doubt_solving_count",
@@ -642,6 +675,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Speaking Practice Count"
                     value={createPackageData.speaking_practice_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.speaking_practice_count === "" && dispatchCreatePackage({ type: "speaking_practice_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "speaking_practice_count",
@@ -674,6 +709,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Tutor Support Count"
                     value={createPackageData.tutor_support_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.tutor_support_count === "" && dispatchCreatePackage({ type: "tutor_support_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "tutor_support_count",
@@ -706,6 +743,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Webinar Count"
                     value={createPackageData.webinar_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.webinar_count === "" && dispatchCreatePackage({ type: "webinar_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "webinar_count",
@@ -738,6 +777,8 @@ const CreatePackage = ({ setMainTab }) => {
                     type="number"
                     placeholder="Counselling Count"
                     value={createPackageData.counselling_count}
+                    // Empty count is set to 0 on blur
+                    onBlur={() => createPackageData.counselling_count === "" && dispatchCreatePackage({ type: "counselling_count", value: 0 })}
                     onChange={(e) => {
                       dispatchCreatePackage({
                         type: "counselling_count",

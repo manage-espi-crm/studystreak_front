@@ -16777,6 +16777,96 @@ div.gridarea__wraper {
   --select-search-highlight: #01579b36;
 }
 
+/* Single select (react-select-search): white 45px box, blue border, blue hovered / selected option.
+   "body" prefix overrides the library CSS. */
+body .select-search-container {
+  --select-search-background: #fff;
+  --select-search-font: inherit;
+}
+
+body .select-search-container .select-search-input {
+  height: 45px;
+  line-height: 45px;
+  padding: 0 40px 0 20px;
+  border: 1px solid #01579b;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Single select: one down arrow */
+body .select-search-container:not(.select-search-is-multiple)::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #01579b;
+  border-bottom: 2px solid #01579b;
+  transform: rotate(45deg);
+  pointer-events: none;
+  /* Above the box, below the open options list (z-index 2) */
+  z-index: 1;
+}
+
+/* Multi select (multiselect-react-dropdown): double down arrow; one arrow in singleSelect mode */
+body .searchWrapper::before,
+body .searchWrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #01579b;
+  border-bottom: 2px solid #01579b;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+body .searchWrapper:not(.singleSelect)::before {
+  margin-top: -9px;
+}
+
+body .searchWrapper:not(.singleSelect)::after {
+  margin-top: -3px;
+}
+
+body .searchWrapper.singleSelect::before {
+  display: none;
+}
+
+body .searchWrapper.singleSelect::after {
+  margin-top: -6px;
+}
+
+body .select-search-container:not(.select-search-is-disabled).select-search-has-focus .select-search-input,
+body .select-search-container:not(.select-search-is-disabled) .select-search-input:hover {
+  border-color: #01579b;
+}
+
+body .select-search-container:not(.select-search-is-multiple) .select-search-select {
+  top: 46px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  max-height: 250px;
+}
+
+body .select-search-container .select-search-option,
+body .select-search-container .select-search-not-found {
+  height: auto;
+  padding: 10px;
+  font-size: 14px;
+}
+
+body .select-search-container .select-search-is-highlighted,
+body .select-search-container .select-search-option:not(.select-search-is-selected):hover,
+body .select-search-container .select-search-is-selected {
+  background: #0096fb;
+  color: #fff;
+  font-weight: normal;
+}
+
 .mainWrapper {
   display: flex;
   justify-content: center;

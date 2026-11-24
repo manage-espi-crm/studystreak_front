@@ -11,6 +11,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemButton,
+  Tooltip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -39,7 +40,7 @@ import {
   BookMarked,
 } from "lucide-react";
 
-const drawerWidth = 280;
+const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -58,7 +59,7 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
+    width: `calc(${theme.spacing(8)} + 12px)`,
   },
 });
 
@@ -102,7 +103,7 @@ const DSLeftDrawer = () => {
   const category = JSON.parse(localStorage.getItem("course"))?.course_category;
   const { logoutUser } = useCheckAuth();
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [count, setCount] = useState({
     count: 0,
     all_pt_count: 0,
@@ -112,14 +113,15 @@ const DSLeftDrawer = () => {
   });
   const [givenPTCount, setGivenPTCount] = useState(0);
   const [givenFLTCount, setGivenFLTCount] = useState(0);
-  const [, setHovered] = useState(false);
+  // Old hover open / close, replaced by burger click
+  /* const [, setHovered] = useState(false); */
 
   const logout = (event) => {
     event.preventDefault();
     logoutUser();
   };
 
-  const handleMouseEnter = () => {
+  /* const handleMouseEnter = () => {
     setHovered(true);
     if (!open) setOpen(true);
   };
@@ -127,7 +129,18 @@ const DSLeftDrawer = () => {
   const handleMouseLeave = () => {
     setHovered(false);
     if (open) setOpen(false);
-  };
+  }; */
+
+  // Burger click opens / closes the side menu
+  const handleMenuClick = () => setOpen((prev) => !prev);
+
+  // Category changed on the dashboard: re-render to read the saved course again
+  const [, setCourseVersion] = useState(0);
+  useEffect(() => {
+    const onCourseChange = () => setCourseVersion((v) => v + 1);
+    window.addEventListener("courseChange", onCourseChange);
+    return () => window.removeEventListener("courseChange", onCourseChange);
+  }, []);
 
   const menuList =
     category === "IELTS" || count?.count === 0
@@ -222,7 +235,7 @@ const DSLeftDrawer = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : category === "PTE"
@@ -301,7 +314,7 @@ const DSLeftDrawer = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : [
@@ -382,7 +395,7 @@ const DSLeftDrawer = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ];
 
@@ -445,6 +458,8 @@ const DSLeftDrawer = () => {
     })();
   }, [givenFLTCount, givenPTCount, open]);
 
+  const labelStyle = { fontSize: 8, lineHeight: "12px", padding: "0 5px" };
+
   const getLabel = (itemName, count, givenCount) => {
     const countKey = itemName.replace(/ /g, "_").toLowerCase() + "_count";
 
@@ -452,7 +467,7 @@ const DSLeftDrawer = () => {
       if (count?.all_pt_count === -1)
         return <span className="dashboard__label bg-success">All</span>;
       if (givenCount === count?.practice_test_count + givenCount)
-        return <span className="dashboard__label bg-danger">N/A</span>;
+        return <span className="dashboard__label bg-danger" style={labelStyle}>N/A</span>;
       return (
         <span className="dashboard__label">{count?.practice_test_count}</span>
       );
@@ -462,7 +477,7 @@ const DSLeftDrawer = () => {
       if (count?.all_flt_count === -1)
         return <span className="dashboard__label bg-success">All</span>;
       if (givenCount === count?.full_length_test_count + givenCount)
-        return <span className="dashboard__label bg-danger">N/A</span>;
+        return <span className="dashboard__label bg-danger" style={labelStyle}>N/A</span>;
       return (
         <span className="dashboard__label">
           {count?.full_length_test_count}
@@ -480,8 +495,7 @@ const DSLeftDrawer = () => {
         <div className="fixing-navbar-at-top-side">
           <NavBar
             showNavBar={true}
-            handleMouseEnter={handleMouseEnter}
-            handleMouseLeave={handleMouseLeave}
+            handleMenuClick={handleMenuClick}
           />
         </div>
       </AppBar>
@@ -493,8 +507,6 @@ const DSLeftDrawer = () => {
             backgroundColor: "#ebf2f5",
           },
         }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
         <Box sx={{ overflow: "auto", mt: 8 }}>
           <List>
@@ -522,11 +534,18 @@ const DSLeftDrawer = () => {
                     color: location === item.link ? "#01579b" : "#000",
                   }}
                 >
+                  <Tooltip
+                    title={open ? "" : item.name}
+                    placement="right"
+                    componentsProps={{ tooltip: { sx: { fontSize: 14 } } }}
+                  >
                   <ListItemButton
                     sx={{
                       minHeight: 50,
-                      justifyContent: open ? "initial" : "center",
-                      px: 4,
+                      justifyContent: "initial",
+                      px: open ? 4 : 2.5,
+                      pl: "22px",
+                      pr: open ? 4 : 2.5,
                     }}
                   >
                     <ListItemIcon
@@ -558,6 +577,7 @@ const DSLeftDrawer = () => {
                       </>
                     )}
                   </ListItemButton>
+                  </Tooltip>
                 </Link>
               </ListItem>
             ))}

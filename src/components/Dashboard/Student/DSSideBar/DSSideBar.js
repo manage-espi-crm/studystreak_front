@@ -142,7 +142,7 @@ const DSSidebar = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : category === "PTE"
@@ -216,7 +216,7 @@ const DSSidebar = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : [
@@ -297,7 +297,7 @@ const DSSidebar = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ];
 

@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import moment from "moment";
+import { SquareArrowOutUpRight } from "lucide-react";
 import Loading from "../../../UI/Loading";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import { openLoaderTab } from "../../../../helpers/tcy";
 
 const MyCourse = () => {
   const navigate = useNavigate();
@@ -96,6 +99,43 @@ const MyCourse = () => {
     fetchExpiryDates();
   }, [fetchExpiryDates]);
 
+  // Opens the student's TCY dashboard (TCY auto-login link) in a new tab
+  const openTcyCourse = async (courseId) => {
+    // Tab opened before the API call, so the browser does not block it as a popup
+    const tcyTab = openLoaderTab();
+    const response = await ajaxCall(
+      `/tcyloginview/${courseId}/`,
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${
+            JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+          }`,
+        },
+        method: "GET",
+      },
+      8000
+    );
+
+    if (response.status === 200 && response.data?.link) {
+      if (tcyTab) {
+        // TCY page gets no access to this tab
+        tcyTab.opener = null;
+        tcyTab.location.href = response.data.link;
+      } else {
+        // New tab blocked: TCY opens in this tab
+        window.location.href = response.data.link;
+      }
+      return;
+    }
+    tcyTab?.close();
+    // Network / 401 / 403 errors: message already shown by ajaxCall
+    if (!response.isNetwork && ![401, 403].includes(response.status)) {
+      toast.error(response.data?.detail || "Please try again later.");
+    }
+  };
+
   const getDaysRemaining = (endDate) => {
     const end = moment(endDate);
     const today = moment();
@@ -110,6 +150,13 @@ const MyCourse = () => {
     } else {
       return `${minutes} Minutes`;
     }
+  };
+
+  const myCourseButtonStyle = {
+    paddingLeft: 8,
+    paddingRight: 8,
+    fontSize: 14,
+    whiteSpace: "nowrap",
   };
 
   return (
@@ -156,18 +203,32 @@ const MyCourse = () => {
                       ) : courses?.length > 0 ? (
                         courses?.map((item, index) => (
                           <div
-                            className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12"
+                            className="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12"
                             key={index}
                           >
-                            <div className="gridarea__wraper gridarea__wraper__2 global-neomorphism-card-styling">
-                              <div className="gridarea__img">
+                            <div
+                              className="gridarea__wraper gridarea__wraper__2 global-neomorphism-card-styling d-flex flex-column"
+                              style={{ height: "calc(100% - 50px)" }}
+                            >
+                              <div
+                                className="gridarea__img"
+                                style={{
+                                  height: 192,
+                                  background: "#E9E7EF", 
+                                }}
+                              >
                                 <img
                                   src={item?.Course_Thumbnail}
                                   alt={item?.Course_Title}
-                                  className="course__image"
+                                  style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "contain",
+                                    borderRadius: 0,
+                                  }}
                                 />
                               </div>
-                              <div className="gridarea__content d-flex flex-column justify-content-between">
+                              <div className="gridarea__content d-flex flex-column justify-content-between flex-grow-1">
                                 <div className="gridarea__heading">
                                   <h3>{item?.Course_Title}</h3>
                                 </div>
@@ -183,23 +244,41 @@ const MyCourse = () => {
                                     </li>
                                   </ul>
                                 </div>
-                                <div className="d-flex gap-2 align-items-center justify-content-center">
-                                  <button
-                                    onClick={() =>
-                                      navigate(`/courseLessons/${item?.id}`)
-                                    }
-                                    className="default__button"
-                                  >
-                                    Start Lessons
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      navigate(`/courseMaterials/${item?.id}`)
-                                    }
-                                    className="default__button"
-                                  >
-                                    View Materials
-                                  </button>
+                                <div className="d-flex flex-column gap-2 mt-auto">
+                                  {item?.is_tcy_course && (
+                                    <button
+                                      onClick={() => openTcyCourse(item?.id)}
+                                      className="default__button w-100"
+                                      style={myCourseButtonStyle}
+                                    >
+                                      Practice Exam
+                                      {/* Opens in a new tab */}
+                                      <SquareArrowOutUpRight
+                                        size={14}
+                                        style={{ display: "inline-block", marginLeft: 6, verticalAlign: "middle" }}
+                                      />
+                                    </button>
+                                  )}
+                                  <div className="d-flex flex-wrap gap-2">
+                                    <button
+                                      onClick={() =>
+                                        navigate(`/courseLessons/${item?.id}`)
+                                      }
+                                      className="default__button flex-fill"
+                                      style={myCourseButtonStyle}
+                                    >
+                                      Start Lessons
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        navigate(`/courseMaterials/${item?.id}`)
+                                      }
+                                      className="default__button flex-fill"
+                                      style={myCourseButtonStyle}
+                                    >
+                                      View Materials
+                                    </button>
+                                  </div>
                                 </div>
                               </div>
                             </div>

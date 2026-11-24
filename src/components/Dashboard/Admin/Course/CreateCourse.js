@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { Spinner } from "react-bootstrap";
@@ -7,6 +7,7 @@ import slugify from "../../../../helpers/slugify";
 import SingleSelection from "../../../UI/SingleSelect";
 import SelectionBox from "../../../UI/SelectionBox";
 import Tab from "../../../UI/Tab";
+import Loading from "../../../UI/Loading";
 
 const initialCourseData = {
   Course_Title: "",
@@ -29,6 +30,8 @@ const initialCourseData = {
   Featured: false,
   Support_Available: false,
   is_additional_free_course: false,
+  is_tcy_course: false,
+  tcyCourse: "",
   is_active: false,
   Requirements: [],
   requirementId: [],
@@ -60,6 +63,9 @@ const tabs = [
   { name: "Course SEO" },
   { name: "Lessons" },
 ];
+
+// Allowed characters for each SEO Meta Keywords / Meta Description item
+const SLUG_PATTERN = /^[-a-zA-Z0-9_]+$/;
 
 const validateForm = (createCourseData, setFormError) => {
   if (!createCourseData.Course_Title) {
@@ -98,6 +104,10 @@ const validateForm = (createCourseData, setFormError) => {
     setFormError("FAQs is Required");
     return false;
   }
+  if (createCourseData.is_tcy_course && !createCourseData.tcyCourse) {
+    setFormError("Select a TCY course.");
+    return false;
+  }
   if (createCourseData.requirementId.length === 0) {
     setFormError("Requirements is Required");
     return false;
@@ -114,6 +124,15 @@ const validateForm = (createCourseData, setFormError) => {
     setFormError("Course Banner is Required");
     return false;
   }
+  // SEO fields optional; each filled item must match SLUG_PATTERN
+  if (!createCourseData.SEO_Meta_Keywords.map((item) => item.trim()).filter(Boolean).every((item) => SLUG_PATTERN.test(item))) {
+    setFormError("SEO Meta Keywords: use only letters, numbers, - and _ (no spaces)");
+    return false;
+  }
+  if (!createCourseData.Meta_Description.map((item) => item.trim()).filter(Boolean).every((item) => SLUG_PATTERN.test(item))) {
+    setFormError("Meta Description: use only letters, numbers, - and _ (no spaces)");
+    return false;
+  }
   return true;
 };
 
@@ -126,7 +145,50 @@ const CreateCourse = ({ setMainTab }) => {
   const [activeTab, setActiveTab] = useState("Course Details");
   // Once the admin edits the slug by hand we stop auto-syncing it from the title.
   const [slugEdited, setSlugEdited] = useState(false);
+  // Select TCY Course options; empty list disables the TCY Course checkbox
+  const [tcyList, setTcyList] = useState([]);
+  // Form shown after the TCY course list is loaded (TCY Course checkbox depends on it)
+  const [isTcyLoading, setIsTcyLoading] = useState(true);
+  // Category options, used to find the selected category's name
+  const [categoryList, setCategoryList] = useState([]);
   const authData = useSelector((state) => state.authStore);
+
+  // TCY course list, loaded once
+  useEffect(() => {
+    (async () => {
+      const response = await ajaxCall(
+        "/tcycourseview/",
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${
+              JSON.parse(localStorage.getItem("loginInfo"))?.accessToken
+            }`,
+          },
+          method: "GET",
+        },
+        8000
+      );
+      setTcyList(Array.isArray(response?.data) ? response.data : []);
+      setIsTcyLoading(false);
+    })();
+  }, []);
+
+  // TCY courses of the selected category: TCY course category name contains our course category name
+  // (e.g. "PTE Core" for PTE, "DET (Duolingo English Test)" for DUOLINGO)
+  const selectedCategoryName =
+    categoryList.find((c) => c.id === createCourseData.Category)?.name || "";
+  const tcyOptions = tcyList
+    .filter((item) =>
+      (item.categoy_name || item.category_name || "")
+        .toLowerCase()
+        .includes(selectedCategoryName.toLowerCase())
+    )
+    .map((item) => ({ value: item.id, name: item.label }));
+  
+    // Select TCY Course usable only when TCY Course is ticked and a category is selected
+  const tcyEnabled = Boolean(createCourseData.is_tcy_course && createCourseData.Category);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -170,7 +232,9 @@ const CreateCourse = ({ setMainTab }) => {
       const formData = new FormData();
       formData.append("Course_Title", createCourseData.Course_Title);
       formData.append("slug", createCourseData.slug);
-      formData.append("course_identifier", createCourseData.course_identifier);
+      if (createCourseData.course_identifier) {
+        formData.append("course_identifier", createCourseData.course_identifier);
+      }
       formData.append("Short_Description", createCourseData.Short_Description);
       formData.append("Description", createCourseData.Description);
       formData.append("Category", createCourseData.Category);
@@ -199,6 +263,10 @@ const CreateCourse = ({ setMainTab }) => {
         "is_additional_free_course",
         createCourseData.is_additional_free_course
       );
+      formData.append("is_tcy_course", createCourseData.is_tcy_course);
+      if (createCourseData.is_tcy_course) {
+        formData.append("tcy_course", createCourseData.tcyCourse);
+      }
       createCourseData.requirementId.forEach((id) => {
         formData.append(`Requirements`, id);
       });
@@ -215,10 +283,10 @@ const CreateCourse = ({ setMainTab }) => {
       );
       formData.append("Course_Thumbnail", createCourseData.Course_Thumbnail);
       formData.append("course_banner", createCourseData.course_banner);
-      createCourseData.SEO_Meta_Keywords.forEach((item, index) => {
+      createCourseData.SEO_Meta_Keywords.map((item) => item.trim()).filter(Boolean).forEach((item, index) => {
         formData.append(`SEO_Meta_Keywords[${index}]`, item);
       });
-      createCourseData.Meta_Description.forEach((item, index) => {
+      createCourseData.Meta_Description.map((item) => item.trim()).filter(Boolean).forEach((item, index) => {
         formData.append(`Meta_Description[${index}]`, item);
       });
       createCourseData.lessonsId.forEach((id) => {
@@ -241,7 +309,14 @@ const CreateCourse = ({ setMainTab }) => {
         setMainTab("View Course");
         toast.success("Course Created Successfully");
       } else if ([400, 404].includes(response.status)) {
-        toast.error("Some Problem Occurred. Please try again.");
+        const data = response.data || {};
+        if (data.slug) {
+          toast.error("Course Slug should be unique");
+        } else if (data.course_identifier) {
+          toast.error("Course Identifier should be unique");
+        } else {
+          toast.error("Some Problem Occurred. Please try again.");
+        }
       }
     } catch (error) {
       setFormStatus({
@@ -277,6 +352,10 @@ const CreateCourse = ({ setMainTab }) => {
     });
   };
 
+  if (isTcyLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Tab
@@ -291,10 +370,112 @@ const CreateCourse = ({ setMainTab }) => {
           }`}
         >
           <div className="row">
+            <div className="col-12 mb-3">
+              <div className="d-flex flex-wrap gap-4 mt-4">
+                <div className="form__check">
+                  <input
+                    type="checkbox"
+                    value={createCourseData.is_additional_free_course}
+                    checked={createCourseData.is_additional_free_course}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "is_additional_free_course",
+                        value: e.target.checked,
+                      });
+                      // Ticking Additional Free Course unticks TCY Course
+                      if (e.target.checked) {
+                        dispatchCreateCourse({ type: "is_tcy_course", value: false });
+                        dispatchCreateCourse({ type: "tcyCourse", value: "" });
+                      }
+                    }}
+                  />{" "}
+                  <label
+                    title="Free course bundled with packages. Not sold separately and hidden from course listings."
+                  >
+                    Additional Free Course
+                  </label>
+                </div>
+                <div className="form__check">
+                  <input
+                    type="checkbox"
+                    value={createCourseData.is_tcy_course}
+                    checked={createCourseData.is_tcy_course}
+                    disabled={tcyList.length === 0}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "is_tcy_course",
+                        value: e.target.checked,
+                      });
+                      if (e.target.checked) {
+                        dispatchCreateCourse({
+                          type: "is_additional_free_course",
+                          value: false,
+                        });
+                      } else {
+                        dispatchCreateCourse({ type: "tcyCourse", value: "" });
+                      }
+                    }}
+                  />{" "}
+                  <label>TCY Course</label>
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
+                <span>Category <span className="text-danger" style={{ display: "inline" }}>*</span></span>
+              </div>
+              <div className="dashboard__selector">
+                <SingleSelection
+                  value={createCourseData.Category}
+                  onChange={(val) => {
+                    dispatchCreateCourse({
+                      type: "Category",
+                      value: val,
+                    });
+                    dispatchCreateCourse({
+                      type: "lessons",
+                      value: [],
+                    });
+                    dispatchCreateCourse({
+                      type: "lessonsId",
+                      value: [],
+                    });
+                    dispatchCreateCourse({ type: "tcyCourse", value: "" });
+                  }}
+                  isSearch={true}
+                  url="/categoryview/"
+                  objKey={["name"]}
+                  withBlankOption={true}
+                  onDataLoaded={setCategoryList}
+                />
+              </div>
+            </div>
+            {/* Always shown; enabled only when TCY Course is ticked and a category is selected */}
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
+                <span>Select TCY Course <span className="text-danger" style={{ display: "inline" }}>*</span></span>
+              </div>
+              <div
+                className="dashboard__selector"
+                style={tcyEnabled ? undefined : { opacity: 0.5, cursor: "not-allowed" }}
+              >
+                <SingleSelection
+                  key={`${createCourseData.Category || "no-category"}-${tcyList.length}-${tcyEnabled}`}
+                  value={tcyEnabled ? createCourseData.tcyCourse : "-"}
+                  onChange={(val) => {
+                    dispatchCreateCourse({ type: "tcyCourse", value: val });
+                  }}
+                  isSearch={true}
+                  isStatic={true}
+                  cols={tcyEnabled ? tcyOptions : [{ value: "-", name: "-- None --" }]}
+                  disabled={!tcyEnabled}
+                />
+              </div>
+            </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__form__wraper">
                 <div className="dashboard__form__input">
-                  <label>Course Title</label>
+                  <label>Course Title <span className="text-danger" style={{ display: "inline" }}>*</span></label>
                   <input
                     type="text"
                     placeholder="Course Title"
@@ -315,7 +496,10 @@ const CreateCourse = ({ setMainTab }) => {
                     onChange={(e) => handleSlugChange(e.target.value)}
                     onBlur={(e) => handleSlugBlur(e.target.value)}
                   />
-                  <small className="text-muted">
+                  <small
+                    className="text-muted d-block"
+                    style={{ marginTop: "-12px", marginBottom: "8px" }}
+                  >
                     Used in the public course URL: /course/
                     {createCourseData.slug || "your-course-slug"}
                   </small>
@@ -340,73 +524,51 @@ const CreateCourse = ({ setMainTab }) => {
                 </div>
               </div>
             </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__form__wraper">
-                <div className="dashboard__form__input">
-                  <label>Short Description</label>
-                  <textarea
-                    type="text"
-                    placeholder="Short Description"
-                    value={createCourseData.Short_Description}
-                    onChange={(e) => {
-                      dispatchCreateCourse({
-                        type: "Short_Description",
-                        value: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__form__wraper">
-                <div className="dashboard__form__input">
-                  <label>Description</label>
-                  <textarea
-                    type="text"
-                    placeholder="Description"
-                    value={createCourseData.Description}
-                    onChange={(e) => {
-                      dispatchCreateCourse({
-                        type: "Description",
-                        value: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
-                <span>Category</span>
+                <span>Course Delivery</span>
               </div>
               <div className="dashboard__selector">
                 <SingleSelection
-                  value={createCourseData.Category}
+                  value={createCourseData.course_delivery}
                   onChange={(val) => {
                     dispatchCreateCourse({
-                      type: "Category",
+                      type: "course_delivery",
                       value: val,
                     });
-                    dispatchCreateCourse({
-                      type: "lessons",
-                      value: [],
-                    });
-                    dispatchCreateCourse({
-                      type: "lessonsId",
-                      value: [],
-                    });
                   }}
-                  isSearch={true}
-                  url="/categoryview/"
-                  objKey={["name"]}
-                  withBlankOption={true}
+                  isStatic={true}
+                  cols={[
+                    { value: "SELF-STUDY", name: "Self-Study Course" },
+                    { value: "TAUGHT", name: "Taught Course" },
+                  ]}
                 />
               </div>
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
-                <span>Level</span>
+                <span>Course Type</span>
+              </div>
+              <div className="dashboard__selector">
+                <SingleSelection
+                  value={createCourseData.course_type}
+                  onChange={(val) => {
+                    dispatchCreateCourse({
+                      type: "course_type",
+                      value: val,
+                    });
+                  }}
+                  isStatic={true}
+                  cols={[
+                    { value: "PRIVATE", name: "Private" },
+                    { value: "PUBLIC", name: "Public" },
+                  ]}
+                />
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
+                <span>Level <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
               <div className="dashboard__selector">
                 <SingleSelection
@@ -425,7 +587,7 @@ const CreateCourse = ({ setMainTab }) => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
-                <span>Language</span>
+                <span>Language <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
               <div className="dashboard__selector">
                 <SingleSelection
@@ -440,6 +602,57 @@ const CreateCourse = ({ setMainTab }) => {
                   url="/languageview/"
                   objKey={["name"]}
                 />
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>Max Enrollments</label>
+                  <input
+                    type="number"
+                    value={createCourseData.max_enrollments}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "max_enrollments",
+                        value: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>Enrollment StartDate <span className="text-danger" style={{ display: "inline" }}>*</span></label>
+                  <input
+                    type="date"
+                    value={createCourseData.EnrollmentStartDate}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "EnrollmentStartDate",
+                        value: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>Enrollment EndDate <span className="text-danger" style={{ display: "inline" }}>*</span></label>
+                  <input
+                    type="date"
+                    value={createCourseData.EnrollmentEndDate}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "EnrollmentEndDate",
+                        value: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
               </div>
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
@@ -464,116 +677,6 @@ const CreateCourse = ({ setMainTab }) => {
               </div>
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__form__wraper">
-                <div className="dashboard__form__input">
-                  <label>Enrollment StartDate</label>
-                  <input
-                    type="date"
-                    value={createCourseData.EnrollmentStartDate}
-                    onChange={(e) => {
-                      dispatchCreateCourse({
-                        type: "EnrollmentStartDate",
-                        value: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__form__wraper">
-                <div className="dashboard__form__input">
-                  <label>Enrollment EndDate</label>
-                  <input
-                    type="date"
-                    value={createCourseData.EnrollmentEndDate}
-                    onChange={(e) => {
-                      dispatchCreateCourse({
-                        type: "EnrollmentEndDate",
-                        value: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-12">
-              <div className="dashboard__form__wraper">
-                <div className="dashboard__form__input">
-                  <label>Max Enrollments</label>
-                  <input
-                    type="number"
-                    value={createCourseData.max_enrollments}
-                    onChange={(e) => {
-                      dispatchCreateCourse({
-                        type: "max_enrollments",
-                        value: e.target.value,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__form__wraper">
-                <div className="dashboard__form__input">
-                  <label>FAQS</label>
-                  <textarea
-                    type="text"
-                    value={createCourseData.faqs}
-                    onChange={(e) =>
-                      dispatchCreateCourse({
-                        type: "faqs",
-                        value: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__select__heading">
-                <span>Course Type</span>
-              </div>
-              <div className="dashboard__selector">
-                <select
-                  className="form-select"
-                  aria-label="Default select example"
-                  value={createCourseData.course_type}
-                  onChange={(e) =>
-                    dispatchCreateCourse({
-                      type: "course_type",
-                      value: e.target.value,
-                    })
-                  }
-                >
-                  <option value="PRIVATE">Private</option>
-                  <option value="PUBLIC">Public</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
-              <div className="dashboard__select__heading">
-                <span>Course Delivery</span>
-              </div>
-              <div className="dashboard__selector">
-                <select
-                  className="form-select"
-                  aria-label="Default select example"
-                  value={createCourseData.course_delivery}
-                  onChange={(e) => {
-                    dispatchCreateCourse({
-                      type: "course_delivery",
-                      value: e.target.value,
-                    });
-                  }}
-                >
-                  <option value="SELF-STUDY">Self-Study Course</option>
-                  <option value="TAUGHT">Taught Course</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__select__heading">
                 <span>Primary Instructor</span>
               </div>
@@ -592,63 +695,101 @@ const CreateCourse = ({ setMainTab }) => {
                 />
               </div>
             </div>
-            <div className="d-flex flex-wrap gap-4 mt-4">
-              <div className="form__check">
-                <label>Featured</label>{" "}
-                <input
-                  type="checkbox"
-                  value={createCourseData.Featured}
-                  onChange={(e) => {
-                    dispatchCreateCourse({
-                      type: "Featured",
-                      value: e.target.checked,
-                    });
-                  }}
-                />
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>Short Description <span className="text-danger" style={{ display: "inline" }}>*</span></label>
+                  <textarea
+                    type="text"
+                    placeholder="Short Description"
+                    value={createCourseData.Short_Description}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "Short_Description",
+                        value: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
               </div>
-              <div className="form__check">
-                <label>Support Available</label>{" "}
-                <input
-                  type="checkbox"
-                  value={createCourseData.Support_Available}
-                  onChange={(e) => {
-                    dispatchCreateCourse({
-                      type: "Support_Available",
-                      value: e.target.checked,
-                    });
-                  }}
-                />
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>Description <span className="text-danger" style={{ display: "inline" }}>*</span></label>
+                  <textarea
+                    type="text"
+                    placeholder="Description"
+                    value={createCourseData.Description}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "Description",
+                        value: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
               </div>
-              <div className="form__check">
-                <label
-                  title="Free course bundled with packages. Not sold separately and hidden from course listings."
-                >
-                  Additional Free Course
-                </label>{" "}
-                <input
-                  type="checkbox"
-                  value={createCourseData.is_additional_free_course}
-                  checked={createCourseData.is_additional_free_course}
-                  onChange={(e) => {
-                    dispatchCreateCourse({
-                      type: "is_additional_free_course",
-                      value: e.target.checked,
-                    });
-                  }}
-                />
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="dashboard__form__wraper">
+                <div className="dashboard__form__input">
+                  <label>FAQS <span className="text-danger" style={{ display: "inline" }}>*</span></label>
+                  <textarea
+                    type="text"
+                    value={createCourseData.faqs}
+                    onChange={(e) =>
+                      dispatchCreateCourse({
+                        type: "faqs",
+                        value: e.target.value,
+                      })
+                    }
+                  />
+                </div>
               </div>
-              <div className="form__check">
-                <label>Is Active</label>{" "}
-                <input
-                  type="checkbox"
-                  value={createCourseData.is_active}
-                  onChange={(e) => {
-                    dispatchCreateCourse({
-                      type: "is_active",
-                      value: e.target.checked,
-                    });
-                  }}
-                />
+            </div>
+            {/* Featured / Support / Active beside FAQs */}
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12">
+              <div className="d-flex flex-wrap gap-4 mt-4">
+                <div className="form__check">
+                  <input
+                    type="checkbox"
+                    value={createCourseData.Featured}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "Featured",
+                        value: e.target.checked,
+                      });
+                    }}
+                  />{" "}
+                  <label>Featured</label>
+                </div>
+                <div className="form__check">
+                  <input
+                    type="checkbox"
+                    value={createCourseData.Support_Available}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "Support_Available",
+                        value: e.target.checked,
+                      });
+                    }}
+                  />{" "}
+                  <label>Support Available</label>
+                </div>
+                <div className="form__check">
+                  <input
+                    type="checkbox"
+                    value={createCourseData.is_active}
+                    onChange={(e) => {
+                      dispatchCreateCourse({
+                        type: "is_active",
+                        value: e.target.checked,
+                      });
+                    }}
+                  />{" "}
+                  <label>Is Active</label>
+                </div>
               </div>
             </div>
           </div>
@@ -661,7 +802,7 @@ const CreateCourse = ({ setMainTab }) => {
           <div className="row">
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__select__heading">
-                <span>Requirements</span>
+                <span>Requirements <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
               <div className="dashboard__selector">
                 <SelectionBox
@@ -682,7 +823,7 @@ const CreateCourse = ({ setMainTab }) => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__select__heading">
-                <span>Outcome</span>
+                <span>Outcome <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
               <div className="dashboard__selector">
                 <SelectionBox
@@ -748,7 +889,7 @@ const CreateCourse = ({ setMainTab }) => {
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__form__wraper">
                 <div className="dashboard__form__input">
-                  <label>Course Thumbnail (1483 pixels x 800 pixels)</label>
+                  <label>Course Thumbnail (1483 pixels x 800 pixels) <span className="text-danger" style={{ display: "inline" }}>*</span></label>
                   <input
                     type="file"
                     onChange={(e) => {
@@ -764,7 +905,7 @@ const CreateCourse = ({ setMainTab }) => {
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__form__wraper">
                 <div className="dashboard__form__input">
-                  <label>Course Banner (2000 pixels x 477 pixels)</label>
+                  <label>Course Banner (2000 pixels x 477 pixels) <span className="text-danger" style={{ display: "inline" }}>*</span></label>
                   <input
                     type="file"
                     placeholder=""
@@ -793,13 +934,12 @@ const CreateCourse = ({ setMainTab }) => {
                   <input
                     type="text"
                     placeholder="SEO Meta Keywords"
-                    value={createCourseData.SEO_Meta_Keywords.join(", ")}
+                    // Not trimmed while typing (trimmed on save), so Backspace can remove a comma
+                    value={createCourseData.SEO_Meta_Keywords.join(",")}
                     onChange={(e) => {
                       dispatchCreateCourse({
                         type: "SEO_Meta_Keywords",
-                        value: e.target.value
-                          .split(",")
-                          .map((keyword) => keyword.trim()),
+                        value: e.target.value.split(","),
                       });
                     }}
                   />
@@ -813,13 +953,12 @@ const CreateCourse = ({ setMainTab }) => {
                   <input
                     type="text"
                     placeholder="Meta Description"
-                    value={createCourseData.Meta_Description.join(", ")}
+                    // Not trimmed while typing (trimmed on save), so Backspace can remove a comma
+                    value={createCourseData.Meta_Description.join(",")}
                     onChange={(e) => {
                       dispatchCreateCourse({
                         type: "Meta_Description",
-                        value: e.target.value
-                          .split(",")
-                          .map((desc) => desc.trim()),
+                        value: e.target.value.split(","),
                       });
                     }}
                   />

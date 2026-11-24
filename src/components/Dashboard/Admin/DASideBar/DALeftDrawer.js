@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemButton,
+  Tooltip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -38,7 +39,7 @@ import {
   Podcast,
 } from "lucide-react";
 
-const drawerWidth = 300;
+const drawerWidth = 230;
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -57,7 +58,7 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 20px)`,
+    width: `calc(${theme.spacing(8)} + 12px)`,
   },
 });
 
@@ -204,14 +205,15 @@ const DALeftDrawer = () => {
   const location = useLocation().pathname;
   const { logoutUser } = useCheckAuth();
   const [open, setOpen] = useState(true);
-  const [, setHovered] = useState(false);
+  // Old hover open / close, replaced by burger click
+  /* const [, setHovered] = useState(false); */
 
   const logout = (event) => {
     event.preventDefault();
     logoutUser();
   };
 
-  const handleMouseEnter = () => {
+  /* const handleMouseEnter = () => {
     setHovered(true);
     if (!open) setOpen(true);
   };
@@ -219,7 +221,10 @@ const DALeftDrawer = () => {
   const handleMouseLeave = () => {
     setHovered(false);
     if (open) setOpen(false);
-  };
+  }; */
+
+  // Burger click opens / closes the side menu
+  const handleMenuClick = () => setOpen((prev) => !prev);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -228,8 +233,7 @@ const DALeftDrawer = () => {
         <div className="fixing-navbar-at-top-side">
           <NavBar
             showNavBar={true}
-            handleMouseEnter={handleMouseEnter}
-            handleMouseLeave={handleMouseLeave}
+            handleMenuClick={handleMenuClick}
           />
         </div>
       </AppBar>
@@ -241,10 +245,8 @@ const DALeftDrawer = () => {
             backgroundColor: "#ebf2f5",
           },
         }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
       >
-        <Box sx={{ mt: 10 }}>
+        <Box sx={{ overflow: "auto", mt: 8 }}>
           <List>
             {menuList.map((item, index) => (
               <ListItem
@@ -270,11 +272,18 @@ const DALeftDrawer = () => {
                     color: location === item.link ? "#01579b" : "#000",
                   }}
                 >
+                  {/* Closed menu: item name shown on icon hover */}
+                  <Tooltip
+                    title={open ? "" : item.name}
+                    placement="right"
+                    componentsProps={{ tooltip: { sx: { fontSize: 14 } } }}
+                  >
                   <ListItemButton
                     sx={{
                       minHeight: 50,
-                      justifyContent: open ? "initial" : "center",
-                      px: 4,
+                      justifyContent: "initial",
+                      px: open ? 4 : 2.5,
+                      pl: "22px",
                     }}
                   >
                     <ListItemIcon
@@ -299,6 +308,7 @@ const DALeftDrawer = () => {
                       </>
                     )}
                   </ListItemButton>
+                  </Tooltip>
                 </Link>
               </ListItem>
             ))}

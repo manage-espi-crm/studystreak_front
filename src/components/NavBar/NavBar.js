@@ -19,7 +19,12 @@ const encrypt = (text, key) => {
   return base64Result;
 };
 
-const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
+const NavBar = ({
+  showNavBar,
+  handleMouseEnter,
+  handleMouseLeave,
+  handleMenuClick,
+}) => {
   const { logoutUser } = useCheckAuth();
   const token = localStorage.getItem("loginInfo");
   const role = JSON.parse(localStorage.getItem("loginInfo"))?.user_role || "";
@@ -103,22 +108,32 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
     setUnreadCount(0);
   };
 
+  const navTextStyle = showNavBar ? { fontSize: 17 } : undefined;
+
   return (
     <div
       className="headerarea headerarea__3 header__sticky header__area"
       style={{ backgroundColor: "#ebf2f5" }}
     >
-      <div className="container desktop__menu__wrapper">
-        <div className="row">
+      <div
+        className={`${showNavBar ? "container-fluid" : "container"} desktop__menu__wrapper`}
+        style={showNavBar ? { paddingLeft: 24 } : undefined}
+      >
+        <div className={`row ${showNavBar ? "align-items-center" : ""}`}>
           <div className="col-xl-2 col-lg-2 col-md-6">
             <div className="headerarea__left">
-              <div className="headerarea__left__logo d-flex justify-content-center align-items-center">
+              <div
+                className={`headerarea__left__logo d-flex ${
+                  showNavBar ? "justify-content-start" : "justify-content-center"
+                } align-items-center`}
+              >
                 {showNavBar && token && (
                   <div className="headerarea__left">
                     <IconButton
                       aria-label="open drawer"
-                      onMouseEnter={handleMouseEnter}
-                      onMouseLeave={handleMouseLeave}
+                      onClick={handleMenuClick}
+                      onMouseEnter={handleMenuClick ? undefined : handleMouseEnter}
+                      onMouseLeave={handleMenuClick ? undefined : handleMouseLeave}
                       edge="start"
                       sx={{
                         marginRight: 2,
@@ -133,7 +148,16 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
                   </div>
                 )}
                 <Link to="/">
-                  <img className="logoSize" src={logo} alt="logo" />
+                  <img
+                    className="logoSize"
+                    src={logo}
+                    alt="logo"
+                    style={
+                      showNavBar
+                        ? { height: 70, width: "auto", maxWidth: "none" }
+                        : undefined
+                    }
+                  />
                 </Link>
               </div>
             </div>
@@ -141,14 +165,16 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
           <div className="col-xl-7 col-lg-7 main_menu_wrap">
             <div className="headerarea__main__menu">
               <nav>
-                <ul>
+                <ul style={showNavBar ? { marginTop: 0, marginBottom: 0 } : undefined}>
                   <li className="mega__menu position-static">
-                    <Link className="headerarea__has__dropdown" to="/">
+                    <Link className="headerarea__has__dropdown"
+                      style={navTextStyle} to="/">
                       Home
                     </Link>
                   </li>
                   <li className="mega__menu position-static">
-                    <Link className="headerarea__has__dropdown" to="/courses">
+                    <Link className="headerarea__has__dropdown"
+                      style={navTextStyle} to="/courses">
                       Courses
                     </Link>
                   </li>
@@ -156,6 +182,7 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
                     <li className="mega__menu position-static">
                       <Link
                         className="headerarea__has__dropdown"
+                      style={navTextStyle}
                         to={
                           role === "admin"
                             ? "/admin-dashboard"
@@ -171,6 +198,7 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
                   <li className="mega__menu position-static">
                     <Link
                       className="headerarea__has__dropdown"
+                      style={navTextStyle}
                       to="/talk-to-us"
                     >
                       Contact Us
@@ -246,7 +274,7 @@ const NavBar = ({ showNavBar, handleMouseEnter, handleMouseLeave }) => {
               )}
               <div className="headerarea__login">
                 {token ? (
-                  <Link to="/login" onClick={logout}>
+                  <Link to="/logout" onClick={logout} style={navTextStyle}>
                     <div>Logout</div>
                   </Link>
                 ) : (
