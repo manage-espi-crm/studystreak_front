@@ -11,6 +11,7 @@ import {
   Loader2
 } from 'lucide-react';
 import './ExportFeatures.css';
+import logger from "../../helpers/logger";
 
 const ExportFeatures = ({ 
   data, 
@@ -126,7 +127,7 @@ const ExportFeatures = ({
       // Save the PDF
       pdf.save(`${examTitle}_${studentName}_${examDate}.pdf`);
     } catch (error) {
-      console.error('PDF Export Error:', error);
+      logger.error('PDF Export Error:', error);
       alert('Failed to export PDF. Please try again.');
     } finally {
       setExporting(false);
@@ -160,7 +161,7 @@ const ExportFeatures = ({
       link.href = canvas.toDataURL('image/png');
       link.click();
     } catch (error) {
-      console.error('Image Export Error:', error);
+      logger.error('Image Export Error:', error);
       alert('Failed to export image. Please try again.');
     } finally {
       setExporting(false);
@@ -185,7 +186,7 @@ const ExportFeatures = ({
       try {
         await navigator.share(shareData);
       } catch (error) {
-        console.error('Share Error:', error);
+        logger.error('Share Error:', error);
       }
     } else {
       // Fallback: copy to clipboard

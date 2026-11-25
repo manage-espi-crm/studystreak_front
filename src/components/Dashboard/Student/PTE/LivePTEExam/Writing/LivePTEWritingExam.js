@@ -5,6 +5,7 @@ import Loading from "../../../../../UI/Loading";
 import SmallModal from "../../../../../UI/Modal";
 import ajaxCall from "../../../../../../helpers/ajaxCall";
 import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../helpers/secureOpenAIService";
+import logger from "../../../../../../helpers/logger";
 
 const instructions = {
   SWT: "Read the passage below and summarize it using one sentence. Type your response in the box at the bottom of your screen. You have 10 minutes to finish your task. Your response will be judged on the quality of your writing and how well your response presents the key points in the passage. Your response must be between 5 and 75 words.",
@@ -101,11 +102,9 @@ const LivePTEWritingExam = () => {
             return 0;
           });
           setFullPaper(filteredData);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -199,12 +198,10 @@ const LivePTEWritingExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Exam Submitted Successfully");
-      } else {
-        console.log("error");
+        logger.log("Latest Exam Submitted Successfully");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -456,7 +453,7 @@ const LivePTEWritingExam = () => {
       }
     } catch (error) {
       setIsSubmitting(false);
-      console.log("error", error);
+      logger.log("error", error);
       toast.error("Some Problem Occurred. Please try again.");
     }
   };

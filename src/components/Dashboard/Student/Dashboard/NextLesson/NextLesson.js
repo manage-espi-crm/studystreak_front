@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const NextLesson = () => {
   const [lessonData, setLessonData] = useState(null);
@@ -27,11 +28,9 @@ const NextLesson = () => {
           const nextLesson =
             response.data?.course?.category === category ? response.data : null;
           setLessonData(nextLesson);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [category]);

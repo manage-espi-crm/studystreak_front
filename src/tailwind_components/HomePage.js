@@ -20,6 +20,7 @@ import CourseList from "./Course/CourseList";
 import Loading from "../components/UI/Loading";
 import Testimonial from "./Testimonial/Testimonial";
 import TodayFreeClasses from "./FreeClasses/TodayFreeClasses";
+import logger from "../helpers/logger";
 
 const features = [
   {
@@ -112,7 +113,7 @@ const HomePage = () => {
         toast.error("Submission failed. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }
@@ -139,7 +140,7 @@ const HomePage = () => {
         navigate("/login");
       }
     } catch (error) {
-      console.error("Error checking login status:", error);
+      logger.error("Error checking login status:", error);
       navigate("/login");
     }
   };
@@ -168,7 +169,7 @@ const HomePage = () => {
           setWebinars(data);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

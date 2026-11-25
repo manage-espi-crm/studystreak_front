@@ -6,6 +6,7 @@ import { CreditCard, Package, Tag, User, Cpu } from "lucide-react";
 import { Spinner } from "react-bootstrap";
 import logo from "../../img/logo/Logo.png";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -93,7 +94,7 @@ const Checkout = () => {
           setNoCoupon("Invalid Coupon Code");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
     return () => {
@@ -263,11 +264,9 @@ const Checkout = () => {
         );
         if (response.status === 200) {
           setUserDetails(response.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [authData.loggedIn]);

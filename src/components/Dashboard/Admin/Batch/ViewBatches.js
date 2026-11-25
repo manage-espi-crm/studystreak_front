@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const WEEKDAY_LABELS = {
   MON: "Mon",
@@ -95,7 +96,7 @@ const ViewBatches = ({ activeTab }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

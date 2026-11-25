@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
 import ajaxCall from "../../../helpers/ajaxCall";
+import logger from "../../../helpers/logger";
 
 const CourseMaterialsTab = ({ courseId }) => {
   const [materials, setMaterials] = useState([]);
@@ -27,7 +28,7 @@ const CourseMaterialsTab = ({ courseId }) => {
           setMaterials(response?.data?.data || []);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [courseId]);

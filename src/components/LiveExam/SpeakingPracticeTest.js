@@ -6,6 +6,7 @@ import ajaxCall from "../../helpers/ajaxCall";
 import AudioRecorder from "../Exam-Create/AudioRecorder";
 import { convert } from "html-to-text";
 import SpeakingInstruction from "../Instruction/SpeakingInstruction";
+import logger from "../../helpers/logger";
 
 const initialSpeakingSingleQuestionState = {
   // 0 for incoming, 1 for instruction on screen, 2 for completed
@@ -96,12 +97,10 @@ const PracticeSpeakingLiveExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Practice Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Practice Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -189,11 +188,9 @@ const PracticeSpeakingLiveExam = () => {
               }))
           );
           setSpeaking(tempSpeakingQuestions.flat());
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examId]);

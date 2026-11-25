@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import AnswerTable from "../../Exam-Answer/AnswerTable/AnswerTable";
+import logger from "../../../helpers/logger";
 
 const GeneralPTAnswer = () => {
   const { examId } = useParams();
@@ -86,11 +87,9 @@ const GeneralPTAnswer = () => {
             const percentage = (correct / correctAnswer?.length) * 100;
             setPercentage(percentage.toFixed(2));
           }
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examId]);

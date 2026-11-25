@@ -4,6 +4,7 @@ import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import SmallModal from "../../../UI/Modal";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const documentsColumns = [
   {
@@ -74,7 +75,7 @@ const ViewPaperTest = ({ activeTab }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

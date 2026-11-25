@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import logger from "../../../../../../helpers/logger";
 
 const One = () => {
   const audioChunksRef = useRef([]);
@@ -37,7 +38,7 @@ const One = () => {
       mediaRecorderRef.current.start();
       setIsRecording(true);
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

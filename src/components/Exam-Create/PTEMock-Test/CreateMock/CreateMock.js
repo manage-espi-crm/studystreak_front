@@ -5,6 +5,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const intialMockData = {
   name: "",
@@ -86,7 +87,7 @@ const CreateMock = ({ activeTab, primaryTab }) => {
             setExams(updatedExams);
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         } finally {
           setIsLoading(false);
         }

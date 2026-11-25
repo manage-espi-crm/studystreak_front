@@ -7,6 +7,7 @@ import SelectSearch from "react-select-search";
 import SelectionBox from "../../../UI/SelectionBox";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
+import logger from "../../../../helpers/logger";
 
 const initialLessonData = {
   category: "",
@@ -301,7 +302,7 @@ const CreateLesson = ({ parentActiveTab, parentSetActiveTab }) => {
             setOptions(result);
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         } finally {
           setIsLoading(false);
         }

@@ -4,6 +4,7 @@ import moment from "moment";
 import Loading from "../../../UI/Loading";
 import Table from "../../../UI/Table";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const columns = [
   {
@@ -73,7 +74,7 @@ const ViewCoupon = ({ activeTab }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

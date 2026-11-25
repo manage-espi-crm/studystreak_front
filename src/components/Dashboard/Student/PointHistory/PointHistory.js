@@ -3,6 +3,7 @@ import moment from "moment";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import Loading from "../../../UI/Loading";
 import Table from "../../../UI/Table";
+import logger from "../../../../helpers/logger";
 
 const specificColumns = {
   Lesson: [
@@ -227,11 +228,9 @@ const PointHistory = ({ totalPoints, setTotalPoints }) => {
             : response?.data?.results || [];
           setPointHistory(points);
           setTotalPoints(points.reduce((a, b) => a + b.points, 0));
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -266,7 +265,7 @@ const PointHistory = ({ totalPoints, setTotalPoints }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

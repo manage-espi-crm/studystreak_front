@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import ajaxCall from "../../helpers/ajaxCall";
 import Loading from "../../components/UI/Loading";
+import logger from "../../helpers/logger";
 
 const BlogsPage = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const BlogsPage = () => {
           setCategory([{ id: 0, name: "All" }, ...arr]);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoadingCategories(false);
       }
@@ -87,7 +88,7 @@ const BlogsPage = () => {
           setFilteredBlogs(arr);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoadingBlogs(false);
       }

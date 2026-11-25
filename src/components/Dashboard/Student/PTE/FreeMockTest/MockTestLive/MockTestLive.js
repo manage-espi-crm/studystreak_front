@@ -12,6 +12,7 @@ import PTEAudioRecorder from "../../LivePTEExam/PTEAudioRecorder/PTEAudioRecorde
 import readingBandValues from "../../../../../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../../../../../utils/bandValues/listeningBandValues";
 import { OPENAI_MODEL } from "../../../../../../helpers/secureOpenAIService";
+import logger from "../../../../../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const instructions = {
@@ -169,7 +170,7 @@ const MockTestLive = () => {
           setFullLengthId(filteredData.id);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -224,12 +225,10 @@ const MockTestLive = () => {
             );
 
             setCorrectAnswers([...correctAnswers, ...tempCorrectAnswers]);
-          } else {
-            console.log("error");
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examData]);
@@ -608,12 +607,10 @@ const MockTestLive = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Full Length Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Full Length Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -640,11 +637,9 @@ const MockTestLive = () => {
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -872,7 +867,7 @@ const MockTestLive = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

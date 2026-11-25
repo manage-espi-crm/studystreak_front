@@ -6,6 +6,7 @@ import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import PracticeTestTable from "./PracticeTestTable";
 import PTAssessment from "../Assessment/PTAssessment/PTAssessment";
+import logger from "../../../../helpers/logger";
 
 const PracticeTest = () => {
   const { count, packageCount } = useLocation().state || {};
@@ -80,11 +81,9 @@ const PracticeTest = () => {
             });
 
           setStudentCourses(courses);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);
@@ -110,7 +109,7 @@ const PracticeTest = () => {
           setGivenTest(response?.data?.student_pt);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [activeTab]);
@@ -147,7 +146,7 @@ const PracticeTest = () => {
           setTestData(filteredData);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

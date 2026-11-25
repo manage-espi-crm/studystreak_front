@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import CardFlip from "react-card-flip";
 import SmallModal from "../../../UI/Modal";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const FlashCardModal = ({
   show,
@@ -58,11 +59,9 @@ const FlashCardModal = ({
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

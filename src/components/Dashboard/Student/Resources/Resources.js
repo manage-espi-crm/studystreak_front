@@ -5,6 +5,7 @@ import Loading from "../../../UI/Loading";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const Resources = () => {
   const { packageCount } = useLocation().state || {};
@@ -48,7 +49,7 @@ const Resources = () => {
           setResourceList(data);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

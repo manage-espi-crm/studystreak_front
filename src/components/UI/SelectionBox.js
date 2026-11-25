@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import ajaxCall from "../../helpers/ajaxCall";
 import "react-select-search/style.css";
+import logger from "../../helpers/logger";
 
 // Box: min 45px high (grows when chips wrap), white, text 20px from the left
 const boxStyle = {
@@ -84,7 +85,7 @@ const SelectionBox = (props) => {
       props.isEdit
         ? props.isEditLoading
           ? data()
-          : console.log("no need")
+          : logger.log("no need")
         : data();
     }
   }, [props.url, props.isEditLoading, props.isEdit]);

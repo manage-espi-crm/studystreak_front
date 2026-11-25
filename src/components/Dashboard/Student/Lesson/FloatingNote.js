@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useReducer } from "react";
 import "../../../../css/custom.css";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import { toast } from "react-toastify";
+import logger from "../../../../helpers/logger";
 
 const initialNoteData = {
   note: "",
@@ -49,11 +50,9 @@ const FloatingNote = ({ setIsFloatingNotes, lessonId, lessonName }) => {
 
         if (response?.status === 200) {
           setNotes(response?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [lessonId, studentId]);

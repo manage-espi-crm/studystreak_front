@@ -6,6 +6,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import ajaxCall from "../../../helpers/ajaxCall";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import logger from "../../../helpers/logger";
 
 const intialFLTData = {
   name: "",
@@ -110,7 +111,7 @@ const FLT = ({ category, activeTab }) => {
             setExams(updatedExams);
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         } finally {
           setIsLoading(false);
         }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link2 } from "lucide-react";
 import ajaxCall from "../../../helpers/ajaxCall";
+import logger from "../../../helpers/logger";
 
 const CourseResourcesTab = ({ courseId }) => {
   const [resources, setResources] = useState([]);
@@ -27,7 +28,7 @@ const CourseResourcesTab = ({ courseId }) => {
           setResources(response?.data?.data || []);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [courseId]);

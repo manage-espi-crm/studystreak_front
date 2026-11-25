@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
 import { BookOpen, Globe, GraduationCap } from "lucide-react";
+import logger from "../../helpers/logger";
 
 const packagesDetails = [
   {
@@ -79,7 +80,7 @@ const TodayFreeClasses = () => {
         process.env.REACT_APP_EMAIL_JS_PUBLIC_KEY
       );
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -135,7 +136,7 @@ const TodayFreeClasses = () => {
         toast.error("Submission failed. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }

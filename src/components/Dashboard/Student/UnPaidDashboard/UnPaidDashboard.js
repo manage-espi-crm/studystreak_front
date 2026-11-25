@@ -13,6 +13,7 @@ import {
   Users,
   Videotape,
 } from "lucide-react";
+import logger from "../../../../helpers/logger";
 
 const tableData = [
   {
@@ -84,11 +85,9 @@ const UnPaidDashboard = () => {
             setClassData(
               Array.isArray(data) ? data : data?.results || []
             );
-          } else {
-            console.log("error");
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         }
       };
 

@@ -6,6 +6,7 @@ import { Spinner } from "react-bootstrap";
 import ajaxCall from "../../helpers/ajaxCall";
 import DisplayAudio from "../UI/DisplayAudio";
 import { OPENAI_MODEL } from "../../helpers/secureOpenAIService";
+import logger from "../../helpers/logger";
 
 const AudioRecorder = ({
   setRecordedFilePath,
@@ -66,7 +67,7 @@ const AudioRecorder = ({
         SpeechRecognition.startListening({ continuous: true });
       })
       .catch((error) => {
-        console.log("error", error);
+        logger.log("error", error);
       });
   };
 
@@ -82,7 +83,6 @@ const AudioRecorder = ({
   useEffect(() => {
     if (audioBlob) {
       if (!transcript || transcript.trim().length === 0) {
-        console.log("No Transcript Available. Skip ChatGPT Analysis.");
         return;
       }
       setIsSubmitting(true);
@@ -209,10 +209,10 @@ const AudioRecorder = ({
             bandValue = roundToNearestHalf(rawBandValue); // Round to nearest 0.5
           }
           
-          console.log("AudioRecorder - AI Assessment:", aiAssessment);
-          console.log("AudioRecorder - Band Match:", bandMatch);
-          console.log("AudioRecorder - Raw Band Value:", bandMatch ? parseFloat(bandMatch[1]) : 0);
-          console.log("AudioRecorder - Rounded Band Value:", bandValue);
+          logger.log("AudioRecorder - AI Assessment:", aiAssessment);
+          logger.log("AudioRecorder - Band Match:", bandMatch);
+          logger.log("AudioRecorder - Raw Band Value:", bandMatch ? parseFloat(bandMatch[1]) : 0);
+          logger.log("AudioRecorder - Rounded Band Value:", bandValue);
 
           // Convert aiAssessment to HTML format
           const assessment = aiAssessment
@@ -223,8 +223,8 @@ const AudioRecorder = ({
           formData.append("AI_Assessment", assessment);
           formData.append("band", bandValue);
           
-          console.log("AudioRecorder - FormData band:", formData.get("band"));
-          console.log("AudioRecorder - FormData AI_Assessment:", formData.get("AI_Assessment"));
+          logger.log("AudioRecorder - FormData band:", formData.get("band"));
+          logger.log("AudioRecorder - FormData AI_Assessment:", formData.get("AI_Assessment"));
 
           ajaxCall(
             "/speaking-answers/",
@@ -241,8 +241,8 @@ const AudioRecorder = ({
             8000
           )
             .then((response) => {
-              console.log("AudioRecorder - API Response Status:", response.status);
-              console.log("AudioRecorder - API Response Data:", response.data);
+              logger.log("AudioRecorder - API Response Status:", response.status);
+              logger.log("AudioRecorder - API Response Data:", response.data);
               if (response.status === 201) {
                 setRecordedFilePath({
                   recorderIndex,
@@ -250,17 +250,17 @@ const AudioRecorder = ({
                 });
                 setSubmitSuccess(true);
               } else {
-                console.log("error in submission response:", response);
+                logger.log("error in submission response:", response);
               }
             })
             .catch((error) => {
-              console.log("error submitting data:", error);
+              logger.log("error submitting data:", error);
             })
             .finally(() => {
               setIsSubmitting(false);
             });
         } catch (error) {
-          console.log("error occurred while fetching data from AI:", error);
+          logger.log("error occurred while fetching data from AI:", error);
           setIsSubmitting(false);
         }
       };

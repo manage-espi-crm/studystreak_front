@@ -11,6 +11,7 @@ import DateRange from "../../../UI/DateRangePicker";
 import StatusBox from "../Classes/StatusBox";
 import { filterByDateRange } from "../Classes/filterByDateRange";
 import BuyCourse from "../BuyCourse/BuyCourse";
+import logger from "../../../../helpers/logger";
 
 const RecordedClasses = () => {
   const { packageCount } = useLocation().state || {};
@@ -190,7 +191,7 @@ const RecordedClasses = () => {
         }
       } catch (error) {
         setError("Failed to load recorded classes. Please try again later.");
-        console.error("Error fetching recorded classes:", error);
+        logger.error("Error fetching recorded classes:", error);
       } finally {
         setIsLoading(false);
       }

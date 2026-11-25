@@ -4,6 +4,7 @@ import moment from "moment";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const UpcomingClass = ({ isLoading, classes, message }) => {
   const [currentTime, setCurrentTime] = useState(moment());
@@ -81,11 +82,9 @@ const UpcomingClass = ({ isLoading, classes, message }) => {
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -112,11 +111,9 @@ const UpcomingClass = ({ isLoading, classes, message }) => {
       );
       if (response.status === 200) {
         toast.success("Join Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

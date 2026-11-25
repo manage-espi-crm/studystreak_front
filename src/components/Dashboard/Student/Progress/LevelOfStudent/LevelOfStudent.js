@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import moment from "moment";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const LevelOfStudent = () => {
   const [testData, setTestData] = useState({
@@ -131,7 +132,7 @@ const LevelOfStudent = () => {
         }));
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   }, []);
 
@@ -161,7 +162,7 @@ const LevelOfStudent = () => {
           fetchFLTAnswer(response.data?.flt_id);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     };
 

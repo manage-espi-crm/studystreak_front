@@ -6,6 +6,7 @@ import ScoreCard from "../../../../Exam-Answer/ScoreCard/ScoreCard";
 import { getBackgroundColor } from "../../../../../utils/background/background";
 import WritingAnswerTable from "../../../../Exam-Answer/AnswerTable/WritingAnswerTable";
 import SpeakingAnswerTable from "../../../../Exam-Answer/AnswerTable/SpeakingAnswerTable";
+import logger from "../../../../../helpers/logger";
 
 const ViewPTAssessment = () => {
   const { examId, examType } = useParams();
@@ -53,11 +54,9 @@ const ViewPTAssessment = () => {
           setExamName(response?.data?.name);
           setBand(totalBand / studentAnswers?.length);
           setAssessment(response?.data?.student_answers);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examId, examType]);

@@ -7,6 +7,7 @@ import CancelIcon from "../../../UI/CancelIcon";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SmallModal from "../../../UI/Modal";
+import logger from "../../../../helpers/logger";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Profile = () => {
           setProfileData(response?.data);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +84,7 @@ const Profile = () => {
         );
       }
     } catch (error) {
-      console.log("error:", error);
+      logger.log("error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +131,7 @@ const Profile = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }

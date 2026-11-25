@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const FreeDiagnosticTest = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +34,7 @@ const FreeDiagnosticTest = () => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

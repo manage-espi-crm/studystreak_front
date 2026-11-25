@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const UpCommingRegularLiveClass = () => {
   const [upcomingClass, setUpcomingClass] = useState({});
@@ -30,24 +31,24 @@ const UpCommingRegularLiveClass = () => {
           8000
         );
         if (response?.status === 200) {
-          console.log("Regular Classes Data:", response?.data);
+          logger.log("Regular Classes Data:", response?.data);
           // Find the next upcoming class (where start_time is in the future - hasn't started yet)
           const upcomingClasses = response?.data
             ?.filter((cls) => moment(cls.start_time).isAfter(now))
             .sort((a, b) => moment(a.start_time).diff(moment(b.start_time)));
           
-          console.log("Upcoming Regular Classes:", upcomingClasses);
+          logger.log("Upcoming Regular Classes:", upcomingClasses);
           
           if (upcomingClasses && upcomingClasses.length > 0) {
             const nextClass = upcomingClasses[0];
-            console.log("Next Upcoming Regular Class:", nextClass);
+            logger.log("Next Upcoming Regular Class:", nextClass);
             setUpcomingClass(nextClass);
           }
         } else {
-          console.log("Regular Classes - Non-200 response:", response);
+          logger.log("Regular Classes - Non-200 response:", response);
         }
       } catch (error) {
-        console.error("Error fetching regular classes:", error);
+        logger.error("Error fetching regular classes:", error);
       }
     };
     fetchUpcomingClassData();

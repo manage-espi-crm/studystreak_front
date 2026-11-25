@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const LessonList = ({
   lessons,
@@ -36,7 +37,7 @@ const LessonList = ({
           setStudentLessons(response?.data);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     };
 

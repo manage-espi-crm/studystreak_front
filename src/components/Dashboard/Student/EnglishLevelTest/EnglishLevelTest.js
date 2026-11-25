@@ -5,6 +5,7 @@ import Loading from "../../../UI/Loading";
 import DSSidebar from "../DSSideBar/DSSideBar";
 import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const EnglishLevelTest = () => {
   const navigate = useNavigate();
@@ -40,11 +41,9 @@ const EnglishLevelTest = () => {
         );
         if (response.status === 200) {
           setGivenTest(response?.data?.student_flt);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, []);
@@ -75,7 +74,7 @@ const EnglishLevelTest = () => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

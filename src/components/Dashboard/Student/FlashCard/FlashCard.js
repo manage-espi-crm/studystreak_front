@@ -7,6 +7,7 @@ import FlashCardModal from "./FlashCardModal";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import BuyCourse from "../BuyCourse/BuyCourse";
+import logger from "../../../../helpers/logger";
 
 const FlashCard = () => {
   const { packageCount } = useLocation().state || {};
@@ -58,7 +59,7 @@ const FlashCard = () => {
           setIsFlipped(initialFlipState);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

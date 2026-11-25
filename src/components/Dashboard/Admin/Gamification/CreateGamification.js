@@ -6,6 +6,7 @@ import { Spinner } from "react-bootstrap";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
 import SelectSearch from "react-select-search";
+import logger from "../../../../helpers/logger";
 
 const initialGamificationData = {
   model: "Flash Card",
@@ -110,7 +111,7 @@ const CreateGamification = ({ setActiveTab }) => {
           setNoData(classData.length === 0);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

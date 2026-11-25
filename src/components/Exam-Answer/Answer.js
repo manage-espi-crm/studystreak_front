@@ -16,6 +16,7 @@ import ComparisonView from "../UI/ComparisonView";
 import "../UI/ComparisonModal.css";
 import "./Answer.css";
 import { Eye, BarChart3, X } from "lucide-react";
+import logger from "../../helpers/logger";
 
 const Answer = () => {
   const { examId } = useParams();
@@ -137,7 +138,7 @@ const Answer = () => {
       
       return questions;
     } catch (error) {
-      console.warn('Error extracting questions from HTML:', error);
+      logger.warn('Error extracting questions from HTML:', error);
       return [];
     }
   };
@@ -301,7 +302,7 @@ const Answer = () => {
           throw new Error(`Failed to load exam data: ${response.statusText || 'Unknown error'}`);
         }
       } catch (error) {
-        console.error("Exam data fetch error:", error);
+        logger.error("Exam data fetch error:", error);
         setError({
           type: 'api',
           message: error.message || 'Failed to load exam results',
@@ -341,10 +342,10 @@ const Answer = () => {
             question: data?.question_other,
           });
         } else {
-          console.warn("Failed to load exam paper data:", response.statusText);
+          logger.warn("Failed to load exam paper data:", response.statusText);
         }
       } catch (error) {
-        console.error("Exam paper fetch error:", error);
+        logger.error("Exam paper fetch error:", error);
         // Don't set main error state for exam paper as it's secondary data
       }
     };

@@ -7,6 +7,7 @@ import Loading from "../../../../UI/Loading";
 import ProfileSection from "./ProfileSection";
 import LeaderboardTable from "./LeaderboardTable";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 export const calculateTotals = (data) => {
   const totals = {
@@ -192,11 +193,9 @@ const PTEDashboard = () => {
         );
         if (response.status === 200) {
           setDashboardData(response.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

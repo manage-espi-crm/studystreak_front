@@ -5,6 +5,7 @@ import Loading from "../../../../../UI/Loading";
 import SmallModal from "../../../../../UI/Modal";
 import ajaxCall from "../../../../../../helpers/ajaxCall";
 import { formatTime } from "../../../../../../utils/timer/formateTime";
+import logger from "../../../../../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const instructions = {
@@ -100,11 +101,9 @@ const LivePTEListeningExam = () => {
             return 0;
           });
           setFullPaper(filteredData);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -448,12 +447,10 @@ const LivePTEListeningExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Exam Submitted Successfully");
-      } else {
-        console.log("error");
+        logger.log("Latest Exam Submitted Successfully");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -540,7 +537,7 @@ const LivePTEListeningExam = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

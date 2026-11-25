@@ -9,6 +9,7 @@ import Loading from "../../../UI/Loading";
 import DASideBar from "../DASideBar/DASideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SmallModal from "../../../UI/Modal";
+import logger from "../../../../helpers/logger";
 
 const Users = () => {
   const [userList, setUserList] = useState([]);
@@ -42,7 +43,7 @@ const Users = () => {
           setFilteredUserList(users);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

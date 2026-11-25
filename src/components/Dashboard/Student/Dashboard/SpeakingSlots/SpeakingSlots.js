@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const SpeakingSlots = () => {
   const [upcomingSSClass, setUpcomingSSClass] = useState({});
@@ -29,24 +30,24 @@ const SpeakingSlots = () => {
           8000
         );
         if (response?.status === 200) {
-          console.log("Speaking Classes Data:", response?.data);
+          logger.log("Speaking Classes Data:", response?.data);
           // Find the next upcoming class (where start_time is in the future - hasn't started yet)
           const upcomingClasses = response?.data
             ?.filter((cls) => moment(cls.start_time).isAfter(now))
             .sort((a, b) => moment(a.start_time).diff(moment(b.start_time)));
           
-          console.log("Upcoming Speaking Classes:", upcomingClasses);
+          logger.log("Upcoming Speaking Classes:", upcomingClasses);
           
           if (upcomingClasses && upcomingClasses.length > 0) {
             const nextClass = upcomingClasses[0];
-            console.log("Next Upcoming Speaking Class:", nextClass);
+            logger.log("Next Upcoming Speaking Class:", nextClass);
             setUpcomingSSClass(nextClass);
           }
         } else {
-          console.log("Speaking Classes - Non-200 response:", response);
+          logger.log("Speaking Classes - Non-200 response:", response);
         }
       } catch (error) {
-        console.error("Error fetching speaking classes:", error);
+        logger.error("Error fetching speaking classes:", error);
       }
     };
     fetchUpcomingSSData();

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import Loading from "../../../../UI/Loading";
 import Table from "../../../../UI/Table";
+import logger from "../../../../../helpers/logger";
 
 const FullLengthTestReport = ({ activeTab }) => {
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ const FullLengthTestReport = ({ activeTab }) => {
             setIsLoading(false);
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         }
       })();
     }

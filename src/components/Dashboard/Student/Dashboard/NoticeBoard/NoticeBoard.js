@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import { Box, List, ListItem, Typography } from "@mui/material";
+import logger from "../../../../../helpers/logger";
 
 const NoticeBoard = () => {
   const [notice, setNotice] = useState([]);
@@ -30,11 +31,9 @@ const NoticeBoard = () => {
             };
           });
           setNotice(noticeData);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

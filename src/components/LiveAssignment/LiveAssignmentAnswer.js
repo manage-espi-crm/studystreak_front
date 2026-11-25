@@ -5,6 +5,7 @@ import SkipIcon from "../UI/SkipIcon";
 import CheckIcon from "../UI/CheckIcon";
 import CancelIcon from "../UI/CancelIcon";
 import ScoreCard from "../Exam-Answer/ScoreCard/ScoreCard";
+import logger from "../../helpers/logger";
 
 const LiveAssignmentAnswer = () => {
   const { examId } = useParams();
@@ -47,11 +48,9 @@ const LiveAssignmentAnswer = () => {
             )
           );
           setExamType(response.data?.exam_type);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examId]);

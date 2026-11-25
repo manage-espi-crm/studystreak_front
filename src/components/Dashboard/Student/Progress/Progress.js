@@ -5,6 +5,7 @@ import listeningBandValues from "../../../../utils/bandValues/listeningBandValue
 import readingBandValues from "../../../../utils/bandValues/ReadingBandValues";
 import PointHistory from "../PointHistory/PointHistory";
 import LevelOfStudent from "./LevelOfStudent/LevelOfStudent";
+import logger from "../../../../helpers/logger";
 
 const Progress = () => {
   const [band, setBand] = useState(0);
@@ -168,11 +169,9 @@ const Progress = () => {
       );
       if (response.status === 200) {
         setData(response?.data);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -197,11 +196,9 @@ const Progress = () => {
           setExpectedScore(
             response?.data.find((item) => item.course_category === category)
           );
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [category]);
@@ -270,7 +267,7 @@ const Progress = () => {
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     };
 
@@ -496,11 +493,9 @@ const Progress = () => {
             bands.length > 0 ? (sum / bands.length).toFixed(1) : 0;
 
           setFltBand(averageBand);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     };
 
@@ -548,7 +543,7 @@ const Progress = () => {
             });
           }
         } catch (error) {
-          console.log("error:", error);
+          logger.log("error:", error);
         }
       })();
     }
@@ -606,7 +601,7 @@ const Progress = () => {
           });
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, []);

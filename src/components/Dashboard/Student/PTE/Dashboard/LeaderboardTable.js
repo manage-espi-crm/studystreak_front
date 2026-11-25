@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Trophy } from "lucide-react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const LeaderboardTable = () => {
   const studentID = JSON.parse(localStorage.getItem("StudentID"));
@@ -28,11 +29,9 @@ const LeaderboardTable = () => {
         );
         if (response.status === 200) {
           setTableData(response?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [courseID]);

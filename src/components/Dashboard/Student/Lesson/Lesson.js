@@ -6,6 +6,7 @@ import LessonList from "./LessonList";
 import LessonContent from "./LessonContent";
 import Loading from "../../../UI/Loading";
 import BuyCourse from "../BuyCourse/BuyCourse";
+import logger from "../../../../helpers/logger";
 
 const Lesson = () => {
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Lesson = () => {
           setCurrentLesson({});
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);
@@ -108,7 +109,7 @@ const Lesson = () => {
         }
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }

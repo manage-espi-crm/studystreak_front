@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const ViewFLT = ({ activeTab }) => {
   const [fltList, setFltList] = useState([]);
@@ -33,7 +34,7 @@ const ViewFLT = ({ activeTab }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

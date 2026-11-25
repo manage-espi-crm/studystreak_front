@@ -5,6 +5,7 @@ import RARecorder from "./RARecorder";
 import Loading from "../../../../../../UI/Loading";
 import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import { formatTime } from "../../../../../../../utils/timer/formateTime";
+import logger from "../../../../../../../helpers/logger";
 
 const initialState = {
   // 0 for incoming, 1 for instruction on screen, 2 for completed
@@ -98,12 +99,10 @@ const LivePTESpeakingRAExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Practice Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Practice Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -193,11 +192,9 @@ const LivePTESpeakingRAExam = () => {
               }))
           );
           setSpeaking(tempSpeakingQuestions.flat());
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

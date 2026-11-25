@@ -5,6 +5,7 @@
  */
 
 import ajaxCall from "./ajaxCall";
+import logger from "./logger";
 
 // OpenAI model used for all AI evaluation requests
 export const OPENAI_MODEL = "gpt-6-luna";
@@ -49,7 +50,7 @@ export const secureOpenAIChatCompletion = async (gptBody) => {
     return data;
 
   } catch (error) {
-    console.error("Secure OpenAI Error:", error);
+    logger.error("Secure OpenAI Error:", error);
     
     // User-friendly error messages
     if (error.message.includes("Authentication")) {

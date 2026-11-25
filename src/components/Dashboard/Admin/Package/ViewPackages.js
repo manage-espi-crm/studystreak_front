@@ -4,6 +4,7 @@ import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
+import logger from "../../../../helpers/logger";
 
 const columns = [
   {
@@ -120,7 +121,7 @@ const ViewPackages = ({ activeTab }) => {
             setPackageList(packageWithNumbers);
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         } finally {
           setIsLoading(false);
         }

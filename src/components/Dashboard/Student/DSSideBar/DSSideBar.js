@@ -24,6 +24,7 @@ import {
   WalletCards,
   BookMarked,
 } from "lucide-react";
+import logger from "../../../../helpers/logger";
 
 const DSSidebar = () => {
   const location = useLocation().pathname;
@@ -350,11 +351,9 @@ const DSSidebar = () => {
           localStorage.setItem("StudentID", data?.student_details?.student_id);
           localStorage.setItem("BatchIds", JSON.stringify(batchIds));
           localStorage.setItem("courses", JSON.stringify(courseIds));
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [givenFLTCount, givenPTCount]);

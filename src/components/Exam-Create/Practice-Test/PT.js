@@ -6,6 +6,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import ajaxCall from "../../../helpers/ajaxCall";
 import "ag-grid-community/styles/ag-theme-quartz.css";
+import logger from "../../../helpers/logger";
 
 const ieltsSubCategory = [
   { name: "Academic", value: "Academic" },
@@ -174,7 +175,7 @@ const PT = ({ category, type, activeTab }) => {
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -281,14 +282,14 @@ const PT = ({ category, type, activeTab }) => {
       const keyA = extractSortKey(nameA);
       const keyB = extractSortKey(nameB);
       
-      console.log(`🔀 Sorting: "${nameA}" (${keyA}) vs "${nameB}" (${keyB})`);
+      logger.log(`🔀 Sorting: "${nameA}" (${keyA}) vs "${nameB}" (${keyB})`);
       return keyA - keyB;
     });
     
     // Extract IDs from sorted nodes
     const selectedIds = sortedNodes.map((node) => node?.data?.id);
     
-    console.log('✅ Sections selected in sorted order:', sortedNodes.map((node, idx) => ({
+    logger.log('✅ Sections selected in sorted order:', sortedNodes.map((node, idx) => ({
       index: idx + 1,
       id: node?.data?.id,
       name: node?.data?.exam_name || node?.data?.name
