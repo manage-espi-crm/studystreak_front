@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const LeaderBoard = ({ studentID }) => {
   const courseID = JSON.parse(localStorage.getItem("course"))?.course_id;
@@ -24,11 +25,9 @@ const LeaderBoard = ({ studentID }) => {
         );
         if (response.status === 200) {
           setTableData(response?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [courseID]);

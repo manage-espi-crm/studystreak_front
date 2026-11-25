@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const examsCategory = [
   { name: "IELTS", value: "IELTS" },
@@ -63,7 +64,7 @@ const ViewMT = ({ activeTab }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

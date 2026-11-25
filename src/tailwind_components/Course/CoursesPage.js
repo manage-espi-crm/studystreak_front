@@ -9,6 +9,7 @@ import ajaxCall from "../../helpers/ajaxCall";
 import Loading from "../../components/UI/Loading";
 import TestimonialSection from "../Testimonial/Testimonial";
 import Faqs from "../StaticPackages/components/Faqs";
+import logger from "../../helpers/logger";
 
 const CoursesPage = () => {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ const CoursesPage = () => {
         toast.error("Submission failed. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +107,7 @@ const CoursesPage = () => {
           setCategory([{ id: 0, name: "All" }, ...arr]);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -137,7 +138,7 @@ const CoursesPage = () => {
           setWebinars(data);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -164,7 +165,7 @@ const CoursesPage = () => {
           setBlogs(response?.data.slice(0, 3));
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

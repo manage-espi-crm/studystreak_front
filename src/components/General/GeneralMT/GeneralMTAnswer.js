@@ -4,6 +4,7 @@ import ajaxCall from "../../../helpers/ajaxCall";
 import SkipIcon from "../../UI/SkipIcon";
 import CheckIcon from "../../UI/CheckIcon";
 import CancelIcon from "../../UI/CancelIcon";
+import logger from "../../../helpers/logger";
 
 const GeneralMTAnswer = () => {
   const { examId } = useParams();
@@ -44,11 +45,9 @@ const GeneralMTAnswer = () => {
               (a, b) => a.question_number - b.question_number
             )
           );
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examId]);

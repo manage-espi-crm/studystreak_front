@@ -3,6 +3,7 @@ import moment from "moment";
 import { Users, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const WEEKDAY_LABELS = {
   MON: "Mon",
@@ -66,11 +67,9 @@ const BatchSelection = ({
           ? response.data
           : response.data?.results || [];
         setBatches(list);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   }, [packageId]);
 

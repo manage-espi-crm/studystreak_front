@@ -6,6 +6,7 @@ import moment from "moment";
 import { IconButton } from "@mui/material";
 import logo from "../../img/logo/Logo.png";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
+import logger from "../../helpers/logger";
 
 const encrypt = (text, key) => {
   let result = "";
@@ -88,7 +89,7 @@ const NavBar = ({
       }
       return data;
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

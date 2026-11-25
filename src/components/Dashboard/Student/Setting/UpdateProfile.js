@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Country, State, City } from "country-state-city";
 import Tab from "../../../UI/Tab";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const tabs = [
   { name: "Personal Information" },
@@ -117,11 +118,9 @@ const UpdateProfile = () => {
       );
       if (response.status === 200) {
         setUserId(response?.data?.id);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -198,7 +197,7 @@ const UpdateProfile = () => {
         toast.error("Something went wrong. Please try again later.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -220,11 +219,9 @@ const UpdateProfile = () => {
       );
       if (response.status === 200) {
         setProfileData(response?.data);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   }, [userId]);
 
@@ -247,11 +244,9 @@ const UpdateProfile = () => {
         );
         if (response.status === 200) {
           setCountryInterests(response.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, []);

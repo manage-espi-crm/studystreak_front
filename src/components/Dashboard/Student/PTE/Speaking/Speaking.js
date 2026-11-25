@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../../../UI/Loading";
 import DSSidebar from "../../DSSideBar/DSSideBar";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const Speaking = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +49,7 @@ const Speaking = () => {
           });
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

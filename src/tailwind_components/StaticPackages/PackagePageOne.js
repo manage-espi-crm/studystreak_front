@@ -19,6 +19,7 @@ import ContactForm from "./components/ContactForm";
 import Testimonials from "../Testimonial/Testimonial";
 import FloatingCoupon from "./components/FloatingCoupon";
 import bannerImg from "../../img/herobanner/selfStudyMode.png";
+import logger from "../../helpers/logger";
 
 const FeatureCard = ({ icon, title, description }) => (
   <div className="bg-white rounded-xl shadow-soft p-6 hover:shadow-card-hover transition-shadow duration-300 h-full">
@@ -59,7 +60,7 @@ const PackagePageOne = () => {
           setPackageDetails({});
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

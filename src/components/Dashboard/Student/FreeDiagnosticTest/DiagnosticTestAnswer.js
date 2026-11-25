@@ -8,6 +8,7 @@ import SpeakingAnswerTable from "../../../Exam-Answer/AnswerTable/SpeakingAnswer
 import SkipIcon from "../../../UI/SkipIcon";
 import CheckIcon from "../../../UI/CheckIcon";
 import CancelIcon from "../../../UI/CancelIcon";
+import logger from "../../../../helpers/logger";
 
 const DiagnosticTestAnswer = () => {
   const { examId } = useParams();
@@ -201,11 +202,9 @@ const DiagnosticTestAnswer = () => {
               band: lCorrect,
             },
           }));
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     };
 

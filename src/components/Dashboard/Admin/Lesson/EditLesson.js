@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import SelectSearch from "react-select-search";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SingleSelection from "../../../UI/SingleSelect";
+import logger from "../../../../helpers/logger";
 
 const initialLessonData = {
   category: "",
@@ -64,7 +65,7 @@ const EditLesson = ({ lesson, onClose, setRefresh }) => {
           setOptions(result);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

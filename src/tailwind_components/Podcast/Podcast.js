@@ -20,6 +20,7 @@ import {
 import moment from "moment";
 import ajaxCall from "../../helpers/ajaxCall";
 import Loading from "../../components/UI/Loading";
+import logger from "../../helpers/logger";
 
 const categories = [
   { name: "All Episodes", icon: <Headphones size={16} /> },
@@ -230,7 +231,7 @@ const Podcast = () => {
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -314,7 +315,7 @@ const Podcast = () => {
       audioRef.current.load();
       audioRef.current
         .play()
-        .catch((e) => console.log("Auto-play prevented", e));
+        .catch((e) => logger.log("Auto-play prevented", e));
     }
   }, [currentEpisode, isPlaying]);
 

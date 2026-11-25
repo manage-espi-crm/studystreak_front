@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import { Clock, User } from "lucide-react";
 import { useParams } from "react-router-dom";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const BlogDetails = () => {
   const { slug } = useParams();
@@ -26,11 +27,9 @@ const BlogDetails = () => {
 
         if (response?.status === 200) {
           setBlog(response?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [slug]);

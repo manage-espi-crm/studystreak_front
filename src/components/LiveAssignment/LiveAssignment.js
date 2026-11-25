@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Loading from "../UI/Loading";
 import SmallModal from "../UI/Modal";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const LiveAssignment = () => {
@@ -44,11 +45,9 @@ const LiveAssignment = () => {
         );
         if (response.status === 200) {
           setExamData(response?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -146,7 +145,7 @@ const LiveAssignment = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

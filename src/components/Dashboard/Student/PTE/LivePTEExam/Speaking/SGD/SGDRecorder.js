@@ -6,6 +6,7 @@ import { ProgressBar, Spinner } from "react-bootstrap";
 import DisplayAudio from "../../../../../../UI/DisplayAudio";
 import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../../helpers/secureOpenAIService";
+import logger from "../../../../../../../helpers/logger";
 
 const SGDRecorder = ({
   setRecordedFilePath,
@@ -128,7 +129,7 @@ const SGDRecorder = ({
         }, 5000);
       })
       .catch((error) => {
-        console.log("error", error);
+        logger.log("error", error);
         setStatus("idle");
       });
   };
@@ -295,16 +296,16 @@ const SGDRecorder = ({
                   });
                   setStatus("completed");
                 } else {
-                  console.log("error in submission response:", response);
+                  logger.log("error in submission response:", response);
                   setStatus("completed");
                 }
               })
               .catch((error) => {
-                console.log("error submitting data:", error);
+                logger.log("error submitting data:", error);
                 setStatus("completed");
               });
           } catch (error) {
-            console.log("error occurred while fetching data from AI:", error);
+            logger.log("error occurred while fetching data from AI:", error);
             setStatus("completed");
           }
         };

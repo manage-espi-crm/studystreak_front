@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const RegularClassList = ({ isLoading, regularClass }) => {
   const studentId = JSON.parse(localStorage.getItem("StudentID"));
@@ -51,11 +52,9 @@ const RegularClassList = ({ isLoading, regularClass }) => {
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -82,11 +81,9 @@ const RegularClassList = ({ isLoading, regularClass }) => {
       );
       if (response.status === 200) {
         toast.success("Join Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

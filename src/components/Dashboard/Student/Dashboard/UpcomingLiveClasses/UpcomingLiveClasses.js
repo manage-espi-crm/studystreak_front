@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import { Link } from "react-router-dom";
+import logger from "../../../../../helpers/logger";
 
 const UpcomingLiveClasses = () => {
   const [upcomingClass, setUpcomingClass] = useState({});
@@ -28,13 +29,13 @@ const UpcomingLiveClasses = () => {
           8000
         );
         if (response?.status === 200) {
-          console.log("Upcoming Other Classes Data:", response?.data);
+          logger.log("Upcoming Other Classes Data:", response?.data);
           setUpcomingClass(response?.data);
         } else {
-          console.log("Upcoming Other Classes - Non-200 response:", response);
+          logger.log("Upcoming Other Classes - Non-200 response:", response);
         }
       } catch (error) {
-        console.error("Error fetching upcoming other classes:", error);
+        logger.error("Error fetching upcoming other classes:", error);
       }
     };
     fetchUpcomingClassData();

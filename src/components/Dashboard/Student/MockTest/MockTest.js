@@ -6,6 +6,7 @@ import DSSidebar from "../DSSideBar/DSSideBar";
 import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import MTAssessment from "../Assessment/MTAssessment/MTAssessment";
+import logger from "../../../../helpers/logger";
 
 const MockTest = () => {
   const { count } = useLocation().state || {};
@@ -95,11 +96,9 @@ const MockTest = () => {
             });
 
           setStudentCourses(courses);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);
@@ -126,7 +125,7 @@ const MockTest = () => {
           setGivenSpeakingTest(response?.data?.student_speakingblock);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [activeTab]);
@@ -198,7 +197,7 @@ const MockTest = () => {
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

@@ -4,6 +4,7 @@ import moment from "moment";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const specificColumns = {
   "Flash Card": [
@@ -179,7 +180,7 @@ const ViewGamification = ({ content, activeTab }) => {
           setter(data);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

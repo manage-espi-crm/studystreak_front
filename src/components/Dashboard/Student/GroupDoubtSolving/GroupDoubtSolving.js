@@ -5,6 +5,7 @@ import ClassList from "../Classes/ClassList";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import UpcomingClass from "../Classes/UpcomingClass";
 import { filterByDateRange } from "../Classes/filterByDateRange";
+import logger from "../../../../helpers/logger";
 
 const tabs = [{ name: "Upcoming" }, { name: "Available Slot" }];
 
@@ -51,7 +52,7 @@ const GroupDoubtSolving = ({
           setGroupDoubtSolvingClass(classes);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

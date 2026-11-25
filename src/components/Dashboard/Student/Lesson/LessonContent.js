@@ -9,6 +9,7 @@ import Assignment from "./Assignment";
 import Attachment from "./Attachment";
 import FloatingNote from "./FloatingNote";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const tabs = [{ name: "Assignment" }, { name: "Attachment" }, { name: "Quiz" }];
 
@@ -61,10 +62,10 @@ const LessonContent = ({ activeLesson, setLessonStatus, onLessonComplete }) => {
       );
 
       if (response.status !== 200 && response.status !== 201) {
-        console.log("error updating watchedTime:", response);
+        logger.log("error updating watchedTime:", response);
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -103,11 +104,9 @@ const LessonContent = ({ activeLesson, setLessonStatus, onLessonComplete }) => {
         }
         await gamificationSubmit(activeLesson?.id);
         toast.success("Lesson Completed Successfully!");
-      } else {
-        console.log("Failed to complete lesson");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
       completionAttempted.current = false;
     }
   };
@@ -137,7 +136,7 @@ const LessonContent = ({ activeLesson, setLessonStatus, onLessonComplete }) => {
         toast.success("Points Updated Successfully");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

@@ -23,6 +23,7 @@ import {
   ReorderParagraph,
 } from "../../utils/HTMLContent";
 import MultipleChoicesAnswer from "../../utils/HTMLContent/MultipleChoicesAnswer";
+import logger from "../../helpers/logger";
 
 const Cheerio = require("cheerio");
 
@@ -72,7 +73,7 @@ const DragDrop = () => {
           // Do something with audioSource, for example, set it in state
           setAudioLink(audioSource);
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         }
       }
     };

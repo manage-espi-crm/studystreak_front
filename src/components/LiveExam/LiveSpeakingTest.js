@@ -7,6 +7,7 @@ import ajaxCall from "../../helpers/ajaxCall";
 import { formatTime } from "../../utils/timer/formateTime";
 import AudioRecorder from "../Exam-Create/AudioRecorder";
 import SpeakingMTInstruction from "../Instruction/MiniTestInstruction/SpeakingMTInstruction";
+import logger from "../../helpers/logger";
 
 const initialSpeakingSingleQuestionState = {
   // 0 for incoming, 1 for instruction on screen, 2 for completed
@@ -71,7 +72,7 @@ const LiveSpeakingExam = () => {
         setTimerRunning(false);
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -133,7 +134,7 @@ const LiveSpeakingExam = () => {
           setSpeaking(tempSpeakingQuestions);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examId]);

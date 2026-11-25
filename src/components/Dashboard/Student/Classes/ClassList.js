@@ -4,6 +4,7 @@ import moment from "moment";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const ClassList = ({ count, classes, isLoading, message, classType }) => {
   const [isBooking, setIsBooking] = useState(false);
@@ -29,11 +30,9 @@ const ClassList = ({ count, classes, isLoading, message, classType }) => {
       );
       if (response.status === 200) {
         setBookedCount(response?.data?.live_class_id?.length);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error:", error);
+      logger.log("error:", error);
     }
   }, [classType, studentId]);
 
@@ -70,7 +69,7 @@ const ClassList = ({ count, classes, isLoading, message, classType }) => {
         toast.error(response?.data?.message);
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsBooking(false);
       setBookingSlotId(null);
@@ -110,7 +109,7 @@ const ClassList = ({ count, classes, isLoading, message, classType }) => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsBooking(false);
       setBookingSlotId(null);

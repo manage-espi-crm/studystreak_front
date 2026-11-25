@@ -5,6 +5,7 @@ import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import Table from "../../../UI/Table";
 import SmallModal from "../../../UI/Modal";
+import logger from "../../../../helpers/logger";
 
 const liveClass = [
   { name: "Regular Class", value: "Regular Class" },
@@ -156,7 +157,7 @@ const TutorLiveClass = ({ activeTab }) => {
           setLiveClassList([]);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

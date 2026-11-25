@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import Table from "../../../../UI/Table";
 import BuyCourse from "../../BuyCourse/BuyCourse";
+import logger from "../../../../../helpers/logger";
 
 const Material = ({ courseId }) => {
   const [hasAccess, setHasAccess] = useState(true);
@@ -35,11 +36,9 @@ const Material = ({ courseId }) => {
         if (response.status === 200) {
           setHasAccess(response?.data?.has_access !== false);
           setCourseMaterial(response?.data?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       }
     })();
   }, [courseId]);

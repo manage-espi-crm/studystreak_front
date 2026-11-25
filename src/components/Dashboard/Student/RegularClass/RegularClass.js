@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import RegularClassList from "./RegularClassList";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import { filterByDateRange } from "../Classes/filterByDateRange";
+import logger from "../../../../helpers/logger";
 
 const RegularClass = ({ selectedDate, onDataFetch }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,7 +34,7 @@ const RegularClass = ({ selectedDate, onDataFetch }) => {
           setRegularClass(classes);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

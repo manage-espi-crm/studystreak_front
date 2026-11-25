@@ -8,6 +8,7 @@ import Loading from "../../../UI/Loading";
 import DASideBar from "../DASideBar/DASideBar";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import SmallModal from "../../../UI/Modal";
+import logger from "../../../../helpers/logger";
 
 const WEEKDAY_LABELS = {
   MON: "Mon",
@@ -63,7 +64,7 @@ const Student = () => {
       setBatchDetails(validBatchDetails);
       setOpenBatch(true);
     } catch (error) {
-      console.log("Error fetching batch details:", error);
+      logger.log("Error fetching batch details:", error);
     } finally {
       setIsLoading(false);
     }
@@ -95,7 +96,7 @@ const Student = () => {
       setPackageDeails(validPackageDetails);
       setOpenPackages(true);
     } catch (error) {
-      console.log("Error fetching package details:", error);
+      logger.log("Error fetching package details:", error);
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +126,7 @@ const Student = () => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

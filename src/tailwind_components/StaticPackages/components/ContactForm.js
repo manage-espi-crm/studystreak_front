@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Send, X } from "lucide-react";
+import logger from "../../../helpers/logger";
 
 const purposes = [
   "General Inquiry",
@@ -139,7 +140,7 @@ const ContactForm = ({ isOpen, onClose }) => {
       sessionStorage.setItem("formSubmitted", "true");
       navigate("/thank-you", { replace: true });
     } catch (error) {
-      console.error("Submission error:", error);
+      logger.error("Submission error:", error);
       toast.error(
         "Failed to send message. Please try again later or contact us directly."
       );

@@ -19,6 +19,7 @@ import {
   Award, TrendingUp, CheckCircle, XCircle, MinusCircle,
   Play, FileText, Calendar, Clock
 } from "lucide-react";
+import logger from "../../../helpers/logger";
 
 const FullLengthTestAnswer = () => {
   const { examId } = useParams();
@@ -115,8 +116,8 @@ const FullLengthTestAnswer = () => {
   };
 
   const handleViewSectionExam = (section) => {
-    console.log('📂 Opening View Exam modal for section:', section);
-    console.log('📊 Section data:', {
+    logger.log('📂 Opening View Exam modal for section:', section);
+    logger.log('📊 Section data:', {
       section,
       questionsCount: examData[section]?.questions?.length || 0,
       questions: examData[section]?.questions
@@ -509,7 +510,7 @@ const FullLengthTestAnswer = () => {
           
           // Extract reading exam questions
           if (reading_set?.Reading && Array.isArray(reading_set.Reading)) {
-            console.log('🔍 Reading set data:', reading_set.Reading);
+            logger.log('🔍 Reading set data:', reading_set.Reading);
             // Sort by exam_name using natural string comparison for correct order
             const sortedReadingSet = [...reading_set.Reading].sort((a, b) => {
               const nameA = a.exam_name || '';
@@ -517,7 +518,7 @@ const FullLengthTestAnswer = () => {
               return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
             });
             readingQuestions = sortedReadingSet.map((exam, index) => {
-              console.log(`📖 Reading Section ${index + 1}:`, {
+              logger.log(`📖 Reading Section ${index + 1}:`, {
                 id: exam?.id,
                 name: exam?.exam_name,
                 sectionNumber: exam?.section_number,
@@ -538,7 +539,7 @@ const FullLengthTestAnswer = () => {
                 order: exam?.order || index
               };
             });
-            console.log('✅ Total reading sections:', readingQuestions.length);
+            logger.log('✅ Total reading sections:', readingQuestions.length);
           }
           
           // Process Listening data
@@ -583,7 +584,7 @@ const FullLengthTestAnswer = () => {
           
           // Extract listening exam questions
           if (listening_set?.Listening && Array.isArray(listening_set.Listening)) {
-            console.log('🔍 Listening set data:', listening_set.Listening);
+            logger.log('🔍 Listening set data:', listening_set.Listening);
             // Sort by exam_name using natural string comparison for correct order
             const sortedListeningSet = [...listening_set.Listening].sort((a, b) => {
               const nameA = a.exam_name || '';
@@ -591,7 +592,7 @@ const FullLengthTestAnswer = () => {
               return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
             });
             listeningQuestions = sortedListeningSet.map((exam, index) => {
-              console.log(`🎧 Listening Section ${index + 1}:`, {
+              logger.log(`🎧 Listening Section ${index + 1}:`, {
                 id: exam?.id,
                 name: exam?.exam_name,
                 sectionNumber: exam?.section_number,
@@ -613,7 +614,7 @@ const FullLengthTestAnswer = () => {
                 order: exam?.order || index
               };
             });
-            console.log('✅ Total listening sections:', listeningQuestions.length);
+            logger.log('✅ Total listening sections:', listeningQuestions.length);
           }
           
           // Calculate Reading stats
@@ -725,7 +726,7 @@ const FullLengthTestAnswer = () => {
           throw new Error(`Failed to load exam data: ${response.statusText || 'Unknown error'}`);
         }
       } catch (error) {
-        console.error("Full length test data fetch error:", error);
+        logger.error("Full length test data fetch error:", error);
         setError({
           type: 'api',
           message: error.message || 'Failed to load full length test results',

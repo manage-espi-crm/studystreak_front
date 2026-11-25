@@ -6,6 +6,7 @@ import Loading from "../../UI/Loading";
 import SmallModal from "../../UI/Modal";
 import ajaxCall from "../../../helpers/ajaxCall";
 import DisplayLeftContainer from "../../UI/DisplayPassage";
+import logger from "../../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const GeneralMTExam = () => {
@@ -57,11 +58,9 @@ const GeneralMTExam = () => {
         );
         if (response.status === 200) {
           setExamData(response?.data);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -89,12 +88,10 @@ const GeneralMTExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -120,11 +117,9 @@ const GeneralMTExam = () => {
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully 🚀 !!");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -223,7 +218,7 @@ const GeneralMTExam = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

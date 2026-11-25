@@ -12,6 +12,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const PopularPackages = () => {
   const navigate = useNavigate();
@@ -66,7 +67,7 @@ const PopularPackages = () => {
         
         setPackages([packages30, customPackage]);
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

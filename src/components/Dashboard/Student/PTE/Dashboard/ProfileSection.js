@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { UserCircle, Edit2, Star, Clock, Award } from "lucide-react";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import { useNavigate } from "react-router-dom";
+import logger from "../../../../../helpers/logger";
 
 const ProfileSection = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const ProfileSection = () => {
           setProfileData(response?.data);
         }
       } catch (error) {
-        console.log("error:", error);
+        logger.log("error:", error);
       } finally {
         setIsLoading(false);
       }

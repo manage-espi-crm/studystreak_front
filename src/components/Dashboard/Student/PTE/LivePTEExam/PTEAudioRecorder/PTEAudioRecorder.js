@@ -5,6 +5,7 @@ import SpeechRecognition, {
 import DisplayAudio from "../../../../../UI/DisplayAudio";
 import ajaxCall from "../../../../../../helpers/ajaxCall";
 import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../helpers/secureOpenAIService";
+import logger from "../../../../../../helpers/logger";
 
 const PTEAudioRecorder = ({
   next,
@@ -109,7 +110,7 @@ const PTEAudioRecorder = ({
         }, 1000);
       })
       .catch((error) => {
-        console.log("error", error);
+        logger.log("error", error);
       });
   };
 
@@ -244,14 +245,14 @@ const PTEAudioRecorder = ({
                   filePath: response?.data?.answer_audio,
                 });
               } else {
-                console.log("error in submission response:", response);
+                logger.log("error in submission response:", response);
               }
             })
             .catch((error) => {
-              console.log("error submitting data:", error);
+              logger.log("error submitting data:", error);
             });
         } catch (error) {
-          console.log("error occurred while fetching data from AI:", error);
+          logger.log("error occurred while fetching data from AI:", error);
         }
       };
       getChatGPTResponse();

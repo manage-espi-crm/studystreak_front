@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ajaxCall from "../../../helpers/ajaxCall";
+import logger from "../../../helpers/logger";
 
 const WritingAnswerTable = ({ data }) => {
   const [blockDataMap, setBlockDataMap] = useState({});
@@ -33,7 +34,7 @@ const WritingAnswerTable = ({ data }) => {
             return { blockId, data: response.data };
           }
         } catch (error) {
-          console.error(`Error fetching block ${blockId}:`, error);
+          logger.error(`Error fetching block ${blockId}:`, error);
         }
         return { blockId, data: null };
       });

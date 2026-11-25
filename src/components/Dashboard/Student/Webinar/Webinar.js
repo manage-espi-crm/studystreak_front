@@ -4,6 +4,7 @@ import ClassList from "../Classes/ClassList";
 import Tab from "../../../UI/Tab";
 import { filterByDateRange } from "../Classes/filterByDateRange";
 import UpcomingClass from "../Classes/UpcomingClass";
+import logger from "../../../../helpers/logger";
 
 const tabs = [{ name: "Upcoming" }, { name: "Webinar" }];
 
@@ -42,7 +43,7 @@ const Webinar = ({ count, solvingClassBook, selectedDate, onDataFetch }) => {
           setWebinar(classes);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

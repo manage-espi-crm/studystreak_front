@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Clock, Users, BookOpen } from "lucide-react";
 import ajaxCall from "../../helpers/ajaxCall";
 import Loading from "../../components/UI/Loading";
+import logger from "../../helpers/logger";
 
 const COURSE_DELIVERY_TAGS = {
   TAUGHT: {
@@ -46,7 +47,7 @@ const CourseList = ({ selectedCategory = "", searchTerm = "" }) => {
           setCouresList(list.filter(({ course_type }) => course_type === "PUBLIC"));
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

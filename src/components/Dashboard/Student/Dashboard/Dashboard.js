@@ -31,6 +31,7 @@ import {
   BookMarked,
 } from "lucide-react";
 import TidioChat from "../../../../tailwind_components/ChatBot/TidioChat";
+import logger from "../../../../helpers/logger";
 
 const Dashboard = () => {
   const [count, setCount] = useState({
@@ -267,11 +268,9 @@ const Dashboard = () => {
       );
       if (response?.status === 200) {
         dataes(response?.data);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -345,11 +344,9 @@ const Dashboard = () => {
           );
           setStudentCourses(courses_list);
           handleCourseSelection(courses_list);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsCoursesLoading(false);
       }

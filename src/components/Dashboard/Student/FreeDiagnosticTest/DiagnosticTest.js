@@ -18,6 +18,7 @@ import ReadingDTI from "../../../Instruction/DiagnosticTestInstruction/ReadingDT
 import WritingDTI from "../../../Instruction/DiagnosticTestInstruction/WritingDTI";
 import SpeakingDTI from "../../../Instruction/DiagnosticTestInstruction/SpeakingDTI";
 import ListeningDTI from "../../../Instruction/DiagnosticTestInstruction/ListeningDTI";
+import logger from "../../../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const intialInstructionState = {
@@ -60,7 +61,7 @@ const DisplayLeftContainer = ({ next, passage, image }) => {
           },
         ]);
       } catch (e) {
-        console.log("Cannot highlight across multiple nodes");
+        logger.log("Cannot highlight across multiple nodes");
       }
 
       // Clear the selection
@@ -262,7 +263,7 @@ const DiagnosticTest = () => {
           setFullLengthId(filteredData.id);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -317,12 +318,10 @@ const DiagnosticTest = () => {
             );
 
             setCorrectAnswers([...correctAnswers, ...tempCorrectAnswers]);
-          } else {
-            console.log("error");
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examData]);
@@ -704,12 +703,10 @@ const DiagnosticTest = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Diagnostic Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Diagnostic Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -934,7 +931,7 @@ const DiagnosticTest = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

@@ -5,6 +5,7 @@ import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import SmallModal from "../../../UI/Modal";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const ViewPodcast = ({ activeTab }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -93,7 +94,7 @@ const ViewPodcast = ({ activeTab }) => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

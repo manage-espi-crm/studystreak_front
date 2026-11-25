@@ -6,6 +6,7 @@ import Table from "../../../UI/Table";
 import SmallModal from "../../../UI/Modal";
 import EditLesson from "./EditLesson";
 import SingleSelection from "../../../UI/SingleSelect";
+import logger from "../../../../helpers/logger";
 
 const ViewLesson = ({ activeTab }) => {
   const [refresh, setRefresh] = useState(false);
@@ -67,7 +68,7 @@ const ViewLesson = ({ activeTab }) => {
 
           setLessonList(lessons);
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         } finally {
           setIsLoading(false);
         }

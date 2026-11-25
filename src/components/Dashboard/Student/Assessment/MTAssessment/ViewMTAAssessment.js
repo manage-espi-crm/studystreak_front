@@ -4,6 +4,7 @@ import SmallModal from "../../../../UI/Modal";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import ScoreCard from "../../../../Exam-Answer/ScoreCard/ScoreCard";
 import { getBackgroundColor } from "../../../../../utils/background/background";
+import logger from "../../../../../helpers/logger";
 
 const ViewMTAAssessment = () => {
   const { examId, examType } = useParams();
@@ -35,17 +36,15 @@ const ViewMTAAssessment = () => {
         8000
       );
       if (response.status === 200) {
-        console.log("ViewMTAAssessment - API Response:", response?.data);
-        console.log("ViewMTAAssessment - Exam Type:", examType);
+        logger.log("ViewMTAAssessment - API Response:", response?.data);
+        logger.log("ViewMTAAssessment - Exam Type:", examType);
         setExamData(response?.data);
         const calculatedBand = calculateBand(response?.data, examType);
-        console.log("ViewMTAAssessment - Calculated Band:", calculatedBand);
+        logger.log("ViewMTAAssessment - Calculated Band:", calculatedBand);
         setBand(calculatedBand);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   }, [examId, examType]);
 
@@ -54,30 +53,29 @@ const ViewMTAAssessment = () => {
   }, [examId, examType, fetchExamData]);
 
   const calculateBand = (data, type) => {
-    console.log("calculateBand - Input Data:", data);
-    console.log("calculateBand - Type:", type);
+    logger.log("calculateBand - Input Data:", data);
+    logger.log("calculateBand - Type:", type);
     
     if (type === "Writing") return data.band;
     
-    console.log("calculateBand - Student Answers:", data.student_answers);
+    logger.log("calculateBand - Student Answers:", data.student_answers);
     
     if (!data.student_answers || data.student_answers.length === 0) {
-      console.log("calculateBand - No student answers found");
       return 0;
     }
     
     const totalBand = data.student_answers?.reduce(
       (sum, item) => {
-        console.log("calculateBand - Item:", item);
-        console.log("calculateBand - Item Band:", item.band);
+        logger.log("calculateBand - Item:", item);
+        logger.log("calculateBand - Item Band:", item.band);
         return sum + (parseFloat(item.band) || 0);
       },
       0
     );
     
     const averageBand = (totalBand / data.student_answers?.length).toFixed(1);
-    console.log("calculateBand - Total Band:", totalBand);
-    console.log("calculateBand - Average Band:", averageBand);
+    logger.log("calculateBand - Total Band:", totalBand);
+    logger.log("calculateBand - Average Band:", averageBand);
     
     return averageBand;
   };

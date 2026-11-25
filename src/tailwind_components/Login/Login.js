@@ -15,6 +15,7 @@ import { authAction } from "../../store/authStore";
 import { GoogleLogin } from "@react-oauth/google";
 import { setToLocalStorage } from "../../helpers/helperFunction";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const initialLoginData = {
   username: "",
@@ -168,7 +169,7 @@ const Login = () => {
       const signal = controller.current.signal;
 
       const gotLate = setTimeout(() => {
-        console.log("------->");
+        logger.log("------->");
       }, 4000);
 
       const timeOutFunction = () => {

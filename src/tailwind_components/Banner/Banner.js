@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ajaxCall from "../../helpers/ajaxCall";
 import fullBanner from "../../img/herobanner/FView.png";
 import mobileBanner from "../../img/herobanner/MView.jpeg";
+import logger from "../../helpers/logger";
 
 const Banner = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Banner = () => {
           setCategory(arr);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
 

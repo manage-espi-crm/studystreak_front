@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ajaxCall from "../../../helpers/ajaxCall";
 import SmallModal from "../../UI/Modal";
 import Loading from "../../UI/Loading";
+import logger from "../../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const DisplayLeftContainer = ({ next, passage, image }) => {
@@ -36,7 +37,7 @@ const DisplayLeftContainer = ({ next, passage, image }) => {
           },
         ]);
       } catch (e) {
-        console.log("Cannot highlight across multiple nodes");
+        logger.log("Cannot highlight across multiple nodes");
       }
 
       // Clear the selection
@@ -172,11 +173,9 @@ const GeneralPTExam = () => {
             return 0;
           });
           setFullPaper(filteredData);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -474,11 +473,9 @@ const GeneralPTExam = () => {
               );
             }
             setCorrectAnswer(correctAnswer);
-          } else {
-            console.log("error");
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         }
       }
     })();
@@ -505,12 +502,10 @@ const GeneralPTExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Practice Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Practice Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -537,11 +532,9 @@ const GeneralPTExam = () => {
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -645,7 +638,7 @@ const GeneralPTExam = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

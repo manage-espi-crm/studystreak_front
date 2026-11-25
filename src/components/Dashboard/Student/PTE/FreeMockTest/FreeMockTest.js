@@ -3,6 +3,7 @@ import Table from "../../../../UI/Table";
 import Loading from "../../../../UI/Loading";
 import DSSidebar from "../../DSSideBar/DSSideBar";
 import ajaxCall from "../../../../../helpers/ajaxCall";
+import logger from "../../../../../helpers/logger";
 
 const FreeMockTest = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -44,7 +45,7 @@ const FreeMockTest = () => {
           );
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

@@ -20,6 +20,7 @@ import SpeakingInstruction from "../Instruction/SpeakingInstruction";
 import ListeningInstruction from "../Instruction/ListeningInstruction";
 import readingBandValues from "../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../utils/bandValues/listeningBandValues";
+import logger from "../../helpers/logger";
 const Cheerio = require("cheerio");
 
 const intialInstructionState = {
@@ -62,7 +63,7 @@ const DisplayLeftContainer = ({ next, passage, image }) => {
           },
         ]);
       } catch (e) {
-        console.log("Cannot highlight across multiple nodes");
+        logger.log("Cannot highlight across multiple nodes");
       }
 
       // Clear the selection
@@ -303,7 +304,7 @@ const FullLengthLiveExam = () => {
           setFullLengthId(filteredData.id);
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -358,12 +359,10 @@ const FullLengthLiveExam = () => {
             );
 
             setCorrectAnswers([...correctAnswers, ...tempCorrectAnswers]);
-          } else {
-            console.log("error");
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [examData]);
@@ -745,12 +744,10 @@ const FullLengthLiveExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Full Length Exam Submitted");
-      } else {
-        console.log("error");
+        logger.log("Latest Full Length Exam Submitted");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -777,11 +774,9 @@ const FullLengthLiveExam = () => {
       );
       if (response.status === 201) {
         toast.success("Points Updated Successfully");
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -1013,7 +1008,7 @@ const FullLengthLiveExam = () => {
       }
     } catch (error) {
       setIsSubmitting(false);
-      console.log("error", error);
+      logger.log("error", error);
       toast.error("Some Problem Occurred. Please try again.");
     }
   };

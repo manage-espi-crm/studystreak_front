@@ -8,6 +8,7 @@ import DSSidebar from "../DSSideBar/DSSideBar";
 import BuyCourse from "../BuyCourse/BuyCourse";
 import ajaxCall from "../../../../helpers/ajaxCall";
 import { openLoaderTab } from "../../../../helpers/tcy";
+import logger from "../../../../helpers/logger";
 
 const MyCourse = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const MyCourse = () => {
         );
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +87,7 @@ const MyCourse = () => {
         setExpiryDate(response.data);
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   }, []);
 

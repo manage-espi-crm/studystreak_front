@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import ajaxCall from "../../../../../helpers/ajaxCall";
 import readingBandValues from "../../../../../utils/bandValues/ReadingBandValues";
 import listeningBandValues from "../../../../../utils/bandValues/listeningBandValues";
+import logger from "../../../../../helpers/logger";
 
 const ScoreCard = ({ course }) => {
   const navigate = useNavigate();
@@ -30,11 +31,9 @@ const ScoreCard = ({ course }) => {
       );
       if (response.status === 200) {
         setData(response?.data);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -97,7 +96,7 @@ const ScoreCard = ({ course }) => {
           }
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     };
 
@@ -324,11 +323,9 @@ const ScoreCard = ({ course }) => {
               bands.length > 0 ? (sum / bands.length).toFixed(1) : 0;
 
             setFltBand(averageBand);
-          } else {
-            console.log("error");
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         }
       };
 

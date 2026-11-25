@@ -13,6 +13,7 @@ import Counselling from "../Counselling/Counselling";
 import moment from "moment";
 import StatusBox from "../Classes/StatusBox";
 import BuyCourse from "../BuyCourse/BuyCourse";
+import logger from "../../../../helpers/logger";
 
 const LiveClass = () => {
   const location = useLocation();
@@ -160,11 +161,9 @@ const LiveClass = () => {
 
           setCount(counts);
           setSolvingClassBook(data?.student_details?.Live_class_enroll);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

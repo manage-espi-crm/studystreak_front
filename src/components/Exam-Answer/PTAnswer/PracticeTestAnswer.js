@@ -19,6 +19,7 @@ import ExportFeatures from "../../UI/ExportFeatures";
 import ComparisonView from "../../UI/ComparisonView";
 import "../../UI/ComparisonModal.css";
 import { Eye, BarChart3, X } from "lucide-react";
+import logger from "../../../helpers/logger";
 
 const PracticeTestAnswer = () => {
   const { examId, examType } = useParams();
@@ -65,7 +66,7 @@ const PracticeTestAnswer = () => {
       tempDiv.innerHTML = questionHTML;
       
       // Log the original HTML structure
-      console.log('📝 Processing questions for block:', {
+      logger.log('📝 Processing questions for block:', {
         blockName: blockInfo.blockName,
         questionRange: `${blockInfo.studentAnswers?.[0]?.question_number || 1} - ${blockInfo.studentAnswers?.[blockInfo.studentAnswers?.length - 1]?.question_number || blockInfo.stats?.total}`,
         htmlLength: questionHTML.length
@@ -74,7 +75,7 @@ const PracticeTestAnswer = () => {
       // Return the original HTML for now - the backend should ideally return only the relevant questions
       return questionHTML;
     } catch (error) {
-      console.error('Error processing questions:', error);
+      logger.error('Error processing questions:', error);
       return questionHTML;
     }
   };
@@ -154,7 +155,7 @@ const PracticeTestAnswer = () => {
       
       return questions;
     } catch (error) {
-      console.warn('Error extracting questions from HTML:', error);
+      logger.warn('Error extracting questions from HTML:', error);
       return [];
     }
   };
@@ -353,7 +354,7 @@ const PracticeTestAnswer = () => {
             // Round to nearest 0.5 for IELTS band score
             const roundedBand = Math.round(avgBand * 2) / 2;
             
-            console.log('Writing Band Calculation:', {
+            logger.log('Writing Band Calculation:', {
               totalAnswers: studentAnswers.length,
               bandsWithSources,
               validBands,
@@ -431,7 +432,7 @@ const PracticeTestAnswer = () => {
                 return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
               });
             } catch (err) {
-              console.warn('Failed to fetch block details for ordering:', err);
+              logger.warn('Failed to fetch block details for ordering:', err);
             }
           }
 
@@ -480,7 +481,7 @@ const PracticeTestAnswer = () => {
             totalSkipped += skipped;
 
             const blockName = correctBlock.sectionName || `Section ${index + 1}`;
-            console.log(`📦 Creating block ${index + 1}:`, {
+            logger.log(`📦 Creating block ${index + 1}:`, {
               blockId: correctBlock.block_id,
               blockName: blockName,
               sectionName: correctBlock.sectionName,
@@ -506,7 +507,7 @@ const PracticeTestAnswer = () => {
           });
 
           setBlocksData(blocks);
-          console.log('📚 Blocks data loaded in correct order:', blocks.map(b => ({
+          logger.log('📚 Blocks data loaded in correct order:', blocks.map(b => ({
             blockId: b.blockId,
             blockName: b.blockName,
             totalQuestions: b.stats.total
@@ -542,7 +543,7 @@ const PracticeTestAnswer = () => {
           throw new Error(`Failed to load practice test data: ${response.statusText || 'Unknown error'}`);
         }
       } catch (error) {
-        console.error("Practice test data fetch error:", error);
+        logger.error("Practice test data fetch error:", error);
         setError({
           type: 'api',
           message: error.message || 'Failed to load practice test results',
@@ -560,12 +561,12 @@ const PracticeTestAnswer = () => {
 
   const fetchExamPaper = async (blockId) => {
     try {
-      console.log('📂 Fetching exam paper for block:', blockId);
+      logger.log('📂 Fetching exam paper for block:', blockId);
       
       // Check if we have the section mapped
       const mappedSection = blockToSectionMap[blockId];
       if (mappedSection) {
-        console.log('✅ Using mapped section data:', {
+        logger.log('✅ Using mapped section data:', {
           blockId,
           sectionId: mappedSection.id,
           sectionName: mappedSection.exam_name,
@@ -601,7 +602,7 @@ const PracticeTestAnswer = () => {
         8000
       );
       if (response.status === 200) {
-        console.log('✅ Exam paper data received from API:', {
+        logger.log('✅ Exam paper data received from API:', {
           blockId,
           hasPassage: !!response.data?.passage,
           hasQuestion: !!response.data?.question_other,
@@ -610,17 +611,17 @@ const PracticeTestAnswer = () => {
           questionLength: response.data?.question_other?.length || 0,
           dataKeys: Object.keys(response.data || {})
         });
-        console.log('📄 Full exam paper data:', response.data);
+        logger.log('📄 Full exam paper data:', response.data);
         setExamPaperData(response.data);
       }
     } catch (error) {
-      console.error("❌ Error fetching exam paper:", error);
+      logger.error("❌ Error fetching exam paper:", error);
     }
   };
 
   const handleBlockSelect = async (blockId) => {
     const selectedBlock = blocksData.find(b => b.blockId === blockId);
-    console.log('🎯 Selected block for viewing:', {
+    logger.log('🎯 Selected block for viewing:', {
       blockId,
       blockName: selectedBlock?.blockName,
       questionRange: `Q${selectedBlock?.studentAnswers?.[0]?.question_number || 1} - Q${selectedBlock?.studentAnswers?.[selectedBlock?.studentAnswers?.length - 1]?.question_number || selectedBlock?.stats?.total || '?'}`,

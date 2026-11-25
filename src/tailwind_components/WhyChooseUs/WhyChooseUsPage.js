@@ -13,6 +13,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const statistics = [
   { icon: Users, number: "15,000+", label: "Students Trained" },
@@ -94,11 +95,9 @@ const WhyChooseUsPage = () => {
             ? response.data
             : response.data?.results || [];
           setTestimonials(arr);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

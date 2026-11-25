@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Star } from "lucide-react";
 import ajaxCall from "../../helpers/ajaxCall";
+import logger from "../../helpers/logger";
 
 const Testimonial = () => {
   const scrollRef = useRef(null);
@@ -31,11 +32,9 @@ const Testimonial = () => {
           } else {
             setTestimonials([]);
           }
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

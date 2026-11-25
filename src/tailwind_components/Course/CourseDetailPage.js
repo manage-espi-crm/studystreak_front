@@ -8,6 +8,7 @@ import PackageDetails from "./PackageDetails";
 import CourseBanner from "./CourseBanner";
 import CourseDetailsCard from "./CourseDetailsCard";
 import CourseTabs from "./CourseTabs";
+import logger from "../../helpers/logger";
 
 const CourseDetailPage = () => {
   // `courseParam` is either a numeric id (legacy links) or an SEO slug.
@@ -70,11 +71,9 @@ const CourseDetailPage = () => {
             sectionItem.lessons = lessons;
           });
           setCourseDetail(updatedData);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [courseParam]);
@@ -107,11 +106,9 @@ const CourseDetailPage = () => {
             ...response.data,
             packages: response.data?.packages || [],
           });
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, [resolvedCourseId]);
@@ -134,11 +131,9 @@ const CourseDetailPage = () => {
         if (response?.status === 200) {
           const data = response?.data;
           setBatchData(Array.isArray(data) ? data : data?.results || []);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       }
     })();
   }, []);

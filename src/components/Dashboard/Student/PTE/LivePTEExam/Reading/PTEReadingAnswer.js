@@ -4,6 +4,7 @@ import { ProgressBar } from "react-bootstrap";
 import Loading from "../../../../../UI/Loading";
 import SmallModal from "../../../../../UI/Modal";
 import ajaxCall from "../../../../../../helpers/ajaxCall";
+import logger from "../../../../../../helpers/logger";
 
 const PTEReadingAnswer = () => {
   const { examId } = useParams();
@@ -71,11 +72,9 @@ const PTEReadingAnswer = () => {
           setStudentExams(response?.data?.student_answers?.Reading);
           setStudentAnswers(studentAnswers[0]?.studentAnswers || []);
           setCorrectAnswers(correctAnswers[0]?.correctAnswers || []);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -106,11 +105,9 @@ const PTEReadingAnswer = () => {
             sub_category: response?.data?.sub_category,
             question_other: response?.data?.question_other,
           });
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

@@ -5,6 +5,7 @@ import Loading from "../../../../../../UI/Loading";
 import SmallModal from "../../../../../../UI/Modal";
 import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import { formatTime } from "../../../../../../../utils/timer/formateTime";
+import logger from "../../../../../../../helpers/logger";
 
 const LivePTEHIWExam = () => {
   const navigate = useNavigate();
@@ -83,11 +84,9 @@ const LivePTEHIWExam = () => {
           setAllHighlightedWords(
             Array(filteredData[0][examType][examForm]?.length || 0).fill([])
           );
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -193,12 +192,10 @@ const LivePTEHIWExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Exam Submitted Successfully");
-      } else {
-        console.log("error");
+        logger.log("Latest Exam Submitted Successfully");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -287,7 +284,7 @@ const LivePTEHIWExam = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import microphone from "../../../../../../img/service/microphone.png";
+import logger from "../../../../../../helpers/logger";
 
 const Four = () => {
   const audioChunksRef = useRef([]);
@@ -30,7 +31,7 @@ const Four = () => {
       mediaRecorderRef.current.start();
       setIsRecording(true);
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 

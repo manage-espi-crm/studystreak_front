@@ -4,6 +4,7 @@ import { ProgressBar } from "react-bootstrap";
 import Loading from "../../../../../UI/Loading";
 import SmallModal from "../../../../../UI/Modal";
 import ajaxCall from "../../../../../../helpers/ajaxCall";
+import logger from "../../../../../../helpers/logger";
 
 const PTEWritingAnswer = () => {
   const { examId } = useParams();
@@ -52,11 +53,9 @@ const PTEWritingAnswer = () => {
           practice_test_type: response?.data?.practice_test_type,
         });
         setAssessment(response?.data?.student_answers?.Writing);
-      } else {
-        console.log("error");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }
@@ -89,11 +88,9 @@ const PTEWritingAnswer = () => {
             exam_name: response?.data?.exam_name,
             passage: response?.data?.passage || response?.data?.question || "",
           });
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }

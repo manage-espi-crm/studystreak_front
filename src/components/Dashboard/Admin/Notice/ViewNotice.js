@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Table from "../../../UI/Table";
 import Loading from "../../../UI/Loading";
 import ajaxCall from "../../../../helpers/ajaxCall";
+import logger from "../../../../helpers/logger";
 
 const ViewNotice = ({ activeTab }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -115,7 +116,7 @@ const ViewNotice = ({ activeTab }) => {
             setNoticeList(noticeData);
           }
         } catch (error) {
-          console.log("error", error);
+          logger.log("error", error);
         } finally {
           setIsLoading(false);
         }

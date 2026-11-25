@@ -13,6 +13,7 @@ import {
   Facebook,
   Instagram,
 } from "lucide-react";
+import logger from "../../helpers/logger";
 
 const contactOptions = [
   {
@@ -130,7 +131,7 @@ const TalkToUsPage = () => {
         toast.error("Submission failed. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     } finally {
       setIsLoading(false);
     }

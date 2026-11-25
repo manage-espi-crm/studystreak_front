@@ -5,6 +5,7 @@ import ajaxCall from "../../../../../../../helpers/ajaxCall";
 import Loading from "../../../../../../UI/Loading";
 import SmallModal from "../../../../../../UI/Modal";
 import { secureOpenAIChatCompletion, OPENAI_MODEL } from "../../../../../../../helpers/secureOpenAIService";
+import logger from "../../../../../../../helpers/logger";
 
 const instructions = {
   SST: "You will hear a short lecture. Write a summary for a fellow student who was not present at the lecture. You should write 50-70 words. You have 10 minutes to finish this task. Your response will be judged on the Quality of Your writing and on how well your response presents the key points presented in the lecture.",
@@ -100,11 +101,9 @@ const LivePTESSTWFDExam = () => {
             return 0;
           });
           setFullPaper(filteredData);
-        } else {
-          console.log("error");
         }
       } catch (error) {
-        console.log("error", error);
+        logger.log("error", error);
       } finally {
         setIsLoading(false);
       }
@@ -269,12 +268,10 @@ const LivePTESSTWFDExam = () => {
         8000
       );
       if (response.status === 201) {
-        console.log("Latest Exam Submitted Successfully");
-      } else {
-        console.log("error");
+        logger.log("Latest Exam Submitted Successfully");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
@@ -540,7 +537,7 @@ const LivePTESSTWFDExam = () => {
         toast.error("Some Problem Occurred. Please try again.");
       }
     } catch (error) {
-      console.log("error", error);
+      logger.log("error", error);
     }
   };
 
