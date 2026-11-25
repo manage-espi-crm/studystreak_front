@@ -1,6 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 import { getAndSetRefreshToken, forceLogout } from "./helperFunction";
+import logger from "./logger";
 
 const ajaxCall = async (
   url,
@@ -9,6 +10,9 @@ const ajaxCall = async (
   timeOutFunction = () => {},
   _isRetry = false
 ) => {
+  // /client-log/ calls are not reported
+  const isReportCall = typeof url === "string" && url.startsWith("/client-log/");
+  let serverErrorReported = false;
   try {
     const id = setTimeout(() => {
       timeOutFunction();
@@ -32,6 +36,13 @@ const ajaxCall = async (
     const baseUrl = process.env.REACT_APP_API_BASE_URL
     const response = await fetch(`${baseUrl}${url}`, fetchObj);
     clearTimeout(id);
+    // Report 5xx responses with the request id
+    if (response.status >= 500 && !isReportCall) {
+      serverErrorReported = true;
+      logger.report(new Error(`API ${response.status} ${String(url).split("?")[0]}`), {
+        requestId: response.headers.get("X-Request-ID"),
+      });
+    }
     const data = await response.json();
 
     const result = {
@@ -75,9 +86,16 @@ const ajaxCall = async (
 
     return result;
   } catch (e) {
-    toast.error("Something went wrong. Please check your connection and try again.", {
-      toastId: "network-error",
-    });
+    // No toast for a failed error report
+    if (!isReportCall) {
+      toast.error("Something went wrong. Please check your connection and try again.", {
+        toastId: "network-error",
+      });
+    }
+    // Report network errors
+    if (!isReportCall && !serverErrorReported) {
+      logger.report(new Error(`API request failed ${String(url).split("?")[0]}: ${e?.message}`));
+    }
     return {
       status: null,
       isError: true,

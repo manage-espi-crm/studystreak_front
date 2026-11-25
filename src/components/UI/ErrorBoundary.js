@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './ErrorBoundary.css';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
+import logger from '../../helpers/logger';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class ErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     // Log error details
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    logger.error('ErrorBoundary caught an error:', error, errorInfo);
     
     this.setState({
       error: error,
@@ -42,9 +43,12 @@ class ErrorBoundary extends Component {
       url: window.location.href
     };
 
-    console.group('🐛 Error Report');
-    console.error('Error Details:', errorData);
-    console.groupEnd();
+    logger.group('🐛 Error Report');
+    logger.error('Error Details:', errorData);
+    logger.groupEnd();
+
+    // Report the error to the backend
+    logger.report(error, { componentStack: errorInfo.componentStack });
   };
 
   handleRetry = () => {
