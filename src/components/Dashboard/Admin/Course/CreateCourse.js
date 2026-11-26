@@ -7,6 +7,7 @@ import slugify from "../../../../helpers/slugify";
 import SingleSelection from "../../../UI/SingleSelect";
 import SelectionBox from "../../../UI/SelectionBox";
 import Tab from "../../../UI/Tab";
+import Loading from "../../../UI/Loading";
 
 const initialCourseData = {
   Course_Title: "",
@@ -146,8 +147,12 @@ const CreateCourse = ({ setMainTab }) => {
   const [slugEdited, setSlugEdited] = useState(false);
   // Select TCY Course options; empty list disables the TCY Course checkbox
   const [tcyList, setTcyList] = useState([]);
+  // Form shown after the TCY course list is loaded (TCY Course checkbox depends on it)
+  const [isTcyLoading, setIsTcyLoading] = useState(true);
   // Category options, used to find the selected category's name
   const [categoryList, setCategoryList] = useState([]);
+  // Language options, used to find English for TCY courses
+  const [languageList, setLanguageList] = useState([]);
   const authData = useSelector((state) => state.authStore);
 
   // TCY course list, loaded once
@@ -168,6 +173,7 @@ const CreateCourse = ({ setMainTab }) => {
         8000
       );
       setTcyList(Array.isArray(response?.data) ? response.data : []);
+      setIsTcyLoading(false);
     })();
   }, []);
 
@@ -185,6 +191,9 @@ const CreateCourse = ({ setMainTab }) => {
   
     // Select TCY Course usable only when TCY Course is ticked and a category is selected
   const tcyEnabled = Boolean(createCourseData.is_tcy_course && createCourseData.Category);
+  // Language fixed to English (dropdown disabled) once a TCY course is selected
+  const languageLocked = Boolean(tcyEnabled && createCourseData.tcyCourse);
+  const englishId = languageList.find((l) => l.name?.toLowerCase() === "english")?.id;
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -348,6 +357,10 @@ const CreateCourse = ({ setMainTab }) => {
     });
   };
 
+  if (isTcyLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Tab
@@ -456,6 +469,9 @@ const CreateCourse = ({ setMainTab }) => {
                   value={tcyEnabled ? createCourseData.tcyCourse : "-"}
                   onChange={(val) => {
                     dispatchCreateCourse({ type: "tcyCourse", value: val });
+                    if (val && englishId) {
+                      dispatchCreateCourse({ type: "Language", value: englishId });
+                    }
                   }}
                   isSearch={true}
                   isStatic={true}
@@ -581,7 +597,10 @@ const CreateCourse = ({ setMainTab }) => {
               <div className="dashboard__select__heading">
                 <span>Language <span className="text-danger" style={{ display: "inline" }}>*</span></span>
               </div>
-              <div className="dashboard__selector">
+              <div
+                className="dashboard__selector"
+                style={languageLocked ? { opacity: 0.5, cursor: "not-allowed" } : undefined}
+              >
                 <SingleSelection
                   value={createCourseData.Language}
                   onChange={(val) => {
@@ -593,6 +612,8 @@ const CreateCourse = ({ setMainTab }) => {
                   isSearch={true}
                   url="/languageview/"
                   objKey={["name"]}
+                  onDataLoaded={setLanguageList}
+                  disabled={languageLocked}
                 />
               </div>
             </div>

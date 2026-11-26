@@ -11,7 +11,6 @@ const initialPackageData = {
   package_name: "",
   package_price: "",
   duration: 0,
-  PackageType: "",
   category: "",
   select_course: "",
   additional_courses: [],
@@ -50,7 +49,7 @@ const courseListUrl = (category, isAdditionalFree) => {
     is_additional_free_course: isAdditionalFree,
   });
   if (category) params.append("category", category);
-  return `/courselistforpackage/?${params.toString()}`;
+  return `/courselistforpackage_v1/?${params.toString()}`;
 };
 
 const initialSubmit = { isError: false, errMsg: null, isSubmitting: false };
@@ -89,10 +88,6 @@ const FEATURE_COUNTS = [
 ];
 
 const validateForm = (createPackageData, setFormError) => {
-  if (!createPackageData.PackageType) {
-    setFormError("Package Type is Required");
-    return false;
-  }
   if (!createPackageData.select_course) {
     setFormError("Course is Required");
     return false;
@@ -137,6 +132,8 @@ const CreatePackage = ({ setMainTab }) => {
   );
   const [formStatus, setFormStatus] = useState(initialSubmit);
   const [activeTab, setActiveTab] = useState("Package");
+  // Course options, used to find the selected course's category
+  const [courseList, setCourseList] = useState([]);
   const authData = useSelector((state) => state.authStore);
 
   const handleTabChange = (tab) => {
@@ -221,6 +218,67 @@ const CreatePackage = ({ setMainTab }) => {
           }`}
         >
           <div className="row">
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
+                <span>Category</span>
+              </div>
+              <div className="dashboard__selector">
+                <SingleSelection
+                  value={createPackageData?.category}
+                  onChange={(val) => {
+                    dispatchCreatePackage({
+                      type: "category",
+                      value: val,
+                    });
+                    dispatchCreatePackage({
+                      type: "select_course",
+                      value: "",
+                    });
+                    dispatchCreatePackage({
+                      type: "additional_courses",
+                      value: [],
+                    });
+                    dispatchCreatePackage({
+                      type: "additional_coursesId",
+                      value: [],
+                    });
+                  }}
+                  isSearch={true}
+                  url="/categoryview/"
+                  objKey={["name"]}
+                  withBlankOption={true}
+                />
+              </div>
+            </div>
+            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
+              <div className="dashboard__select__heading">
+                <span>Course <span className="text-danger" style={{ display: "inline" }}>*</span></span>
+              </div>
+              <div className="dashboard__selector">
+                {/* key: new list per category, "Loading" shown until it arrives */}
+                <SingleSelection
+                  key={createPackageData.category}
+                  value={createPackageData?.select_course}
+                  onChange={(val) => {
+                    dispatchCreatePackage({
+                      type: "select_course",
+                      value: val,
+                    });
+                    // Category set to the selected course's category; additional courses cleared when it changes
+                    const courseCategory = courseList.find((c) => c.id === val)?.Category;
+                    if (courseCategory && courseCategory !== createPackageData.category) {
+                      dispatchCreatePackage({ type: "category", value: courseCategory });
+                      dispatchCreatePackage({ type: "additional_courses", value: [] });
+                      dispatchCreatePackage({ type: "additional_coursesId", value: [] });
+                    }
+                  }}
+                  isSearch={true}
+                  url={courseListUrl(createPackageData.category, false)}
+                  objKey={["Course_Title"]}
+                  onDataLoaded={setCourseList}
+                />
+              </div>
+            </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12">
               <div className="dashboard__form__wraper">
                 <div className="dashboard__form__input">
@@ -277,80 +335,11 @@ const CreatePackage = ({ setMainTab }) => {
             </div>
             <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
               <div className="dashboard__select__heading">
-                <span>Package Type <span className="text-danger" style={{ display: "inline" }}>*</span></span>
-              </div>
-              <div className="dashboard__selector">
-                <SingleSelection
-                  value={createPackageData?.PackageType}
-                  onChange={(val) => {
-                    dispatchCreatePackage({
-                      type: "PackageType",
-                      value: val,
-                    });
-                  }}
-                  isSearch={true}
-                  url="/packagetypeview/"
-                  objKey={["name"]}
-                />
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
-              <div className="dashboard__select__heading">
-                <span>Category</span>
-              </div>
-              <div className="dashboard__selector">
-                <SingleSelection
-                  value={createPackageData?.category}
-                  onChange={(val) => {
-                    dispatchCreatePackage({
-                      type: "category",
-                      value: val,
-                    });
-                    dispatchCreatePackage({
-                      type: "select_course",
-                      value: "",
-                    });
-                    dispatchCreatePackage({
-                      type: "additional_courses",
-                      value: [],
-                    });
-                    dispatchCreatePackage({
-                      type: "additional_coursesId",
-                      value: [],
-                    });
-                  }}
-                  isSearch={true}
-                  url="/categoryview/"
-                  objKey={["name"]}
-                  withBlankOption={true}
-                />
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
-              <div className="dashboard__select__heading">
-                <span>Course <span className="text-danger" style={{ display: "inline" }}>*</span></span>
-              </div>
-              <div className="dashboard__selector">
-                <SingleSelection
-                  value={createPackageData?.select_course}
-                  onChange={(val) => {
-                    dispatchCreatePackage({
-                      type: "select_course",
-                      value: val,
-                    });
-                  }}
-                  isSearch={true}
-                  url={courseListUrl(createPackageData.category, false)}
-                  objKey={["Course_Title"]}
-                />
-              </div>
-            </div>
-            <div className="col-xl-6 col-lg-6 col-md-6 col-12 mb-4">
-              <div className="dashboard__select__heading">
                 <span>Additional Courses</span>
               </div>
               <div className="dashboard__selector">
                 <SelectionBox
+                  key={createPackageData.category}
                   value={createPackageData?.additional_courses}
                   onSelect={addedAdditionalCourses}
                   isSearch={true}

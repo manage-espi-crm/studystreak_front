@@ -247,7 +247,7 @@ const DSLeftDrawer = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : category === "PTE" || category === "DUOLINGO" || category === "TOEFL"
@@ -347,7 +347,7 @@ const DSLeftDrawer = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : [
@@ -428,7 +428,7 @@ const DSLeftDrawer = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ];
 

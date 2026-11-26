@@ -155,7 +155,7 @@ const DSSidebar = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : category === "PTE" || category === "DUOLINGO" || category === "TOEFL"
@@ -248,7 +248,7 @@ const DSSidebar = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ]
       : [
@@ -329,7 +329,7 @@ const DSSidebar = () => {
           {
             name: "Logout",
             icon: <LogOut />,
-            link: "/login",
+            link: "/logout",
           },
         ];
 
