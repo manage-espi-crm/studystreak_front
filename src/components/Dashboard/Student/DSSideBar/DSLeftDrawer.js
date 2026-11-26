@@ -21,22 +21,21 @@ import NoticeBoard from "../Dashboard/NoticeBoard/NoticeBoard";
 import {
   BookCheck,
   BookCopy,
-  CassetteTape,
-  ClipboardMinus,
   LayoutPanelLeft,
   LogOut,
   NotebookPen,
   NotepadTextDashed,
-  PcCase,
   Pencil,
-  Proportions,
   Scroll,
   Settings,
   SquareArrowOutUpRight,
   UserPen,
-  Videotape,
   WalletCards,
   BookMarked,
+  ClipboardList,
+  CirclePlay,
+  FolderOpen,
+  Video,
 } from "lucide-react";
 
 const drawerWidth = 240;
@@ -195,7 +194,7 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Full Length Test",
-            icon: <PcCase />,
+            icon: <ClipboardList />,
             link: "/fullLengthTest",
             state: {
               count: count?.full_length_test_count,
@@ -212,13 +211,13 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Live Classes",
-            icon: <CassetteTape />,
+            icon: <Video />,
             link: "/studentLiveClasses",
             state: { packageCount: count?.count },
           },
           {
             name: "Recorded Classes",
-            icon: <Videotape />,
+            icon: <CirclePlay />,
             link: "/recordedClasses",
             state: { packageCount: count?.count },
           },
@@ -230,7 +229,7 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Resources",
-            icon: <Proportions />,
+            icon: <FolderOpen />,
             link: "/resources",
             state: { packageCount: count?.count },
           },
@@ -307,18 +306,18 @@ const DSLeftDrawer = () => {
           }, */
           {
             name: "Live Classes",
-            icon: <CassetteTape />,
+            icon: <Video />,
             link: "/studentLiveClasses",
           },
           // Resources hidden from the PTE menu
           /* {
             name: "Resources",
-            icon: <Proportions />,
+            icon: <FolderOpen />,
             link: "/resources",
           }, */
           {
             name: "Recorded Classes",
-            icon: <Videotape />,
+            icon: <CirclePlay />,
             link: "/recordedClasses",
             state: { packageCount: count?.count },
           },
@@ -397,12 +396,12 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Live Classes",
-            icon: <CassetteTape />,
+            icon: <Video />,
             link: "/studentLiveClasses",
           },
           {
             name: "Recorded Classes",
-            icon: <ClipboardMinus />,
+            icon: <CirclePlay />,
             link: "/recordedClasses",
           },
           {
@@ -412,7 +411,7 @@ const DSLeftDrawer = () => {
           },
           {
             name: "Resources",
-            icon: <Proportions />,
+            icon: <FolderOpen />,
             link: "/resources",
           },
           {

@@ -15,20 +15,22 @@ import UpcomingLiveClasses from "./UpcomingLiveClasses/UpcomingLiveClasses";
 import UpcomingRegularLiveClass from "./UpcomingRegularLiveClass/UpCommingRegularLiveClass";
 import {
   BookCheck,
-  CassetteTape,
   ChartNoAxesColumnIncreasing,
   NotebookPen,
-  Film,
   NotepadTextDashed,
-  PcCase,
   Pencil,
   Presentation,
-  Proportions,
-  Speaker,
   SquareArrowOutUpRight,
-  Users,
-  Videotape,
+  HeartHandshake,
   BookMarked,
+  ClipboardList,
+  Mic,
+  Video,
+  GraduationCap,
+  MessagesSquare,
+  MonitorPlay,
+  FolderOpen,
+  CirclePlay,
 } from "lucide-react";
 import TidioChat from "../../../../tailwind_components/ChatBot/TidioChat";
 
@@ -81,7 +83,7 @@ const Dashboard = () => {
           },
           {
             name: "Speaking Slot",
-            icon: <Speaker width={35} height={35} />,
+            icon: <Mic width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Speaking Practice" },
           },
@@ -93,30 +95,30 @@ const Dashboard = () => {
           },
           {
             name: "Full Length Test",
-            icon: <PcCase width={35} height={35} />,
+            icon: <ClipboardList width={35} height={35} />,
             link: "/fullLengthTest",
             state: { count: count?.full_length_test_count },
           },
           {
             name: "Regular Classes",
-            icon: <Videotape width={35} height={35} />,
+            icon: <Video width={35} height={35} />,
             link: "/studentLiveClasses",
           },
           {
             name: "Tutor Support",
-            icon: <Users width={35} height={35} />,
+            icon: <GraduationCap width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Tutor Support" },
           },
           {
             name: "Counselling",
-            icon: <Users width={35} height={35} />,
+            icon: <HeartHandshake width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Counselling" },
           },
           {
             name: "Webinar",
-            icon: <Film width={35} height={35} />,
+            icon: <MonitorPlay width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Webinar" },
           },
@@ -127,7 +129,7 @@ const Dashboard = () => {
           },
           {
             name: "Resources",
-            icon: <Proportions width={35} height={35} />,
+            icon: <FolderOpen width={35} height={35} />,
             link: "/resources",
           },
           {
@@ -146,7 +148,7 @@ const Dashboard = () => {
           },
           {
             name: "Speaking Slot",
-            icon: <Speaker width={35} height={35} />,
+            icon: <Mic width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Speaking Practice" },
           },
@@ -179,24 +181,24 @@ const Dashboard = () => {
           }, */
           {
             name: "Regular Classes",
-            icon: <Videotape width={35} height={35} />,
+            icon: <Video width={35} height={35} />,
             link: "/studentLiveClasses",
           },
           {
             name: "Tutor Support",
-            icon: <Users width={35} height={35} />,
+            icon: <GraduationCap width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Tutor Support" },
           },
           {
             name: "Counselling",
-            icon: <Users width={35} height={35} />,
+            icon: <HeartHandshake width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Counselling" },
           },
           {
             name: "Webinar",
-            icon: <Film width={35} height={35} />,
+            icon: <MonitorPlay width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Webinar" },
           },
@@ -207,7 +209,7 @@ const Dashboard = () => {
           },
           {
             name: "Resources",
-            icon: <Proportions width={35} height={35} />,
+            icon: <FolderOpen width={35} height={35} />,
             link: "/resources",
           },
           {
@@ -231,30 +233,30 @@ const Dashboard = () => {
           },
           {
             name: "Regular Classes",
-            icon: <Videotape width={35} height={35} />,
+            icon: <Video width={35} height={35} />,
             link: "/studentLiveClasses",
           },
           {
             name: "Counselling",
-            icon: <Users width={35} height={35} />,
+            icon: <HeartHandshake width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Counselling" },
           },
           {
             name: "Webinar",
-            icon: <Film width={35} height={35} />,
+            icon: <MonitorPlay width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Webinar" },
           },
           {
             name: "Tutor Support",
-            icon: <Users width={35} height={35} />,
+            icon: <GraduationCap width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Tutor Support" },
           },
           {
             name: "Group Doubt Solving",
-            icon: <CassetteTape width={35} height={35} />,
+            icon: <MessagesSquare width={35} height={35} />,
             link: "/studentLiveClasses",
             state: { activeTab: "Group Doubt" },
           },
@@ -265,7 +267,7 @@ const Dashboard = () => {
           },
           {
             name: "Resources",
-            icon: <Proportions width={35} height={35} />,
+            icon: <FolderOpen width={35} height={35} />,
             link: "/resources",
           },
         ];
@@ -507,6 +509,7 @@ const Dashboard = () => {
                                     >
                                       <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
                                         <NotepadTextDashed
+                                          className="flex-shrink-0"
                                           width={35}
                                           height={35}
                                           color="black"
@@ -540,6 +543,7 @@ const Dashboard = () => {
                                         >
                                           <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
                                             <Presentation
+                                              className="flex-shrink-0"
                                               width={35}
                                               height={35}
                                               color="black"
@@ -568,6 +572,7 @@ const Dashboard = () => {
                                   >
                                     <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
                                       <BookMarked
+                                        className="flex-shrink-0"
                                         width={35}
                                         height={35}
                                         color="black"
@@ -625,7 +630,7 @@ const Dashboard = () => {
                                         onClick={disabled ? undefined : onClick}
                                         className="gridarea__heading d-flex justify-content-center align-items-center gap-4"
                                       >
-                                        {icon}
+                                        <span className="flex-shrink-0 d-flex">{icon}</span>
                                         <h3>{name}</h3>
                                       </div>
                                     ) : (
@@ -636,7 +641,7 @@ const Dashboard = () => {
                                         style={{ color: "black" }}
                                       >
                                         <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
-                                          {icon}
+                                          <span className="flex-shrink-0 d-flex">{icon}</span>
                                           <h3>{name}</h3>
                                         </div>
                                       </Link>
@@ -655,7 +660,8 @@ const Dashboard = () => {
                                     className="text-decoration-none"
                                   >
                                     <div className="gridarea__heading d-flex justify-content-center align-items-center gap-4">
-                                      <CassetteTape
+                                      <CirclePlay
+                                        className="flex-shrink-0"
                                         width={35}
                                         height={35}
                                         color="black"
